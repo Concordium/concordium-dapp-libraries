@@ -10,11 +10,30 @@ import { WalletConnectionDelegate, WalletConnection, WalletConnector } from './W
 
 const BROWSER_WALLET_DETECT_TIMEOUT = 2000;
 
+/**
+ * Implementation of both {@link WalletConnector} and {@link WalletConnection} for the Concordium Browser Wallet.
+ * Implementing both interfaces in the same class is a good fit for this protocol
+ * as all interaction with the wallet's API happens through a single stateful client.
+ *
+ * As all methods basically just delegates to the underlying client,
+ * this class may be seen as little more than a split-up of the client into two interfaces
+ * and adding (simulated) disconnectability.
+ */
 export class BrowserWalletConnector implements WalletConnector, WalletConnection {
     readonly client: WalletApi;
 
     readonly delegate: WalletConnectionDelegate;
 
+    /**
+     * Construct a new instance.
+     *
+     * Use {@link create} to have the API client initialized automatically.
+     *
+     * The constructor sets up event handling and appropriate forwarding to the provided delegate.
+     *
+     * @param client The underlying API client.
+     * @param delegate The object to receive events emitted by the client.
+     */
     constructor(client: WalletApi, delegate: WalletConnectionDelegate) {
         this.client = client;
         this.delegate = delegate;

@@ -85,6 +85,11 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         return this.client.getJsonRpcClient();
     }
 
+    /**
+     * Deregister event handlers on the API client and notify the delegate.
+     * As there's no way to actually disconnect the Browser Wallet, this is all that we can reasonably do.
+     * The client object will remain in the browser's global state.
+     */
     async disconnect() {
         // The connection itself cannot actually be disconnected by the dApp as
         // only the wallet can initiate disconnecting individual accounts.

@@ -110,6 +110,7 @@ export interface WalletConnection {
      * There's no guarantee that the wallet will consider the connection closed
      * even after the returned promise resolves successfully,
      * but it should ensure that the app stops using the connection.
+     * See the documentation for the concrete implementations for details on what guarantees they provide.
      *
      * @return A promise that resolves once the disconnect has completed.
      */
@@ -202,7 +203,8 @@ export interface WalletConnector {
 
     /**
      * Ensure that all connections initiated by this connector are disconnected
-     * and clean up all resources associated to the connector.
+     * and clean up resources associated to the connector.
+     * See the documentation for the concrete implementations for details on what guarantees they provide.
      */
     disconnect(): Promise<void>;
 }

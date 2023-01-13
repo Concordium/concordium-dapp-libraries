@@ -10,7 +10,7 @@ They don’t render any HTML nor do styling.
 
 Component that bridges [`@concordium/wallet-connectors`](../wallet-connectors) into a React context by
 managing active connector, connection, connected account, network information, errors, etc. in its internal state.
-This component is believed to significantly reduce the complexity of integrating with wallets,
+This component significantly reduces the complexity of integrating with wallets,
 even if one only need to support a single protocol and network.
 
 ## Hooks

@@ -77,12 +77,12 @@ async function loadContract(rpc: JsonRpcClient, input: string) {
 }
 
 /**
- * The state of the selector.
+ * The state of a {@link useContractSelector} instance.
  */
 interface State {
     /**
      * The selected contract info, if available.
-     * Is undefined if there isn't any index to lookup or the lookup failed.
+     * Is undefined if there isn't any index to look up, during lookup, or the lookup failed.
      * In the latter case {@link validationError} will be non-empty.
      */
     selected: Info | undefined;
@@ -100,7 +100,7 @@ interface State {
 }
 
 /**
- * React hook for performing lookup of a smart contract based on a string value (for example the value of an input field).
+ * React hook to lookup a smart contract's data and state using the contract's index.
  * @param rpc JSON-RPC proxy client through which to perform the lookup.
  * @param input The index of the contract to look up.
  * @return The resolved contract and related state.

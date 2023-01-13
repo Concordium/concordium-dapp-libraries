@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { ConnectorType, WalletConnectionProps } from './WithWalletConnector';
 
 /**
- * The state of the selector.
+ * The state of the a {@link useWalletConnectorSelector} instance.
  */
 interface State {
     /**

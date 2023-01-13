@@ -31,9 +31,8 @@ interface State {
      * Existing connectors are not disconnected automatically;
      * this may be done using {@link WalletConnectionProps.disconnectActive}.
      *
-     * It's recommended to use the hook {@link useWalletConnectorSelector} to implement any connector selector
-     * as it adds a little more structure to the connector state and also takes care of disconnecting existing connectors
-     * as mentioned above.
+     * The hook {@link useWalletConnectorSelector} adds a little more structure to the connector state
+     * and also takes care of disconnecting existing connectors as mentioned above.
      *
      * Note that the connector stored in this field only controls the creation of new connections.
      * In particular, when a new connector becomes active, the current value of {@link activeConnection} is not touched.
@@ -174,7 +173,7 @@ export interface WalletConnectionProps extends State {
  * Once it receives an event for the active {@link WalletConnection},
  * it performs the relevant updates to its component state which then bubble down to child components.
  *
- * This component is believed to significantly reduce the complexity of integrating with wallets,
+ * This component significantly reduces the complexity of integrating with wallets,
  * even if one only needs to support a single protocol and network.
  */
 // TODO Rename to WalletConnectionManager?
@@ -293,7 +292,7 @@ export class WithWalletConnector extends Component<Props, State> implements Wall
             activeConnector
                 .connect()
                 .then((c) => {
-                    // Don't let it clear any existing connection if the connection was cancelled.
+                    // Don't clear any existing connection if the connection was cancelled.
                     if (c) {
                         this.setActiveConnection(c);
                     }

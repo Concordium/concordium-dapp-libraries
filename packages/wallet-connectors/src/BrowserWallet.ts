@@ -14,10 +14,6 @@ const BROWSER_WALLET_DETECT_TIMEOUT = 2000;
  * Implementation of both {@link WalletConnector} and {@link WalletConnection} for the Concordium Browser Wallet.
  * Implementing both interfaces in the same class is a good fit for this protocol
  * as all interaction with the wallet's API happens through a single stateful client.
- *
- * As all methods basically just delegates to the underlying client,
- * this class may be seen as little more than a split-up of the client into two interfaces
- * and adding (simulated) disconnectability.
  */
 export class BrowserWalletConnector implements WalletConnector, WalletConnection {
     readonly client: WalletApi;

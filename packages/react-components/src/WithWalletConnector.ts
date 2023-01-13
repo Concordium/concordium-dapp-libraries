@@ -154,8 +154,6 @@ export interface WalletConnectionProps extends State {
      * destroying its existing value.
      *
      * This function is called automatically when {@link network} changes.
-     *
-     * This is the only destructive function exposed by this component.
      */
     disconnectActive: () => void;
 }
@@ -164,7 +162,7 @@ export interface WalletConnectionProps extends State {
  * React component that helps managing wallet connections
  * by introducing a notion of "active" {@link WalletConnector} and {@link WalletConnection},
  * and maintaining their states as part of its own component state.
- * This allows child components access to all relevant information in a reactive manner
+ * This allows child components to access all relevant information in a reactive manner
  * and provides methods for managing the active connection.
  *
  * The component implements {@link WalletConnectionDelegate} and passes itself to all {@link WalletConnector}s

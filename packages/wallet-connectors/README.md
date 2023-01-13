@@ -3,6 +3,9 @@
 Interfaces for interacting with wallets along with implementations for Browser Wallet and WalletConnect (v2).
 It’s written in TypeScript and has no dependencies to any UI framework.
 
+The library takes away the complexity involved with interacting with both Browser Wallet and Mobile Wallets (via WalletConnect)
+such that dApps only need to interact with interfaces that abstract away the underlying protocol.
+
 ## Interfaces
 
 ### `WalletConnector`

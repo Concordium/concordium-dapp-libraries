@@ -151,6 +151,8 @@ export interface Network {
  * As the relevant {@link WalletConnection} is passed into the callback,
  * apps will usually create a single delegate to be reused across all {@link WalletConnector}s
  * over the entire lifetime of the application.
+ * The methods could be called redundantly,
+ * so implementations should check the argument values against the current state and only react if they differ.
  */
 export interface WalletConnectionDelegate {
     /**

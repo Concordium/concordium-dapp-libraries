@@ -110,9 +110,6 @@ export interface WalletConnection {
      * There's no guarantee that the wallet will consider the connection closed
      * even after the returned promise resolves successfully,
      * but it should ensure that the app stops using the connection.
-     * In particular, there's no way to actually disconnect the Browser Wallet;
-     * all we can really do is deregister event handlers.
-     * The client object will remain in the browser's global state.
      *
      * @return A promise that resolves once the disconnect has completed.
      */

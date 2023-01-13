@@ -100,7 +100,7 @@ interface State {
 }
 
 /**
- * React hook to lookup a smart contract's data and state using the contract's index.
+ * React hook to look up a smart contract's data and state from its index.
  * @param rpc JSON-RPC proxy client through which to perform the lookup.
  * @param input The index of the contract to look up.
  * @return The resolved contract and related state.

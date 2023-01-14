@@ -189,6 +189,9 @@ export class WithWalletConnector extends Component<Props, State> implements Wall
         };
     }
 
+    /**
+     * @see WalletConnectionProps.setActiveConnectorType
+     */
     setActiveConnectorType = (type: ConnectorType | undefined) => {
         console.debug("WithWalletConnector: calling 'setActiveConnectorType'", { type, state: this.state });
         const { network } = this.props;
@@ -223,6 +226,9 @@ export class WithWalletConnector extends Component<Props, State> implements Wall
             });
     };
 
+    /**
+     * @see WalletConnectionProps.setActiveConnection
+     */
     setActiveConnection = (connection: WalletConnection | undefined) => {
         console.debug("WithWalletConnector: calling 'setActiveConnection'", { connection, state: this.state });
         // Not setting the active connector to that of the connection for reasons described in
@@ -282,6 +288,9 @@ export class WithWalletConnector extends Component<Props, State> implements Wall
         }
     };
 
+    /**
+     * @see WalletConnectionProps.connectActive
+     */
     connectActive = () => {
         console.debug("WithWalletConnector: calling 'connectActive'", { state: this.state });
         const { activeConnector } = this.state;
@@ -308,6 +317,9 @@ export class WithWalletConnector extends Component<Props, State> implements Wall
         }
     };
 
+    /**
+     * @see WalletConnectionProps.disconnectActive
+     */
     disconnectActive = () => {
         console.debug("WithWalletConnector: calling 'disconnectActive'", { state: this.state });
         const { activeConnector } = this.state;

@@ -4,7 +4,7 @@ import { ConnectorType, WalletConnectionProps } from './WithWalletConnector';
 /**
  * The state of the a {@link useWalletConnectorSelector} instance.
  */
-interface State {
+export interface WalletConnectorSelector {
     /**
      * Indicator of whether the selector is selected (i.e. it matches the active connector type).
      */
@@ -35,19 +35,19 @@ interface State {
  * To implement a common case, this hook adds the additional rule that only one connector can exist at any given time.
  * Connections not belonging to this connector are automatically disconnected.
  *
- * More precisely, the hook computes the derived state {@link State} from {@link props} as follows:
- * - The selector is {@link State.isSelected selected} if the active connector has type {@link connectorType}.
- * - The selector is {@link State.isConnected connected} if it is selected and has an active connection.
- * - The selector is {@link State.isDisabled disabled} if it there is another connected selector.
+ * More precisely, the hook computes the derived state {@link WalletConnectorSelector} from {@link props} as follows:
+ * - The selector is {@link WalletConnectorSelector.isSelected selected} if the active connector has type {@link connectorType}.
+ * - The selector is {@link WalletConnectorSelector.isConnected connected} if it is selected and has an active connection.
+ * - The selector is {@link WalletConnectorSelector.isDisabled disabled} if it there is another connected selector.
  *
- * It also exposes a {@link State.select handler function} for connecting/disconnecting appropriately
+ * It also exposes a {@link WalletConnectorSelector.select handler function} for connecting/disconnecting appropriately
  * when the selector is invoked.
  *
  * @param connectorType The connector type controlled by this selector.
  * @param props The props exposed by {@link WithWalletConnector} to its child component.
  * @return The resolved state.
  */
-export function useWalletConnectorSelector(connectorType: ConnectorType, props: WalletConnectionProps): State {
+export function useWalletConnectorSelector(connectorType: ConnectorType, props: WalletConnectionProps): WalletConnectorSelector {
     const { disconnectActive, activeConnectorType, activeConnector, activeConnection, setActiveConnectorType } = props;
     const isSelected = activeConnectorType === connectorType;
     const select = useCallback(() => {

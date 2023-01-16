@@ -77,9 +77,9 @@ async function loadContract(rpc: JsonRpcClient, input: string) {
 }
 
 /**
- * The state of a {@link useContractSelector} instance.
+ * A {@link useContractSelector} instance.
  */
-interface State {
+export interface ContractSelector {
     /**
      * The selected contract info, if available.
      * Is undefined if there isn't any index to look up, during lookup, or the lookup failed.
@@ -105,7 +105,7 @@ interface State {
  * @param input The index of the contract to look up.
  * @return The resolved contract and related state.
  */
-export function useContractSelector(rpc: JsonRpcClient | undefined, input: string): State {
+export function useContractSelector(rpc: JsonRpcClient | undefined, input: string): ContractSelector {
     const [selected, setSelected] = useState<Info>();
     const [isLoading, setIsLoading] = useState(false);
     const [validationError, setValidationError] = useState('');

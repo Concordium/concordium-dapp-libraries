@@ -80,6 +80,12 @@ doSomethingInteresting(connection, delegate.accounts.get(connection)!, ...)
 
 where `connection` is either `browserWalletConnection` or `walletConnectConnection`.
 
+## Usage in React
+
+Use the React component [`WithWalletConnector`](../react-components/src/WithWalletConnector.ts) in
+[`@concordium/react-components`](../react-components)
+to easily integrate this library into a React app.
+
 ## Build
 
 Run

@@ -10,13 +10,31 @@ such that dApps only need to interact with interfaces that abstract away the und
 
 ### `WalletConnector`
 
-Wraps some low-level client for the underlying protocol that it represents and handles events emitted by this client.
-A delegate object is passed to the connector on construction to receive events in a standardized format.
-Implementations may support multiple connections being instantiated from a single connector.
+An object of this type represents some connection type and manages connections over the corresponding protocol.
+
+The main method of this interface is `.connect()`, which attempts to initiate a connection.
+If successful, the returned promise resolves to a `WalletConnection`.
+
+Connectors usually hold a `WalletConnectionDelegate` reference that they share with the application.
+Relevant events pass from the connectors to the application through this delegate.
+
+Implementations may support multiple active connections from the same connector.
 
 ### `WalletConnection`
 
-A connection obtained by invoking `connect` on the connector. It may be used to send transactions to the wallet for approval and submission.
+A connection allows the application to interact with a wallet.
+The following kinds of interactions are supported:
+
+- Ask the wallet to sign a message
+- Ask the wallet to sign and send a transaction. 
+
+The wallet is responsible for prompting for approval of all interactions.
+
+### `WalletConnectionDelegate`
+
+A collection of generic event handlers for common events.
+Applications usually define a single delegate that they share between all connectors.
+This allows the application to handle all events from all kinds of connections in a single place.
 
 ## Usage Example
 

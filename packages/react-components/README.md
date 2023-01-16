@@ -1,11 +1,11 @@
 # `@concordium/react-components`
 
-React components and utilities for implementing common behaviors.
-The components only manage React state and pass data to application components.
-They don’t render any HTML nor do styling.
+React components and utilities for implementing common patterns used in dApps.
+The components only manage React state that is forwarded to application components.
+They don't render any HTML nor do styling.
 
-The components do as much as possible to help make sure that the dApp is connected to a wallet/account on the expected network
-and handle it gracefully when the dApp decides to switch network.
+The components do as much as possible to help make sure that the dApp is connected to a wallet/account
+on the expected network and handle it gracefully when the dApp decides to switch network.
 
 ## Components
 

@@ -1,45 +1,6 @@
 import { useEffect, useState } from 'react';
-import { AccountAddress, CcdAmount, JsonRpcClient } from '@concordium/web-sdk';
-
-/**
- * Data and state of a smart contract.
- */
-export interface Info {
-    /**
-     * Version of the contract's semantics.
-     */
-    version: number;
-
-    /**
-     * The contract's index on the chain.
-     */
-    index: bigint;
-
-    /**
-     * The contract's name without the "init_" prefix.
-     */
-    name: string;
-
-    /**
-     * The contract's balance.
-     */
-    amount: CcdAmount;
-
-    /**
-     * The address of the account that owns the contract.
-     */
-    owner: AccountAddress;
-
-    /**
-     * The contract's invokable methods.
-     */
-    methods: string[];
-
-    /**
-     * The reference identifier of the contract's module.
-     */
-    moduleRef: string;
-}
+import { JsonRpcClient } from '@concordium/web-sdk';
+import { Info } from './contract';
 
 async function refresh(rpc: JsonRpcClient, index: bigint) {
     const info = await rpc.getInstanceInfo({ index, subindex: BigInt(0) });

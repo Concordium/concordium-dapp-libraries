@@ -16,8 +16,8 @@ function findCustomSection(m: WebAssembly.Module) {
         return s.length === 0 ? undefined : [name, s];
     }
     return (
-        getCustomSection('concordium-schema-v1') ||
         getCustomSection('concordium-schema-v2') ||
+        getCustomSection('concordium-schema-v1') ||
         getCustomSection('concordium-schema')
     );
 }

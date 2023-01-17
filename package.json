@@ -6,7 +6,7 @@
         "samples/*"
     ],
     "scripts": {
-        "fmt": "yarn workspaces foreach -v run prettier --write .",
+        "fmt": "yarn workspace @concordium/react-components run prettier --write .",
         "build": "yarn workspaces foreach -tv --no-private run build",
         "postinstall": "husky install",
         "prepack": "pinst --disable",

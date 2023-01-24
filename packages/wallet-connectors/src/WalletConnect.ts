@@ -349,12 +349,13 @@ export class WalletConnectConnector implements WalletConnector {
         const rpcClient = new JsonRpcClient(new HttpProvider(this.network.jsonRpcUrl));
         const connection = new WalletConnectConnection(this, rpcClient, chainId, session);
         this.connections.set(session.topic, connection);
+        this.delegate.onConnected(connection);
         return connection;
     }
 
     onDisconnect(connection: WalletConnectConnection) {
         this.connections.delete(connection.session.topic);
-        this.delegate.onDisconnect(connection);
+        this.delegate.onDisconnected(connection);
     }
 
     async getConnections() {

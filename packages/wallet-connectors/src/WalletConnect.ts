@@ -317,8 +317,7 @@ export class WalletConnectConnector implements WalletConnector {
                 console.error(`WalletConnect event 'session_delete' received for unknown topic '${topic}'.`);
                 return;
             }
-            this.connections.delete(topic);
-            delegate.onDisconnect(connection);
+            this.onDisconnect(connection);
         });
     }
 

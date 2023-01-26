@@ -59,6 +59,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         if (!account) {
             throw new Error('Browser Wallet connection failed');
         }
+        this.delegate.onConnected(this);
         return this;
     }
 
@@ -71,6 +72,10 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
 
     getConnector(): WalletConnector {
         return this;
+    }
+
+    async ping() {
+        return undefined;
     }
 
     async getConnectedAccount() {
@@ -93,7 +98,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         // (which stays in the browser window's global state)
         // such that it doesn't interfere with a future reconnection.
         this.client.removeAllListeners();
-        this.delegate.onDisconnect(this);
+        this.delegate.onDisconnected(this);
     }
 
     async signAndSendTransaction(

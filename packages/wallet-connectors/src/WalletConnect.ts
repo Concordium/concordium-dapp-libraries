@@ -182,6 +182,11 @@ export class WalletConnectConnection implements WalletConnection {
         return this.connector;
     }
 
+    async ping() {
+        const {topic} = this.session;
+        await this.connector.client.ping({ topic });
+    }
+
     async getConnectedAccount() {
         // We're only expecting a single account to be connected.
         const fullAddress = this.session.namespaces[WALLET_CONNECT_SESSION_NAMESPACE].accounts[0];
@@ -317,8 +322,7 @@ export class WalletConnectConnector implements WalletConnector {
                 console.error(`WalletConnect event 'session_delete' received for unknown topic '${topic}'.`);
                 return;
             }
-            this.connections.delete(topic);
-            delegate.onDisconnect(connection);
+            this.onDisconnect(connection);
         });
     }
 
@@ -350,12 +354,13 @@ export class WalletConnectConnector implements WalletConnector {
         const rpcClient = new JsonRpcClient(new HttpProvider(this.network.jsonRpcUrl));
         const connection = new WalletConnectConnection(this, rpcClient, chainId, session);
         this.connections.set(session.topic, connection);
+        this.delegate.onConnected(connection);
         return connection;
     }
 
     onDisconnect(connection: WalletConnectConnection) {
         this.connections.delete(connection.session.topic);
-        this.delegate.onDisconnect(connection);
+        this.delegate.onDisconnected(connection);
     }
 
     async getConnections() {

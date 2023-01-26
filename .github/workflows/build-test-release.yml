@@ -1,10 +1,43 @@
-name: Build, test, and upload release [placeholder]
+name: Build, test, and upload release
 
 on:
     workflow_dispatch: # trigger manually
 
+env:
+    NODE_VERSION: '16.x'
+
 jobs:
-  dummy:
+    build:
         runs-on: ubuntu-latest
         steps:
-          - run: echo placeholder
+            - name: Fail if not running from a tag
+              if: "!startsWith(github.ref , 'refs/tags/')"
+              run: exit 1
+            - name: Parse tag into env vars
+              run: |
+                  echo "${{github.ref}}" |
+                  (read -n 10; read -d/ p; read v; echo "PACKAGE=$p"; echo "VERSION=$v") >> $GITHUB_ENV
+            - name: debug
+              run: echo "PACKAGE=$PACKAGE, VERSION=$VERSION"
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: Check that version matches 'package.json' up to build version
+              run: |
+                  v="$(npm pkg get version | jq -r ".[\"@concordium/${{env.PACKAGE}}\"]")"
+                  [[ "${{env.VERSION}}" = ${v}-* ]]
+              working-directory: './packages/${{ env.PACKAGE }}'
+            - name: Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '${{ env.NODE_VERSION }}'
+            - name: Install dependencies
+              run: yarn install --immutable --check-cache
+            - name: Build
+              run: yarn build
+              working-directory: './packages/${{ env.PACKAGE }}'
+            - name: Upload package as GitHub release
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: ./dist/*
+                  name: "${{ env.PACKAGE }}: ${{ env.VERSION }}"
+                  generate_release_notes: true

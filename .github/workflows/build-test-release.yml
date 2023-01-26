@@ -25,19 +25,19 @@ jobs:
               run: |
                   v="$(npm pkg get version | jq -r ".[\"@concordium/${{env.PACKAGE}}\"]")"
                   [[ "${{env.VERSION}}" = ${v}-* ]]
-              working-directory: './packages/${{ env.PACKAGE }}'
+              working-directory: './packages/${{env.PACKAGE}}'
             - name: Setup Node
               uses: actions/setup-node@v3
               with:
-                  node-version: '${{ env.NODE_VERSION }}'
+                  node-version: '${{env.NODE_VERSION}}'
             - name: Install dependencies
               run: yarn install --immutable --check-cache
             - name: Build
               run: yarn build
-              working-directory: './packages/${{ env.PACKAGE }}'
+              working-directory: './packages/${{env.PACKAGE}}'
             - name: Upload package as GitHub release
               uses: softprops/action-gh-release@v1
               with:
-                  files: ./dist/*
-                  name: "${{ env.PACKAGE }}: ${{ env.VERSION }}"
+                  files: "./packages/${{env.PACKAGE}}/dist/*"
+                  name: "${{env.PACKAGE}}: ${{env.VERSION}}"
                   generate_release_notes: true

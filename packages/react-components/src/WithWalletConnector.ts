@@ -371,7 +371,7 @@ export class WithWalletConnector extends Component<Props, State> implements Wall
                         if (state.activeConnector !== activeConnector) {
                             return state;
                         }
-                        return { ...state, activeConnectorError: (err as Error).message || (err as string) };
+                        return { ...state, activeConnectorError: (err as Error).message};
                     });
                 })
                 .finally(() => {

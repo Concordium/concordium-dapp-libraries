@@ -20,6 +20,8 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
 
     readonly delegate: WalletConnectionDelegate;
 
+    isConnected = false;
+
     /**
      * Construct a new instance.
      *
@@ -59,15 +61,13 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         if (!account) {
             throw new Error('Browser Wallet connection failed');
         }
+        this.isConnected = true;
         this.delegate.onConnected(this);
         return this;
     }
 
-    async getConnections() {
-        // Defining "connected" as the presence of a connected account.
-        // TODO Would be more stable to base on availability of RPC client?
-        const account = await this.getConnectedAccount();
-        return account ? [this] : [];
+    getConnections() {
+        return this.isConnected ? [this] : [];
     }
 
     getConnector(): WalletConnector {
@@ -97,6 +97,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         // This "disconnect" only ensures that we stop interacting with the client
         // (which stays in the browser window's global state)
         // such that it doesn't interfere with a future reconnection.
+        this.isConnected = false;
         this.client.removeAllListeners();
         this.delegate.onDisconnected(this);
     }

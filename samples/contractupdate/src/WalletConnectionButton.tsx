@@ -1,35 +1,35 @@
 import React, { useCallback, useState } from 'react';
 import { Alert, Button } from 'react-bootstrap';
-import { WalletConnectionProps } from '@concordium/react-components';
+import { WalletConnection, WalletConnector } from '@concordium/react-components';
 
-interface Props extends WalletConnectionProps {
+interface Props {
+    connector: WalletConnector;
+    setConnection: (connection: WalletConnection | undefined) => void;
     children: (isConnecting: boolean) => JSX.Element;
 }
 
-export function WalletConnectionButton({ activeConnector, activeConnection, setActiveConnection, children }: Props) {
+export function WalletConnectionButton({ connector, setConnection, children }: Props) {
     const [isConnecting, setIsConnecting] = useState(false);
     const [error, setError] = useState('');
     const connect = useCallback(() => {
-        if (activeConnector) {
+        if (connector) {
             setIsConnecting(true);
-            activeConnector
+            connector
                 .connect()
                 .then((c) => {
-                    setActiveConnection(c);
+                    setConnection(c);
                     setError('');
                 })
                 .catch((e) => setError((e as Error).message))
                 .finally(() => setIsConnecting(false));
         }
-    }, [activeConnector, setActiveConnection]);
+    }, [connector, setConnection]);
     return (
         <>
             {error && <Alert variant="danger">Error: {error}.</Alert>}
-            {activeConnector && !activeConnection && (
-                <Button type="button" onClick={connect} disabled={isConnecting}>
-                    {children(isConnecting)}
-                </Button>
-            )}
+            <Button type="button" onClick={connect} disabled={isConnecting}>
+                {children(isConnecting)}
+            </Button>
         </>
     );
 }

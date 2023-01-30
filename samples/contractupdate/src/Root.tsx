@@ -9,6 +9,7 @@ import { App } from './App';
 import { NetworkSelector } from './NetworkSelector';
 import { BROWSER_WALLET, MAINNET, TESTNET, WALLET_CONNECT } from './config';
 import { errorString } from './util';
+import { useConnection } from '@concordium/react-components';
 
 export default function Root() {
     const [network, setNetwork] = useState(TESTNET);
@@ -22,20 +23,20 @@ export default function Root() {
 }
 
 function Main(props: WalletConnectionProps) {
-    const {
-        activeConnectorType,
+    const { activeConnectorType, activeConnector, activeConnectorError, network, connectedAccounts, genesisHashes } =
+        props;
+    const { connection, setConnection, account, genesisHash } = useConnection(
         activeConnector,
-        activeConnectorError,
-        activeConnection,
-        activeConnectionGenesisHash,
-        network,
-    } = props;
+        connectedAccounts,
+        genesisHashes
+    );
+
     const [rpcGenesisHash, setRpcGenesisHash] = useState<string>();
     const [rpcError, setRpcError] = useState('');
     useEffect(() => {
-        if (activeConnection) {
+        if (connection) {
             setRpcGenesisHash(undefined);
-            withJsonRpcClient(activeConnection, async (rpc) => {
+            withJsonRpcClient(connection, async (rpc) => {
                 const status = await rpc.getConsensusStatus();
                 return status.genesisBlock;
             })
@@ -48,52 +49,62 @@ function Main(props: WalletConnectionProps) {
                     setRpcError(errorString(err));
                 });
         }
-    }, [activeConnection, activeConnectionGenesisHash, network]);
+    }, [connection, genesisHash, network]);
     return (
         <>
             <Row className="mt-3 mb-3">
                 <Col>
-                    <WalletConnectorButton connectorType={BROWSER_WALLET} connectorName="Browser Wallet" {...props} />
+                    <WalletConnectorButton
+                        connectorType={BROWSER_WALLET}
+                        connectorName="Browser Wallet"
+                        activeConnection={connection}
+                        {...props}
+                    />
                 </Col>
                 <Col>
-                    <WalletConnectorButton connectorType={WALLET_CONNECT} connectorName="WalletConnect" {...props} />
+                    <WalletConnectorButton
+                        connectorType={WALLET_CONNECT}
+                        connectorName="WalletConnect"
+                        activeConnection={connection}
+                        {...props}
+                    />
                 </Col>
             </Row>
             <Row className="mt-3 mb-3">
                 <Col>
                     {activeConnectorError && <Alert variant="danger">Error: {activeConnectorError}.</Alert>}
                     {!activeConnectorError && activeConnectorType && !activeConnector && <Spinner />}
-                    <WalletConnectionButton {...props}>
-                        {(isConnecting) => (
-                            <>
-                                {isConnecting && 'Connecting...'}
-                                {!isConnecting && activeConnectorType === BROWSER_WALLET && 'Connect Browser Wallet'}
-                                {!isConnecting && activeConnectorType === WALLET_CONNECT && 'Connect Mobile Wallet'}
-                            </>
-                        )}
-                    </WalletConnectionButton>
+                    {activeConnector && !account && (
+                        <WalletConnectionButton connector={activeConnector} setConnection={setConnection}>
+                            {(isConnecting) => (
+                                <>
+                                    {isConnecting && 'Connecting...'}
+                                    {!isConnecting &&
+                                        activeConnectorType === BROWSER_WALLET &&
+                                        'Connect Browser Wallet'}
+                                    {!isConnecting && activeConnectorType === WALLET_CONNECT && 'Connect Mobile Wallet'}
+                                </>
+                            )}
+                        </WalletConnectionButton>
+                    )}
                 </Col>
             </Row>
             <Row className="mt-3 mb-3">
                 <Col>
-                    <ConnectedAccount {...props} />
+                    <ConnectedAccount connection={connection} account={account} network={network} />
                 </Col>
             </Row>
             <Row className="mt-3 mb-3">
                 <Col>
-                    {props.activeConnectedAccount && (
+                    {account && (
                         <NetworkInconsistencyReporter
                             rpcGenesisHash={rpcGenesisHash}
                             networkGenesisHash={network.genesisHash}
-                            activeConnectionGenesisHash={activeConnectionGenesisHash}
+                            activeConnectionGenesisHash={genesisHash}
                         />
                     )}
                     {rpcError && <Alert variant="warning">RPC error: {rpcError}</Alert>}
-                    <App
-                        network={props.network}
-                        connection={props.activeConnection}
-                        connectedAccount={props.activeConnectedAccount}
-                    />
+                    <App network={props.network} connection={connection} connectedAccount={account} />
                 </Col>
             </Row>
         </>

@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { ConnectorType, WalletConnectionProps } from './WithWalletConnector';
+import { WalletConnection } from '@concordium/wallet-connectors';
 
 /**
  * The state of the a {@link useWalletConnectorSelector} instance.
@@ -40,14 +41,16 @@ export interface WalletConnectorSelector {
  * when the selector is invoked.
  *
  * @param connectorType The connector type controlled by this selector.
+ * @param activeConnection TODO
  * @param props The props exposed by {@link WithWalletConnector} to its child component.
  * @return The resolved state.
  */
 export function useWalletConnectorSelector(
     connectorType: ConnectorType,
+    activeConnection: WalletConnection | undefined,
     props: WalletConnectionProps
 ): WalletConnectorSelector {
-    const { activeConnectorType, activeConnector, activeConnection, setActiveConnectorType } = props;
+    const { activeConnectorType, activeConnector, setActiveConnectorType } = props;
     const isSelected = activeConnectorType === connectorType;
     const select = useCallback(
         () => setActiveConnectorType(isSelected ? undefined : connectorType),

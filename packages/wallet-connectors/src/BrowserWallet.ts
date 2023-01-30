@@ -3,7 +3,6 @@ import {
     AccountTransactionPayload,
     AccountTransactionSignature,
     AccountTransactionType,
-    JsonRpcClient,
     SchemaVersion,
 } from '@concordium/web-sdk';
 import { WalletConnectionDelegate, WalletConnection, WalletConnector } from './WalletConnection';
@@ -19,6 +18,8 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
     readonly client: WalletApi;
 
     readonly delegate: WalletConnectionDelegate;
+
+    isConnected = false;
 
     /**
      * Construct a new instance.
@@ -59,18 +60,16 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         if (!account) {
             throw new Error('Browser Wallet connection failed');
         }
+        this.isConnected = true;
         this.delegate.onConnected(this, account);
         return this;
     }
 
-    async getConnections() {
-        // Defining "connected" as the presence of a connected account.
-        // TODO Would be more stable to base on availability of RPC client?
-        const account = await this.getConnectedAccount();
-        return account ? [this] : [];
+    getConnections() {
+        return this.isConnected ? [this] : [];
     }
 
-    getConnector(): WalletConnector {
+    getConnector() {
         return this;
     }
 
@@ -78,11 +77,14 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         return undefined;
     }
 
+    /**
+     * @return The account that the wallet currently associates with this connection.
+     */
     async getConnectedAccount() {
         return this.client.getMostRecentlySelectedAccount();
     }
 
-    getJsonRpcClient(): JsonRpcClient {
+    getJsonRpcClient() {
         return this.client.getJsonRpcClient();
     }
 
@@ -97,6 +99,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         // This "disconnect" only ensures that we stop interacting with the client
         // (which stays in the browser window's global state)
         // such that it doesn't interfere with a future reconnection.
+        this.isConnected = false;
         this.client.removeAllListeners();
         this.delegate.onDisconnected(this);
     }

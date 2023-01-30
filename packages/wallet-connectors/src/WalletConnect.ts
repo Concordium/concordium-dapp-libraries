@@ -1,6 +1,6 @@
 import SignClient from '@walletconnect/sign-client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
-import { SessionTypes, SignClientTypes, ISignClient } from '@walletconnect/types';
+import {ISignClient, SessionTypes, SignClientTypes} from '@walletconnect/types';
 import {
     AccountTransactionPayload,
     AccountTransactionSignature,
@@ -14,7 +14,7 @@ import {
     toBuffer,
     UpdateContractPayload,
 } from '@concordium/web-sdk';
-import { WalletConnectionDelegate, Network, WalletConnection, WalletConnector } from './WalletConnection';
+import {Network, WalletConnection, WalletConnectionDelegate, WalletConnector} from './WalletConnection';
 
 const WALLET_CONNECT_SESSION_NAMESPACE = 'ccd';
 
@@ -178,7 +178,7 @@ export class WalletConnectConnection implements WalletConnection {
         this.session = session;
     }
 
-    getConnector(): WalletConnector {
+    getConnector() {
         return this.connector;
     }
 
@@ -188,22 +188,15 @@ export class WalletConnectConnection implements WalletConnection {
     }
 
     /**
-     * Non-async variant of {@link getConnectedAccount}.
-     * The async version is a simple wrapper around this one and
-     * only exists to satisfy the {@link WalletConnection} interface.
-     * So prefer this method when interacting with this concrete type.
+     * @return The account that the wallet currently associates with this connection.
      */
-    getConnectedAccount_() {
+    getConnectedAccount() {
         // We're only expecting a single account to be connected.
         const fullAddress = this.session.namespaces[WALLET_CONNECT_SESSION_NAMESPACE].accounts[0];
         return fullAddress.substring(fullAddress.lastIndexOf(':') + 1);
     }
 
-    async getConnectedAccount() {
-        return this.getConnectedAccount_();
-    }
-
-    getJsonRpcClient(): JsonRpcClient {
+    getJsonRpcClient() {
         return this.rpcClient;
     }
 
@@ -318,11 +311,7 @@ export class WalletConnectConnector implements WalletConnector {
             const { namespaces } = params;
             // Overwrite session.
             connection.session = { ...connection.session, namespaces };
-            // TODO Only fire event if the account actually changed.
-            connection
-                .getConnectedAccount()
-                .then((a) => delegate.onAccountChanged(connection, a))
-                .catch(console.error);
+            delegate.onAccountChanged(connection, connection.getConnectedAccount());
         });
         client.on('session_delete', ({ topic }) => {
             // Session was deleted: Reset the dApp state, clean up user session, etc.
@@ -364,7 +353,7 @@ export class WalletConnectConnector implements WalletConnector {
         const rpcClient = new JsonRpcClient(new HttpProvider(this.network.jsonRpcUrl));
         const connection = new WalletConnectConnection(this, rpcClient, chainId, session);
         this.connections.set(session.topic, connection);
-        this.delegate.onConnected(connection, connection.getConnectedAccount_());
+        this.delegate.onConnected(connection, connection.getConnectedAccount());
         return connection;
     }
 
@@ -373,26 +362,15 @@ export class WalletConnectConnector implements WalletConnector {
         this.delegate.onDisconnected(connection);
     }
 
-    /**
-     * Non-async variant of {@link getConnections}.
-     * The async version is a simple wrapper around this one and
-     * only exists to satisfy the {@link WalletConnector} interface.
-     * So prefer this method when interacting with this concrete type.
-     */
-    getConnections_() {
+    getConnections() {
         return Array.from(this.connections.values());
-    }
-
-    async getConnections() {
-        return this.getConnections_();
     }
 
     /**
      * Disconnect all connections.
      */
     async disconnect() {
-        const connections = await this.getConnections();
-        await Promise.all(connections.map((c) => c.disconnect()));
+        await Promise.all(this.getConnections().map((c) => c.disconnect()));
         // TODO Disconnect the underlying client.
     }
 }

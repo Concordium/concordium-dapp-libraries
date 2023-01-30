@@ -40,7 +40,7 @@ export function useContractSchemaRpc(connection: WalletConnection, contract: Inf
     useEffect(() => {
         ResultAsync.fromPromise(
             withJsonRpcClient(connection, (rpc) => rpc.getModuleSource(new ModuleReference(contract.moduleRef))),
-            (e) => errorString(e),
+            (e) => errorString(e)
         )
             .andThen((r) => {
                 if (!r || r.length < 12) {

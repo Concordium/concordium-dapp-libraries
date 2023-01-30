@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     This also introduces the ability for applications to control the activation/deactivation lifecycle of the connectors.
 -   `WithWalletConnector`: Removed method `connectActive` (and child prop `isConnecting`).
     Use the `connect` method directly on `WalletConnector` instead.
+-   Extract hook `useConnection` from `activeConnection` and related fields which were removed from `WithWalletConnector`.
 
 ## [0.1.0] - 2023-01-17
 

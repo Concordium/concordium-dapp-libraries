@@ -1,6 +1,6 @@
 import SignClient from '@walletconnect/sign-client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
-import {ISignClient, SessionTypes, SignClientTypes} from '@walletconnect/types';
+import { ISignClient, SessionTypes, SignClientTypes } from '@walletconnect/types';
 import {
     AccountTransactionPayload,
     AccountTransactionSignature,
@@ -14,7 +14,7 @@ import {
     toBuffer,
     UpdateContractPayload,
 } from '@concordium/web-sdk';
-import {Network, WalletConnection, WalletConnectionDelegate, WalletConnector} from './WalletConnection';
+import { Network, WalletConnection, WalletConnectionDelegate, WalletConnector } from './WalletConnection';
 
 const WALLET_CONNECT_SESSION_NAMESPACE = 'ccd';
 

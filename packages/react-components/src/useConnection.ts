@@ -1,9 +1,9 @@
 import { WalletConnection, WalletConnector } from '@concordium/wallet-connectors';
 import { useEffect, useState } from 'react';
 
-interface ActiveConnection {
+interface Connection {
     /**
-     * The currently active connection.
+     * The current connection.
      */
     connection: WalletConnection | undefined;
 
@@ -28,11 +28,12 @@ export function useConnection(
     connector: WalletConnector | undefined,
     connectedAccounts: Map<WalletConnection, string | undefined>,
     genesisHashes: Map<WalletConnection, string | undefined>
-): ActiveConnection {
+): Connection {
     const [connection, setConnection] = useState<WalletConnection>();
     useEffect(() => {
         setConnection(undefined);
         if (connector) {
+            // When changing connector, select the first of any existing connections.
             const cs = connector.getConnections();
             if (cs.length) {
                 setConnection(cs[0]);

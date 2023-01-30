@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AccountAddress, CcdAmount, JsonRpcClient } from '@concordium/web-sdk';
+import { errorString } from './error';
 
 /**
  * Data and state of a smart contract.
@@ -83,7 +84,7 @@ export interface ContractSelector {
     /**
      * The selected contract info, if available.
      * Is undefined if there isn't any index to look up, during lookup, or the lookup failed.
-     * In the latter case {@link validationError} will be non-empty.
+     * In the latter case {@link error} will be non-empty.
      */
     selected: Info | undefined;
 
@@ -95,8 +96,7 @@ export interface ContractSelector {
     /**
      * Error parsing the input string or RPC error looking up the contract.
      */
-    // TODO Rename as it isn't only a validation error.
-    validationError: string;
+    error: string;
 }
 
 /**
@@ -108,20 +108,20 @@ export interface ContractSelector {
 export function useContractSelector(rpc: JsonRpcClient | undefined, input: string): ContractSelector {
     const [selected, setSelected] = useState<Info>();
     const [isLoading, setIsLoading] = useState(false);
-    const [validationError, setValidationError] = useState('');
+    const [error, setError] = useState('');
     useEffect(() => {
         setSelected(undefined);
-        setValidationError('');
+        setError('');
         if (rpc && input) {
             setIsLoading(true);
             loadContract(rpc, input)
                 .then(setSelected)
                 .catch((err) => {
-                    setValidationError((err as Error).message);
+                    setError(errorString(err));
                     setSelected(undefined); // prevents race condition against an ongoing successful query
                 })
                 .finally(() => setIsLoading(false));
         }
     }, [rpc, input]);
-    return { selected, isLoading, validationError };
+    return { selected, isLoading, error };
 }

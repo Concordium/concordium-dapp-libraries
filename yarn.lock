@@ -1552,7 +1552,6 @@ __metadata:
     "@tsconfig/recommended": ^1.0.1
     "@types/node": ^18.11.17
     "@types/react": ^18
-    "@walletconnect/types": ^2.1.4
     prettier: 2.8.1
     typescript: ^4.9.4
   peerDependencies:
@@ -5328,7 +5327,6 @@ __metadata:
   resolution: "concordium-dapp-contractupdate@workspace:samples/contractupdate"
   dependencies:
     "@concordium/react-components": 0.1.0
-    "@concordium/wallet-connectors": 0.1.0
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^13.0.0
     "@testing-library/user-event": ^13.2.1

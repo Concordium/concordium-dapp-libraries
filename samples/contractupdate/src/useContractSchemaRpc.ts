@@ -1,8 +1,9 @@
 import { err, ok, Result, ResultAsync } from 'neverthrow';
 import { Buffer } from 'buffer/';
-import { WalletConnection, withJsonRpcClient } from '@concordium/wallet-connectors';
+import { WalletConnection, withJsonRpcClient } from '@concordium/react-components';
 import { Info } from '@concordium/react-components';
 import { useEffect, useState } from 'react';
+import { errorString } from './util';
 import { ModuleReference } from '@concordium/web-sdk';
 
 export interface SchemaRpcResult {
@@ -39,7 +40,7 @@ export function useContractSchemaRpc(connection: WalletConnection, contract: Inf
     useEffect(() => {
         ResultAsync.fromPromise(
             withJsonRpcClient(connection, (rpc) => rpc.getModuleSource(new ModuleReference(contract.moduleRef))),
-            (e) => (e as Error).message
+            (e) => errorString(e)
         )
             .andThen((r) => {
                 if (!r || r.length < 12) {
@@ -48,7 +49,7 @@ export function useContractSchemaRpc(connection: WalletConnection, contract: Inf
                 if (r.length < 12) {
                     return err('module source is too short');
                 }
-                return ResultAsync.fromPromise(WebAssembly.compile(r.slice(12)), (e) => (e as Error).message);
+                return ResultAsync.fromPromise(WebAssembly.compile(r.slice(12)), (e) => errorString(e));
             })
             .andThen(findSchema)
             .then(setResult);

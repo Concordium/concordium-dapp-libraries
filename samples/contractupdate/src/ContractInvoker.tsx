@@ -2,10 +2,11 @@ import { Info } from '@concordium/react-components';
 import isBase64 from 'is-base64';
 import React, { ChangeEvent, Dispatch, useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Col, Dropdown, Form, Row } from 'react-bootstrap';
-import { Network, WalletConnection } from '@concordium/wallet-connectors';
+import { Network, WalletConnection } from '@concordium/react-components';
 import { AccountAddress, AccountTransactionType, CcdAmount } from '@concordium/web-sdk';
 import { err, ok, Result, ResultAsync } from 'neverthrow';
 import { useContractSchemaRpc } from './useContractSchemaRpc';
+import { errorString } from './util';
 
 interface ContractParamEntry {
     name: string;
@@ -78,9 +79,11 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
         [contractParamsResult, schemaResult, amountResult]
     );
 
+    const [isAwaitingApproval, setIsAwaitingApproval] = useState(false);
     const [submittedTxHash, setSubmittedTxHash] = useState<Result<string, string>>();
     const submit = useCallback(() => {
         if (connectedAccount) {
+            setIsAwaitingApproval(true);
             inputResult
                 .asyncAndThen(([params, schema, amount]) =>
                     ResultAsync.fromPromise(
@@ -96,10 +99,13 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
                             params,
                             schema.schema
                         ),
-                        (e) => (e as Error).message
+                        (e) => errorString(e)
                     )
                 )
-                .then(setSubmittedTxHash);
+                .then(r => {
+                    setSubmittedTxHash(r);
+                    setIsAwaitingApproval(false);
+                });
         }
     }, [connection, connectedAccount, contract, selectedMethodIndex, inputResult]);
     return (
@@ -207,8 +213,9 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
                 </Form.Group>
                 <Row>
                     <Col>
-                        <Button onClick={submit} disabled={inputResult.isErr()}>
-                            Submit
+                        <Button onClick={submit} disabled={isAwaitingApproval || inputResult.isErr()}>
+                            {isAwaitingApproval && 'Waiting for approval...'}
+                            {!isAwaitingApproval && 'Submit'}
                         </Button>
                     </Col>
                 </Row>

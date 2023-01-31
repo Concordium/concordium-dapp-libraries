@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { Alert, Button, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { withJsonRpcClient } from '@concordium/react-components';
 import { WalletConnectionProps, WithWalletConnector } from '@concordium/react-components';
-import { WalletConnectionButton } from './WalletConnectionButton';
 import { WalletConnectorButton } from './WalletConnectorButton';
 import { ConnectedAccount } from './ConnectedAccount';
 import { App } from './App';
@@ -10,6 +9,7 @@ import { NetworkSelector } from './NetworkSelector';
 import { BROWSER_WALLET, MAINNET, TESTNET, WALLET_CONNECT } from './config';
 import { errorString } from './util';
 import { useConnection } from '@concordium/react-components';
+import { useConnect } from '@concordium/react-components';
 
 export default function Root() {
     const [network, setNetwork] = useState(TESTNET);
@@ -30,6 +30,7 @@ function Main(props: WalletConnectionProps) {
         connectedAccounts,
         genesisHashes
     );
+    const { connect, isConnecting, connectionError } = useConnect(activeConnector, setConnection);
 
     const [rpcGenesisHash, setRpcGenesisHash] = useState<string>();
     const [rpcError, setRpcError] = useState('');
@@ -72,20 +73,15 @@ function Main(props: WalletConnectionProps) {
             </Row>
             <Row className="mt-3 mb-3">
                 <Col>
-                    {activeConnectorError && <Alert variant="danger">Error: {activeConnectorError}.</Alert>}
+                    {activeConnectorError && <Alert variant="danger">Connector error: {activeConnectorError}.</Alert>}
                     {!activeConnectorError && activeConnectorType && !activeConnector && <Spinner />}
+                    {connectionError && <Alert variant="danger">Connection error: {connectionError}.</Alert>}
                     {activeConnector && !account && (
-                        <WalletConnectionButton connector={activeConnector} setConnection={setConnection}>
-                            {(isConnecting) => (
-                                <>
-                                    {isConnecting && 'Connecting...'}
-                                    {!isConnecting &&
-                                        activeConnectorType === BROWSER_WALLET &&
-                                        'Connect Browser Wallet'}
-                                    {!isConnecting && activeConnectorType === WALLET_CONNECT && 'Connect Mobile Wallet'}
-                                </>
-                            )}
-                        </WalletConnectionButton>
+                        <Button type="button" onClick={connect} disabled={isConnecting}>
+                            {isConnecting && 'Connecting...'}
+                            {!isConnecting && activeConnectorType === BROWSER_WALLET && 'Connect Browser Wallet'}
+                            {!isConnecting && activeConnectorType === WALLET_CONNECT && 'Connect Mobile Wallet'}
+                        </Button>
                     )}
                 </Col>
             </Row>

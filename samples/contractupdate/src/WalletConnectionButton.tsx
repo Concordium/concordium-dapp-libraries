@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Alert, Button } from 'react-bootstrap';
 import { WalletConnectionProps } from '@concordium/react-components';
+import { setErrorString } from './util';
 
 interface Props extends WalletConnectionProps {
     children: (isConnecting: boolean) => JSX.Element;
@@ -18,7 +19,7 @@ export function WalletConnectionButton({ activeConnector, activeConnection, setA
                     setActiveConnection(c);
                     setError('');
                 })
-                .catch((e) => setError((e as Error).message))
+                .catch(setErrorString(setError))
                 .finally(() => setIsConnecting(false));
         }
     }, [activeConnector, setActiveConnection]);

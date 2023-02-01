@@ -54,12 +54,17 @@ export const WALLET_CONNECT = ephemeralConnectorType(WalletConnectConnector.crea
 ```
 
 Initiate a connection by invoking `connect` on a connector.
-Set the resulting connection is "active" by passing it to `props.setActiveConnection`:
+This is most easily done using the hooks `useConnection` and `useConnect`:
 
 ```typescript
-const {activeConnector, setActiveConnection} = props;
-activeConnector.connect().then(setActiveConnection).catch(...);
+const { activeConnector, network, connectedAccounts, genesisHashes, ... } = props;
+const { connection, setConnection, account, genesisHash } = useConnection(activeConnector, connectedAccounts, genesisHashes);
+const { connect, isConnecting, connectionError } = useConnect(activeConnector, setConnection);
 ```
+
+The function `connect` initiates a new connection from `activeConnector`.
+Once established, the connection and its account, and genesis hash is available in
+`connection`, `account`, and `genesisHash`, respectively.
 
 See [the sample dApp](../../samples/contractupdate/src/Root.tsx) for a complete example.
 
@@ -67,7 +72,7 @@ See [the sample dApp](../../samples/contractupdate/src/Root.tsx) for a complete 
 
 ### [`useWalletConnectorSelector`](./src/useWalletConnectorSelector.ts)
 
-Hook for managing a connector selector; connecting/disconnecting when clicked and computing its selected/connected/disabled state.
+Helper hook for computing the selected/connected/disabled state of a given connector type.
 
 _Example: Create a button for toggling a connector_
 

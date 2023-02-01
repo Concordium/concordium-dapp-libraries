@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Hooks `useConnection` and `useConnect` for managing connections.
+
 ### Changed
 
 -   `WithWalletConnector`: Decouple component from concrete connector implementations by constructing instances from the application.

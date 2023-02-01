@@ -40,6 +40,12 @@ export function useConnection(
             }
         }
     }, [connector]);
+    useEffect(() => {
+        // Unset disconnected connection.
+        if (connection && !connectedAccounts.has(connection)) {
+            setConnection(undefined);
+        }
+    }, [connectedAccounts]);
     return {
         connection,
         setConnection,

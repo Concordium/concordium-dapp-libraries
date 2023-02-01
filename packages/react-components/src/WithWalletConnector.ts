@@ -91,8 +91,8 @@ interface State {
     activeConnectorError: string;
 
     /**
-     * A map from open connections to their selected accounts.
-     * Connections without a selected account will not have an entry in this map.
+     * A map from open connections to their selected accounts or the empty string
+     * if the connection doesn't have an associated account.
      */
     connectedAccounts: Map<WalletConnection, string>;
 
@@ -236,7 +236,7 @@ export class WithWalletConnector extends Component<Props, State> implements Wall
         console.debug("WithWalletConnector: calling 'onAccountChanged'", { connection, address, state: this.state });
         this.setState((state) => ({
             ...state,
-            connectedAccounts: updateMapEntry(state.connectedAccounts, connection, address),
+            connectedAccounts: updateMapEntry(state.connectedAccounts, connection, address || ''),
         }));
     };
 

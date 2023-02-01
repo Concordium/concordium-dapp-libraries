@@ -62,9 +62,20 @@ const { connection, setConnection, account, genesisHash } = useConnection(active
 const { connect, isConnecting, connectionError } = useConnect(activeConnector, setConnection);
 ```
 
-The function `connect` initiates a new connection from `activeConnector`.
-Once established, the connection and its account, and genesis hash is available in
-`connection`, `account`, and `genesisHash`, respectively.
+The app uses the function `connect` to initiate a new connection from `activeConnector`.
+The fields `isConnecting` and `connectionError` are used to render the connection status.
+Once established, the connection and its state are exposed in the following fields:
+
+- `connection`: The `WalletConnection` object that the app uses to interact with the wallet.
+  Is `undefined` if there is no established connection.
+- `account`: The account that `connection` is associated with in the wallet
+  or the empty string if the connection isn't associated with an account.
+- `genesisHash`: The hash of the genesis block for the chain that `account` lives on
+  if this value has been reported by the wallet or `undefined` otherwise.
+  This may for instance be used to check that `account` lives on the expected network.
+  Use with care as some wallets don't provide this value reliably.
+
+All the fields hold the value `undefined` until the connection has been established and again after it's been disconnected.
 
 See [the sample dApp](../../samples/contractupdate/src/Root.tsx) for a complete example.
 

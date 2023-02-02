@@ -25,11 +25,7 @@ export default function Root() {
 function Main(props: WalletConnectionProps) {
     const { activeConnectorType, activeConnector, activeConnectorError, network, connectedAccounts, genesisHashes } =
         props;
-    const { connection, setConnection, account, genesisHash } = useConnection(
-        activeConnector,
-        connectedAccounts,
-        genesisHashes
-    );
+    const { connection, setConnection, account, genesisHash } = useConnection(connectedAccounts, genesisHashes);
     const { connect, isConnecting, connectionError } = useConnect(activeConnector, setConnection);
 
     const [rpcGenesisHash, setRpcGenesisHash] = useState<string>();
@@ -58,7 +54,7 @@ function Main(props: WalletConnectionProps) {
                     <WalletConnectorButton
                         connectorType={BROWSER_WALLET}
                         connectorName="Browser Wallet"
-                        activeConnection={connection}
+                        connection={connection}
                         {...props}
                     />
                 </Col>
@@ -66,7 +62,7 @@ function Main(props: WalletConnectionProps) {
                     <WalletConnectorButton
                         connectorType={WALLET_CONNECT}
                         connectorName="WalletConnect"
-                        activeConnection={connection}
+                        connection={connection}
                         {...props}
                     />
                 </Col>

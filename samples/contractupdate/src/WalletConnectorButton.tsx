@@ -8,16 +8,16 @@ import {
 } from '@concordium/react-components';
 
 interface Props extends WalletConnectionProps {
-    activeConnection: WalletConnection | undefined;
+    connection: WalletConnection | undefined;
     connectorType: ConnectorType;
     connectorName: string;
 }
 
 export function WalletConnectorButton(props: Props) {
-    const { activeConnection, connectorType, connectorName } = props;
+    const { connection, connectorType, connectorName } = props;
     const { isSelected, isConnected, isDisabled, select } = useWalletConnectorSelector(
         connectorType,
-        activeConnection,
+        connection,
         props
     );
 

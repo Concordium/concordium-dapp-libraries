@@ -1,7 +1,10 @@
-import { WalletConnection, WalletConnector } from '@concordium/wallet-connectors';
+import { WalletConnection } from '@concordium/wallet-connectors';
 import { useEffect, useState } from 'react';
 
-interface Connection {
+/**
+ * The state of the a {@link useConnection} instance.
+ */
+export interface Connection {
     /**
      * The current connection.
      */
@@ -24,22 +27,17 @@ interface Connection {
     genesisHash: string | undefined;
 }
 
+/**
+ * Hook for managing a connection and exposing its state.
+ * The connection is automatically pruned from the state when it disconnects.
+ * @param connectedAccounts Mapping from open connections to their selected accounts or the empty string if there isn't one.
+ * @param genesisHashes Mapping from open connections to the hash of the genesis block for the chain that the selected accounts of the connections live on.
+ */
 export function useConnection(
-    connector: WalletConnector | undefined,
     connectedAccounts: Map<WalletConnection, string | undefined>,
     genesisHashes: Map<WalletConnection, string | undefined>
 ): Connection {
     const [connection, setConnection] = useState<WalletConnection>();
-    useEffect(() => {
-        setConnection(undefined);
-        if (connector) {
-            // When changing connector, select the first of any existing connections.
-            const cs = connector.getConnections();
-            if (cs.length) {
-                setConnection(cs[0]);
-            }
-        }
-    }, [connector]);
     useEffect(() => {
         // Unset disconnected connection.
         if (connection && !connectedAccounts.has(connection)) {

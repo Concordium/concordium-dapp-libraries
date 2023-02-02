@@ -8,7 +8,10 @@ interface Connect {
     connectionError: string;
 }
 
-export function useConnect(connector: WalletConnector | undefined, setConnection: (c: WalletConnection) => void): Connect {
+export function useConnect(
+    connector: WalletConnector | undefined,
+    setConnection: (c: WalletConnection) => void
+): Connect {
     const [isConnecting, setIsConnecting] = useState(false);
     const [connectionError, setConnectionError] = useState('');
     const connect = useCallback(() => {
@@ -22,7 +25,7 @@ export function useConnect(connector: WalletConnector | undefined, setConnection
                         setConnectionError('');
                     }
                 })
-                .catch(e => setConnectionError(errorString(e)))
+                .catch((e) => setConnectionError(errorString(e)))
                 .finally(() => setIsConnecting(false));
         }
     }, [connector, setConnection]);

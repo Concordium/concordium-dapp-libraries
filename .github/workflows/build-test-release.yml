@@ -3,6 +3,10 @@ name: Build, test, and upload release
 on:
     workflow_dispatch: # trigger manually
         inputs:
+            tag_override:
+                description: "Tag"
+                type: string
+                required: false
             # TODO Extract from appropriate changelog.
             release_notes:
                 description: "Release notes"
@@ -16,17 +20,26 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
+            - name: Resolve ref
+              run: |
+                ref="{{github.ref}}"
+                tag="{{github.event.inputs.tag_override}}"
+                [ -n "$tag" ] && ref="refs/tags/$tag"
+                echo "REF=$ref" >> $GITHUB_ENV
             - name: Fail if not running from a tag
-              if: "!startsWith(github.ref , 'refs/tags/')"
+              if: "!startsWith(env.REF , 'refs/tags/')"
               run: exit 1
             - name: Parse tag into env vars
+              # Skip 'refs/tags/' (10 chars), read until '/' ("package"), then read the rest ("version").
               run: |
-                  echo "${{github.ref}}" |
-                  (read -n 10; read -d/ p; read v; echo "PACKAGE=$p"; echo "VERSION=$v") >> $GITHUB_ENV
+                  echo "${{env.REF}}" |
+                    (read -n 10; read -d/ p; read v; echo "PACKAGE=$p"; echo "VERSION=$v") >> $GITHUB_ENV
 #            - name: debug
 #              run: echo "PACKAGE=$PACKAGE, VERSION=$VERSION"
             - name: Checkout
               uses: actions/checkout@v3
+              with:
+                ref: "{{env.REF}}"
             - name: Check that version matches 'package.json' up to build version
               run: |
                   v="$(npm pkg get version | jq -r ".[\"@concordium/${{env.PACKAGE}}\"]")"

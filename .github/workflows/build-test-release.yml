@@ -41,24 +41,26 @@ jobs:
               with:
                 ref: "${{env.REF}}"
             - name: Check that version matches 'package.json' up to build version
+              working-directory: "./packages/${{env.PACKAGE}}"
               run: |
                   v="$(npm pkg get version | jq -r ".[\"@concordium/${{env.PACKAGE}}\"]")"
                   [[ "${{env.VERSION}}" = ${v}-* ]]
-              working-directory: "./packages/${{env.PACKAGE}}"
             - name: Setup Node
               uses: actions/setup-node@v3
               with:
                   node-version: "${{env.NODE_VERSION}}"
             - name: Install dependencies
               run: yarn install --immutable --check-cache
-            - name: Build
-              run: yarn build
+            - name: Build and archive
               working-directory: "./packages/${{env.PACKAGE}}"
+              run: |
+                yarn build
+                zip dist.zip ./dist/*
             - name: Upload package as GitHub release
               uses: softprops/action-gh-release@v1
               with:
                   tag_name: "${{env.REF}}"
                   body: "${{github.event.inputs.release_notes}}"
-                  files: "./packages/${{env.PACKAGE}}/dist/*"
+                  files: "./packages/${{env.PACKAGE}}/dist.zip"
                   name: "${{env.PACKAGE}}: ${{env.VERSION}}"
                   generate_release_notes: false # automatic mechanism doesn't limit changes to the target project

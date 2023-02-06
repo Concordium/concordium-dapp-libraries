@@ -22,8 +22,8 @@ jobs:
         steps:
             - name: Resolve ref
               run: |
-                ref="{{github.ref}}"
-                tag="{{github.event.inputs.tag_override}}"
+                ref="${{github.ref}}"
+                tag="${{github.event.inputs.tag_override}}"
                 [ -n "$tag" ] && ref="refs/tags/$tag"
                 echo "REF=$ref" >> $GITHUB_ENV
             - name: Fail if not running from a tag
@@ -39,7 +39,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v3
               with:
-                ref: "{{env.REF}}"
+                ref: "${{env.REF}}"
             - name: Check that version matches 'package.json' up to build version
               run: |
                   v="$(npm pkg get version | jq -r ".[\"@concordium/${{env.PACKAGE}}\"]")"

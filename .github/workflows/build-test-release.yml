@@ -57,7 +57,8 @@ jobs:
             - name: Upload package as GitHub release
               uses: softprops/action-gh-release@v1
               with:
-                  body: "${{ github.event.inputs.release_notes }}"
+                  tag_name: "${{env.TAG}}"
+                  body: "${{github.event.inputs.release_notes}}"
                   files: "./packages/${{env.PACKAGE}}/dist/*"
                   name: "${{env.PACKAGE}}: ${{env.VERSION}}"
                   generate_release_notes: false # automatic mechanism doesn't limit changes to the target project

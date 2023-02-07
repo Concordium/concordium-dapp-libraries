@@ -17,31 +17,48 @@ env:
     NODE_VERSION: "16.x"
 
 jobs:
-    build:
+    checkout:
         runs-on: ubuntu-latest
         steps:
-            - name: Resolve ref
-              run: |
-                ref="${{github.ref}}"
-                tag="${{github.event.inputs.tag_override}}"
-                [ -n "$tag" ] && ref="refs/tags/$tag"
-                echo "REF=$ref" >> $GITHUB_ENV
-            - name: Fail if not running from a tag
-              if: "!startsWith(env.REF , 'refs/tags/')"
-              run: exit 1
-            - name: Parse tag into env vars
-              # Skip 'refs/tags/' (10 chars), read until '/' ("package"), then read the rest ("version").
-              run: |
-                  echo "${{env.REF}}" |
-                    (read -n 10; read -d/ p; read v; echo "PACKAGE=$p"; echo "VERSION=$v") >> $GITHUB_ENV
-#            - name: debug
-#              run: echo "PACKAGE=$PACKAGE, VERSION=$VERSION"
-            - name: Checkout
-              uses: actions/checkout@v3
+          - name: Resolve ref
+            run: |
+              ref="${{github.ref}}"
+              tag="${{github.event.inputs.tag_override}}"
+              [ -n "$tag" ] && ref="refs/tags/$tag"
+              echo "REF=$ref" >> $GITHUB_ENV
+          - name: Fail if not running from a tag
+            if: "!startsWith(env.REF , 'refs/tags/')"
+            run: exit 1
+          - name: Parse tag into env vars
+            # Skip 'refs/tags/' (10 chars), then read until '/' ("package"), then read the rest ("version").
+            run: |
+              echo "${{env.REF}}" |
+                (read -n 10; read -d/ p; read v; echo "PACKAGE=$p"; echo "VERSION=$v") >> $GITHUB_ENV
+          - name: Checkout
+            uses: actions/checkout@v3
+            with:
+              ref: "${{env.REF}}"
+          - name: Archive source for next job
+            uses: actions/upload-artifact@v3
+            with:
+              name: source
+              path: "./packages/${{env.PACKAGE}}"
+        outputs:
+            ref: "${{env.REF}}"
+            package: "${{env.PACKAGE}}"
+            version: "${{env.VERSION}}"
+
+    build:
+        runs-on: ubuntu-latest
+        needs: checkout
+        steps:
+            - name: Copy files
+              uses: actions/download-artifact@v3
               with:
-                ref: "${{env.REF}}"
+                name: source
+            - name: debug
+              run: ls -l
             - name: Check that version matches 'package.json' up to build version
-              working-directory: "./packages/${{env.PACKAGE}}"
               run: |
                   v="$(npm pkg get version | jq -r ".[\"@concordium/${{env.PACKAGE}}\"]")"
                   [[ "${{env.VERSION}}" = ${v}-* ]]

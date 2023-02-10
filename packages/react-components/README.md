@@ -11,7 +11,7 @@ on the expected network while taking into account that the user may decide to sw
 ### [`WithWalletConnector`](./src/WithWalletConnector.ts)
 
 Component that bridges [`@concordium/wallet-connectors`](../wallet-connectors) into a React context by
-managing connection state and network information as component state.
+managing connection state and network information.
 This component significantly reduces the complexity of integrating with wallets,
 even if one only need to support a single protocol and network.
 

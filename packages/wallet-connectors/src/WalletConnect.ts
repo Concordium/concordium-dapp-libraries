@@ -13,8 +13,10 @@ import {
     serializeUpdateContractParameters,
     toBuffer,
     UpdateContractPayload,
+    serializeTypeValue,
 } from '@concordium/web-sdk';
 import { Network, WalletConnection, WalletConnectionDelegate, WalletConnector } from './WalletConnection';
+import { SchemaType, SchemaWithContext } from '@concordium/browser-wallet-api-helpers';
 
 const WALLET_CONNECT_SESSION_NAMESPACE = 'ccd';
 
@@ -85,7 +87,7 @@ function encodePayloadParameters(
     type: AccountTransactionType,
     payload: AccountTransactionPayload,
     parameters?: Record<string, unknown>,
-    schema?: string,
+    schema?: SchemaWithContext,
     schemaVersion?: SchemaVersion
 ) {
     switch (type) {
@@ -100,15 +102,22 @@ function encodePayloadParameters(
             if (initContractPayload.param) {
                 throw new Error(`'param' field of 'InitContract' parameters must be empty`);
             }
-            return {
-                ...payload,
-                param: serializeInitContractParameters(
-                    initContractPayload.initName,
-                    parameters,
-                    toBuffer(schema, 'base64'),
-                    schemaVersion
-                ),
-            } as InitContractPayload;
+            if (schema.type === 'parameter') {
+                return {
+                    ...payload,
+                    param: serializeTypeValue(parameters, toBuffer(schema.value, 'base64')),
+                };
+            } else {
+                return {
+                    ...payload,
+                    param: serializeInitContractParameters(
+                        initContractPayload.initName,
+                        parameters,
+                        toBuffer(schema.value, 'base64'),
+                        schemaVersion
+                    ),
+                };
+            }
         }
         case AccountTransactionType.Update: {
             if (parameters === undefined) {
@@ -122,16 +131,23 @@ function encodePayloadParameters(
                 throw new Error(`'message' field of 'Update' parameters must be empty`);
             }
             const [contractName, receiveName] = updateContractPayload.receiveName.split('.');
-            return {
-                ...payload,
-                message: serializeUpdateContractParameters(
-                    contractName,
-                    receiveName,
-                    parameters,
-                    toBuffer(schema, 'base64'),
-                    schemaVersion
-                ),
-            } as UpdateContractPayload;
+            if (schema.type === 'parameter') {
+                return {
+                    ...payload,
+                    message: serializeTypeValue(parameters, toBuffer(schema.value, 'base64')),
+                };
+            } else {
+                return {
+                    ...payload,
+                    message: serializeUpdateContractParameters(
+                        contractName,
+                        receiveName,
+                        parameters,
+                        toBuffer(schema.value, 'base64'),
+                        schemaVersion
+                    ),
+                };
+            }
         }
         default: {
             if (parameters !== undefined) {
@@ -205,14 +221,20 @@ export class WalletConnectConnection implements WalletConnection {
         type: AccountTransactionType,
         payload: AccountTransactionPayload,
         parameters?: Record<string, unknown>,
-        schema?: string,
+        schema?: SchemaWithContext | string,
         schemaVersion?: SchemaVersion
     ) {
+        let parsedSchema;
+        if (typeof schema == 'string') {
+            schema = { type: SchemaType.Module, value: schema };
+        } else {
+            parsedSchema = schema;
+        }
         const params = {
             type: AccountTransactionType[type],
             sender: accountAddress,
             payload: accountTransactionPayloadToJson(
-                encodePayloadParameters(type, payload, parameters, schema, schemaVersion)
+                encodePayloadParameters(type, payload, parameters, parsedSchema, schemaVersion)
             ),
             schema,
         };

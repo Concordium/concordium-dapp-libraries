@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 -   Added exported constant `CONCORDIUM_WALLET_CONNECT_PROJECT_ID` that dApps may use when connecting to a Concordium mobile wallet.
+-  `sendTransaction` for smart contract transactions can receive schemas as object, to support schemas that are for the specific parameter.
 
 ### Changed
 

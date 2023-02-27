@@ -1,4 +1,4 @@
-import { detectConcordiumProvider, WalletApi } from '@concordium/browser-wallet-api-helpers';
+import { detectConcordiumProvider, SchemaWithContext, WalletApi } from '@concordium/browser-wallet-api-helpers';
 import {
     AccountTransactionPayload,
     AccountTransactionSignature,
@@ -109,7 +109,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         type: AccountTransactionType,
         payload: AccountTransactionPayload,
         parameters?: Record<string, unknown>,
-        schema?: string,
+        schema?: SchemaWithContext | string,
         schemaVersion?: SchemaVersion
     ): Promise<string> {
         if (

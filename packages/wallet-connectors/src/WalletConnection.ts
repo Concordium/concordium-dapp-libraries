@@ -1,3 +1,4 @@
+import { SchemaWithContext } from '@concordium/browser-wallet-api-helpers';
 import {
     AccountTransactionPayload,
     AccountTransactionSignature,
@@ -70,7 +71,7 @@ export interface WalletConnection {
         type: AccountTransactionType.Update | AccountTransactionType.InitContract,
         payload: SendTransactionPayload,
         parameters: Record<string, unknown>,
-        schema: string,
+        schema: SchemaWithContext | string,
         schemaVersion?: SchemaVersion
     ): Promise<string>;
 

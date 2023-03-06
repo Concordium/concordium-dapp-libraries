@@ -10,6 +10,7 @@ import { BROWSER_WALLET, MAINNET, TESTNET, WALLET_CONNECT } from './config';
 import { errorString } from './util';
 import { useConnection } from '@concordium/react-components';
 import { useConnect } from '@concordium/react-components';
+import { useDisconnect } from '@concordium/react-components/dist/useDisconnect';
 
 export default function Root() {
     const [network, setNetwork] = useState(TESTNET);
@@ -47,6 +48,8 @@ function Main(props: WalletConnectionProps) {
                 });
         }
     }, [connection, genesisHash, network]);
+
+    const {disconnect, isDisconnecting, disconnectError} = useDisconnect(connection);
     return (
         <>
             <Row className="mt-3 mb-3">
@@ -55,6 +58,8 @@ function Main(props: WalletConnectionProps) {
                         connectorType={BROWSER_WALLET}
                         connectorName="Browser Wallet"
                         connection={connection}
+                        isDisconnecting={isDisconnecting}
+                        disconnect={disconnect}
                         {...props}
                     />
                 </Col>
@@ -63,6 +68,8 @@ function Main(props: WalletConnectionProps) {
                         connectorType={WALLET_CONNECT}
                         connectorName="WalletConnect"
                         connection={connection}
+                        isDisconnecting={isDisconnecting}
+                        disconnect={disconnect}
                         {...props}
                     />
                 </Col>
@@ -72,6 +79,7 @@ function Main(props: WalletConnectionProps) {
                     {activeConnectorError && <Alert variant="danger">Connector error: {activeConnectorError}.</Alert>}
                     {!activeConnectorError && activeConnectorType && !activeConnector && <Spinner />}
                     {connectError && <Alert variant="danger">Connection error: {connectError}.</Alert>}
+                    {disconnectError && <Alert variant="danger">Disconnect error: {disconnectError}.</Alert>}
                     {activeConnector && !account && (
                         <Button type="button" onClick={connect} disabled={isConnecting}>
                             {isConnecting && 'Connecting...'}

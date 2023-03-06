@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { ConnectorType, WalletConnectionProps } from './WithWalletConnector';
 import { WalletConnection } from '@concordium/wallet-connectors';
 
@@ -19,15 +18,7 @@ export interface WalletConnectorSelector {
     /**
      * Indicator of whether the selector is disabled (i.e. there is another connected selector).
      */
-    isDisabled: boolean;
-
-    /**
-     * Handler function to be called when the selector is invoked.
-     * It will disconnect all existing connections and set the active connector type to the one of this selector.
-     * If the selector is already selected, it will reset the connector type to allow other connector types to be activated.
-     * The function should not be called if the selector is disabled.
-     */
-    select: () => void;
+    isDisabled: boolean; // TODO rename isOtherConnected - or instead have hook return selected/connected connector?!? Or whether the *active* connector is...
 }
 
 /**
@@ -49,15 +40,11 @@ export interface WalletConnectorSelector {
 export function useWalletConnectorSelector(
     connectorType: ConnectorType,
     connection: WalletConnection | undefined,
-    props: WalletConnectionProps
+    props: WalletConnectionProps // TODO replace with used fields
 ): WalletConnectorSelector {
-    const { activeConnectorType, activeConnector, setActiveConnectorType } = props;
+    const { activeConnectorType, activeConnector } = props;
     const isSelected = activeConnectorType === connectorType;
-    const select = useCallback(
-        () => setActiveConnectorType(isSelected ? undefined : connectorType),
-        [isSelected, connectorType]
-    );
     const isConnected = Boolean(isSelected && connection && connection.getConnector() === activeConnector);
     const isDisabled = Boolean(!isSelected && activeConnectorType && connection);
-    return { isSelected, isConnected, isDisabled, select };
+    return { isSelected, isConnected, isDisabled };
 }

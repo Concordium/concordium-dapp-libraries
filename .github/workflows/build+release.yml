@@ -1,4 +1,4 @@
-name: Build, test, and upload release
+name: Build and upload release
 
 on:
     workflow_dispatch: # trigger manually
@@ -7,7 +7,6 @@ on:
                 description: "Tag"
                 type: string
                 required: false
-            # TODO Extract from appropriate changelog.
             release_notes:
                 description: "Release notes"
                 type: string
@@ -17,12 +16,7 @@ env:
     node_version: "16.x"
 
 jobs:
-    build:
-        # TODO
-        #   - Parse tag (with 'bisgardo/github-action-parse-ref') and split in package/version (with 'bisgardo/github-action-regex-parse').
-        #   - Clone repo in temp folder
-        #   - Move/copy project to workdir and continue...
-        #   - Create action for reading changelog entries
+    build-and-upload-release:
         runs-on: ubuntu-latest
         steps:
             - name: Apply tag override and parse ref
@@ -43,10 +37,10 @@ jobs:
             - name: Checkout subproject
               # Clone repository into temp directory and copy the subproject into the workspace
               # (cannot use 'actions/checkout' because that doesn't allow checkout out the repo outside the workspace dir;
-              # see 'https://github.com/actions/checkout/issues/327' - but alternatively just use a temp dir inside the workspace).
+              # see 'https://github.com/actions/checkout/issues/327' - alternatively we could use a temp dir inside the workspace).
               run: |
-                git clone --branch="${{steps.tag.outputs.name}}" "${{github.server_url}}/${{github.repository}}" "${{runner.temp}}/repo"
-                cp -rT "${{runner.temp}}/repo/packages/${{steps.tag.outputs.package}}" .
+                  git clone --branch="${{steps.tag.outputs.name}}" "${{github.server_url}}/${{github.repository}}" "${{runner.temp}}/repo"
+                  cp -rT "${{runner.temp}}/repo/packages/${{steps.tag.outputs.package}}" .
             - name: Check that version matches 'package.json' up to build version
               run: |
                   v="$(npm pkg get version | xargs)" # piping through 'xargs' removes quotes
@@ -59,8 +53,8 @@ jobs:
               run: yarn install --immutable --check-cache
             - name: Build and archive
               run: |
-                yarn build
-                zip dist.zip ./dist/*
+                  yarn build
+                  zip dist.zip ./dist/*
             # TODO Read release notes from appropriate section of the changelog.
             - name: Upload package as GitHub release
               uses: softprops/action-gh-release@v1

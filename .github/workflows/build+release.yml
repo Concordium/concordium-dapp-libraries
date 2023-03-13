@@ -59,6 +59,10 @@ jobs:
                   #cache: yarn
             - name: Install dependencies
               run: yarn install --immutable
+            - name: debug yarn.lock
+              run: cat yarn.lock
+            - name: debug node_modules
+              run: tree node_modules
             - name: Build and archive
               run: |
                   yarn build

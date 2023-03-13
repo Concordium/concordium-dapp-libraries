@@ -18,24 +18,26 @@ interface Props extends WalletConnectionProps {
 
 export function WalletConnectorButton(props: Props) {
     const { connection, connectorType, connectorName, isDisconnecting, disconnect, setActiveConnectorType } = props;
-    const { isSelected, isConnected, isDisabled } = useWalletConnectorSelector(
+    const { isActive, isConnected, isDisabled } = useWalletConnectorSelector(
         connectorType,
         connection,
-        props
+        props.activeConnectorType,
+        props.activeConnector,
     );
 
-    const verb = isConnected ? 'Disconnect' : isSelected ? 'Using' : 'Use';
+    const verb = isConnected ? 'Disconnect' : isActive ? 'Using' : 'Use';
     const handleClick = useCallback(() => {
+        // Depending on the connector type, this might also disconnect the connection.
+        setActiveConnectorType(isActive ? undefined : connectorType);
         if (isConnected) {
             disconnect();
         }
-        setActiveConnectorType(isSelected ? undefined : connectorType);
-    }, [isConnected, isSelected, setActiveConnectorType, connectorType, disconnect]);
+    }, [isConnected, isActive, setActiveConnectorType, connectorType, disconnect]);
     return (
         <Button
             className="w-100"
             disabled={isDisabled || isDisconnecting}
-            variant={isConnected ? 'danger' : isSelected ? 'dark' : 'light'}
+            variant={isConnected ? 'danger' : isActive ? 'dark' : 'light'}
             onClick={handleClick}
         >
             {`${verb} ${connectorName}`}

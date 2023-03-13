@@ -44,6 +44,7 @@ jobs:
                   EOT" >> "${GITHUB_OUTPUT}"
                   cp -rT "${tmp_repo_dir}/packages/${{steps.tag.outputs.package}}" .
                   cp "${tmp_repo_dir}/yarn.lock" .
+                  ls
             - name: Fail if tag is not "annotated" or the message is empty
               if: "steps.checkout.outputs.tag_msg == ''"
               run: exit 1

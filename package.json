@@ -13,7 +13,7 @@
         "postpack": "pinst --enable"
     },
     "lint-staged": {
-        "*.{js,jsx,ts,tsx}": [
+        "*.{js,jsx,ts,tsx},!.github/actions": [
             "eslint --max-warnings=0"
         ],
         "*.{js,jsx,ts,tsx,json,html,md,yml,yaml},.prettierrc": [

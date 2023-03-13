@@ -1,0 +1,17 @@
+name: "changelog-extract"
+description: "Extract the section of a changelog corresponding to a given version."
+inputs:
+  file:
+    description: "The changelog file."
+    required: true
+    default: "CHANGELOG.md"
+  version:
+    description: "The package version describing what section to extract."
+    required: false
+    default: "tags"
+outputs:
+  changelog:
+    description: "The extracted changelog section."
+runs:
+  using: "node16"
+  main: "./index.js"

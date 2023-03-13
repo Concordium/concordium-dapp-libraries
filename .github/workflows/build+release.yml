@@ -7,10 +7,6 @@ on:
                 description: "Tag"
                 type: string
                 required: false
-            release_notes:
-                description: "Release notes"
-                type: string
-                required: true
 
 env:
     node_version: "16.x"
@@ -41,6 +37,14 @@ jobs:
               run: |
                   git clone --branch="${{steps.tag.outputs.name}}" "${{github.server_url}}/${{github.repository}}" "${{runner.temp}}/repo"
                   cp -rT "${{runner.temp}}/repo/packages/${{steps.tag.outputs.package}}" .
+            - name: Extract message from annotated tag
+              id: tag_msg
+              run: |
+                  msg="$(git for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)')"
+                  echo "tag_msg=${msg}" >> "${GITHUB_OUTPUT}"
+            - name: Fail if tag is not "annotated" or the message is empty
+              if: "steps.tag_msg.outputs.tag_msg == ''"
+              run: exit 1
             - name: Check that version matches 'package.json' up to build version
               run: |
                   v="$(npm pkg get version | xargs)" # piping through 'xargs' removes quotes
@@ -55,12 +59,22 @@ jobs:
               run: |
                   yarn build
                   zip dist.zip ./dist/*
-            # TODO Read release notes from appropriate section of the changelog.
+            - name: Extract changelog entries
+              uses: ./.github/actions/changelog-extract
+              id: changelog
+              with:
+                  file: ./CHANGELOG.md
+                  version: "${{steps.tag.outputs.version}}"
             - name: Upload package as GitHub release
               uses: softprops/action-gh-release@v1
               with:
                   tag_name: "${{steps.tag.outputs.name}}"
-                  body: "${{github.event.inputs.release_notes}}"
+                  # Release body is the message of the annotated tag followed by the changelog entries for the version.
+                  body: |
+                      ${{steps.tag_msg.outputs.tag_msg}}
+                      
+                      ${{steps.changelog.outputs.changelog}}
                   files: "./dist.zip"
                   name: "${{steps.tag.outputs.package}}: ${{steps.tag.outputs.version}}"
-                  generate_release_notes: false # automatic mechanism doesn't limit changes to the target project
+                  # The method for auto-generating release notes just lists all commits, also those irrelevant to the subproject.
+                  generate_release_notes: false

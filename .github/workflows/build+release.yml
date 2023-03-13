@@ -54,7 +54,7 @@ jobs:
               with:
                   node-version: "${{env.node_version}}"
             - name: Install dependencies
-              run: yarn install --immutable --check-cache
+              run: yarn install --frozen-lockfile
             - name: Build and archive
               run: |
                   yarn build

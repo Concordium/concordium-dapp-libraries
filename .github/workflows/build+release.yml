@@ -71,6 +71,8 @@ jobs:
                   body: |
                       ${{steps.checkout.outputs.tag_msg}}
                       
+                      # Changelog
+                      
                       ${{steps.changelog.outputs.changelog}}
                   files: "./dist.zip"
                   name: "${{steps.tag.outputs.package}}: ${{steps.tag.outputs.version}}"

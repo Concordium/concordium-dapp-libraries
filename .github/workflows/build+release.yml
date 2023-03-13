@@ -30,20 +30,18 @@ jobs:
               with:
                   pattern: "(?<name>(?<package>.*?)/(?<version>.*))"
                   input: "${{steps.ref.outputs.ref-name}}"
-            - name: Checkout subproject
+            - name: Checkout subproject and extract tag message
+              id: checkout
               # Clone repository into temp directory and copy the subproject into the workspace
               # (cannot use 'actions/checkout' because that doesn't allow checkout out the repo outside the workspace dir;
               # see 'https://github.com/actions/checkout/issues/327' - alternatively we could use a temp dir inside the workspace).
               run: |
                   git clone --branch="${{steps.tag.outputs.name}}" "${{github.server_url}}/${{github.repository}}" "${{runner.temp}}/repo"
-                  cp -rT "${{runner.temp}}/repo/packages/${{steps.tag.outputs.package}}" .
-            - name: Extract message from annotated tag
-              id: tag_msg
-              run: |
-                  msg="$(git for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)')"
+                  msg="$(git -C "${{runner.temp}}/repo" for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)')"
                   echo "tag_msg=${msg}" >> "${GITHUB_OUTPUT}"
+                  cp -rT "${{runner.temp}}/repo/packages/${{steps.tag.outputs.package}}" .
             - name: Fail if tag is not "annotated" or the message is empty
-              if: "steps.tag_msg.outputs.tag_msg == ''"
+              if: "steps.checkout.outputs.tag_msg == ''"
               run: exit 1
             - name: Check that version matches 'package.json' up to build version
               run: |
@@ -71,7 +69,7 @@ jobs:
                   tag_name: "${{steps.tag.outputs.name}}"
                   # Release body is the message of the annotated tag followed by the changelog entries for the version.
                   body: |
-                      ${{steps.tag_msg.outputs.tag_msg}}
+                      ${{steps.checkout.outputs.tag_msg}}
                       
                       ${{steps.changelog.outputs.changelog}}
                   files: "./dist.zip"

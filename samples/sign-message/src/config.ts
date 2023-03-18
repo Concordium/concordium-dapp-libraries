@@ -26,8 +26,8 @@ const WALLET_CONNECT_PROJECT_ID = '76324905a70fe5c388bab46d3e0564dc';
 const WALLET_CONNECT_OPTS: SignClientTypes.Options = {
     projectId: WALLET_CONNECT_PROJECT_ID,
     metadata: {
-        name: 'Contract Update',
-        description: 'Example dApp for the performing an update on a contract.',
+        name: 'Sign Message',
+        description: 'Example dApp for signing an arbitrary message.',
         url: '#',
         icons: ['https://walletconnect.com/walletconnect-logo.png'],
     },

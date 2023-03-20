@@ -22,6 +22,8 @@ export interface Connect {
     connectError: string;
 }
 
+// TODO Take function 'setError' instead of keeping error state inside.
+
 /**
  * Hook that exposes a function for initiating a connection on the provided {@link connector} and,
  * if successful, store the resulting connection in {@link setConnection}.

@@ -2,12 +2,33 @@ import { WalletConnection } from '@concordium/wallet-connectors';
 import { useCallback, useEffect, useState } from 'react';
 import { errorString } from './error';
 
+
+/**
+ * The state of the a {@link useDisconnect} instance.
+ */
 export interface Disconnect {
+    /**
+     * Function for closing a connection.
+     */
     disconnect: () => void;
+
+    /**
+     * Indicator on whether we're waiting for a connection to be terminated.
+     */
     isDisconnecting: boolean;
+
+    /**
+     * Error terminating the connection. This will be automatically cleared once a new connection has been established.
+     */
     disconnectError: string;
 }
 
+// TODO Take function 'setError' instead of keeping error state inside.
+
+/**
+ * Hook for managing the action of disconnecting a connection.
+ * @param connection TODO
+ */
 export function useDisconnect(connection: WalletConnection | undefined): Disconnect {
     const [isDisconnecting, setIsDisconnecting] = useState(false);
     const [disconnectError, setDisconnectError] = useState('');

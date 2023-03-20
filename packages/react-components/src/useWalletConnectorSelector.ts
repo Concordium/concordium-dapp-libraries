@@ -21,6 +21,9 @@ export interface WalletConnectorSelector {
     isOtherConnected: boolean;
 }
 
+// TODO Rename now that this doesn't expose 'select' anymore?
+//      All it does is compute a little derived state to tell the state of a selector to figure out how it should be rendered.
+
 /**
  * Hook for managing a connector selector (usually a button in the UI).
  *

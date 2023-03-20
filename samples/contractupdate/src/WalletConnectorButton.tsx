@@ -36,7 +36,7 @@ export function WalletConnectorButton(props: Props) {
     return (
         <Button
             className="w-100"
-            disabled={isOtherConnected || isDisconnecting}
+            disabled={isOtherConnected || (isActive && isDisconnecting)}
             variant={isConnected ? 'danger' : isActive ? 'dark' : 'light'}
             onClick={handleClick}
         >

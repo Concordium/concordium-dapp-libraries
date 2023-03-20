@@ -11,10 +11,14 @@ export interface Disconnect {
 export function useDisconnect(connection: WalletConnection | undefined): Disconnect {
     const [isDisconnecting, setIsDisconnecting] = useState(false);
     const [disconnectError, setDisconnectError] = useState('');
-    useEffect(() => setDisconnectError(''));
+    useEffect(() => {
+        if (connection) {
+            setDisconnectError('')
+        }
+    }, [connection]);
     const disconnect = useCallback(() => {
         if (!connection) {
-            throw new Error('no connection to disconnect');
+            return setDisconnectError('no connection to disconnect');
         }
         setIsDisconnecting(true);
         connection

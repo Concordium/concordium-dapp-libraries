@@ -7,7 +7,6 @@ import {
     WalletConnectionProps,
 } from '@concordium/react-components';
 
-// TODO Stop extending (pass 'select' function instead)?
 interface Props extends WalletConnectionProps {
     connection: WalletConnection | undefined;
     connectorType: ConnectorType;
@@ -17,26 +16,27 @@ interface Props extends WalletConnectionProps {
 }
 
 export function WalletConnectorButton(props: Props) {
-    const { connection, connectorType, connectorName, isDisconnecting, disconnect, setActiveConnectorType } = props;
-    const { isActive, isConnected, isDisabled } = useWalletConnectorSelector(
+    const { activeConnectorType, setActiveConnectorType, activeConnector, connection, connectorType, connectorName, isDisconnecting, disconnect } = props;
+    const { isActive, isConnected, isOtherConnected } = useWalletConnectorSelector(
         connectorType,
         connection,
-        props.activeConnectorType,
-        props.activeConnector,
+        activeConnectorType,
+        activeConnector,
     );
 
     const verb = isConnected ? 'Disconnect' : isActive ? 'Using' : 'Use';
     const handleClick = useCallback(() => {
-        // Depending on the connector type, this might also disconnect the connection.
-        setActiveConnectorType(isActive ? undefined : connectorType);
+        // Best to disconnect before unsetting the connector type as that (depending on the connector type variant used)
+        // may also disconnect as a side effect.
         if (isConnected) {
             disconnect();
         }
+        setActiveConnectorType(isActive ? undefined : connectorType);
     }, [isConnected, isActive, setActiveConnectorType, connectorType, disconnect]);
     return (
         <Button
             className="w-100"
-            disabled={isDisabled || isDisconnecting}
+            disabled={isOtherConnected || isDisconnecting}
             variant={isConnected ? 'danger' : isActive ? 'dark' : 'light'}
             onClick={handleClick}
         >

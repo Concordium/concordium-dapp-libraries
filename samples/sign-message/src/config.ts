@@ -26,8 +26,8 @@ export const MAINNET: Network = {
 const WALLET_CONNECT_OPTS: SignClientTypes.Options = {
     projectId: CONCORDIUM_WALLET_CONNECT_PROJECT_ID,
     metadata: {
-        name: 'Contract Update',
-        description: 'Example dApp for the performing an update on a contract.',
+        name: 'Sign Message',
+        description: 'Example dApp for signing an arbitrary message.',
         url: '#',
         icons: ['https://walletconnect.com/walletconnect-logo.png'],
     },

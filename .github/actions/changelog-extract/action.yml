@@ -7,8 +7,7 @@ inputs:
     default: "CHANGELOG.md"
   version:
     description: "The package version describing what section to extract."
-    required: false
-    default: "tags"
+    required: true
 outputs:
   changelog:
     description: "The extracted changelog section."

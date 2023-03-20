@@ -38,7 +38,9 @@ jobs:
               run: |
                   git clone --branch="${{steps.tag.outputs.name}}" "${{github.server_url}}/${{github.repository}}" "${{runner.temp}}/repo"
                   msg="$(git -C "${{runner.temp}}/repo" for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)')"
-                  echo "tag_msg=${msg}" >> "${GITHUB_OUTPUT}"
+                  echo "tag_msg<<EOT
+                  ${msg}
+                  EOT" >> "${GITHUB_OUTPUT}"
                   cp -rT "${{runner.temp}}/repo/packages/${{steps.tag.outputs.package}}" .
             - name: Fail if tag is not "annotated" or the message is empty
               if: "steps.checkout.outputs.tag_msg == ''"

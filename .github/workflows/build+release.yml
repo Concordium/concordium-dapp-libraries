@@ -32,6 +32,14 @@ jobs:
                   input: "${{steps.ref.outputs.ref-name}}"
             - name: Checkout project
               uses: actions/checkout@v3
+            - name: debug
+              run: git for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)'
+            - name: debug
+              run: |
+                echo "GITHUB_OUTPUT='${GITHUB_OUTPUT}'"
+                cat $GITHUB_OUTPUT
+            - name: debug
+              run: git for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)'
             - name: Extract tag message
               id: tag-msg
               run: |
@@ -39,8 +47,10 @@ jobs:
                 echo "msg<<EOT
                 ${msg}
                 EOT" >> "${GITHUB_OUTPUT}"
+            - name: debug
+              run: |
                 echo "GITHUB_OUTPUT='${GITHUB_OUTPUT}'"
-                echo "msg='$msg'"
+                cat $GITHUB_OUTPUT
             - name: debug
               run: echo "${{steps.tag-msg.outputs.msg}}"
             - name: Fail if tag is not "annotated" or its message is empty

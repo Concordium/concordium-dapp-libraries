@@ -30,21 +30,15 @@ jobs:
               with:
                   pattern: "(?<name>(?<package>.*?)/(?<version>.*))"
                   input: "${{steps.ref.outputs.ref-name}}"
-            - name: Checkout subproject and extract tag message
-              id: checkout
-              # Clone repository into temp directory and copy the subproject into the workspace along with the shared 'yarn.lock' file
-              # (cannot use 'actions/checkout' because that doesn't allow checkout out the repo outside the workspace dir;
-              # see 'https://github.com/actions/checkout/issues/327' - alternatively we could use a temp dir inside the workspace).
+            - name: Checkout project
+              uses: action/checkout@v3
+            - name: Extract tag message
+              id: tag-msg
               run: |
-                  tmp_repo_dir="${{runner.temp}}/repo"
-                  git clone --branch="${{steps.tag.outputs.name}}" "${{github.server_url}}/${{github.repository}}" "${tmp_repo_dir}"
-                  tag_msg="$(git -C "${tmp_repo_dir}" for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)')"
-                  echo "tag_msg<<EOT
-                  ${tag_msg}
-                  EOT" >> "${GITHUB_OUTPUT}"
-                  cp -rT "${tmp_repo_dir}/packages/${{steps.tag.outputs.package}}" .
-                  cp "${tmp_repo_dir}/yarn.lock" .
-                  ls
+                tag_msg="$(git for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)')"
+                echo "msg<<EOT
+                ${msg}
+                EOT" >> "${GITHUB_OUTPUT}"
             - name: Fail if tag is not "annotated" or the message is empty
               if: "steps.checkout.outputs.tag_msg == ''"
               run: exit 1
@@ -56,17 +50,12 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: "${{env.node_version}}"
-                  #cache: yarn
-            - name: Install dependencies
-              run: yarn install --immutable
-            - name: debug yarn.lock
-              run: cat yarn.lock
-            - name: debug node_modules
-              run: tree node_modules
-            - name: Build and archive
+                  cache: yarn
+            # TODO Find a way to force target lib to not build against local build of dependent lib, but always against published build.
+            - name: Build all libraries and archive target one
               run: |
                   yarn build
-                  zip dist.zip ./dist/*
+                  zip ./dist.zip "./packages/${{steps.tag.outputs.package}}"/*
             - name: Extract changelog entries
               uses: ./.github/actions/changelog-extract
               id: changelog

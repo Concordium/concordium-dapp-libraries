@@ -31,7 +31,7 @@ jobs:
                   pattern: "(?<name>(?<package>.*?)/(?<version>.*))"
                   input: "${{steps.ref.outputs.ref-name}}"
             - name: Checkout project
-              uses: action/checkout@v3
+              uses: actions/checkout@v3
             - name: Extract tag message
               id: tag-msg
               run: |

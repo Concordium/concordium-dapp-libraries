@@ -34,14 +34,6 @@ jobs:
               uses: actions/checkout@v3
               with:
                 ref: "${{steps.ref.outputs.ref}}"
-            - name: debug
-              run: git for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)'
-            - name: debug
-              run: |
-                echo "GITHUB_OUTPUT='${GITHUB_OUTPUT}'"
-                cat $GITHUB_OUTPUT
-            - name: debug
-              run: git for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)'
             - name: Extract tag message
               id: tag-msg
               run: |
@@ -49,18 +41,12 @@ jobs:
                 echo "msg<<EOT
                 ${msg}
                 EOT" >> "${GITHUB_OUTPUT}"
-            - name: debug
-              run: |
-                echo "GITHUB_OUTPUT='${GITHUB_OUTPUT}'"
-                cat $GITHUB_OUTPUT
-            - name: debug
-              run: echo "${{steps.tag-msg.outputs.msg}}"
             - name: Fail if tag is not "annotated" or its message is empty
               if: "steps.tag-msg.outputs.msg == ''"
               run: exit 1
             - name: Check that version matches 'package.json' up to build version
               run: |
-                  v="$(npm pkg get version | xargs)" # piping through 'xargs' removes quotes
+                  v="$(npm pkg get version -ws | jq -r '.["@concordium/${{steps.tag.outputs.package}}"]')"
                   [[ "${{steps.tag.outputs.version}}" = ${v}-* ]]
             - name: Setup Node
               uses: actions/setup-node@v3

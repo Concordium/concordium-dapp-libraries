@@ -39,9 +39,11 @@ jobs:
                 echo "msg<<EOT
                 ${msg}
                 EOT" >> "${GITHUB_OUTPUT}"
+                echo "GITHUB_OUTPUT='${GITHUB_OUTPUT}'"
+                echo "msg='$msg'"
             - name: debug
               run: echo "${{steps.tag-msg.outputs.msg}}"
-            - name: Fail if tag is not "annotated" or the message is empty
+            - name: Fail if tag is not "annotated" or its message is empty
               if: "steps.tag-msg.outputs.msg == ''"
               run: exit 1
             - name: Check that version matches 'package.json' up to build version

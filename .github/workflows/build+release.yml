@@ -32,6 +32,8 @@ jobs:
                   input: "${{steps.ref.outputs.ref-name}}"
             - name: Checkout project
               uses: actions/checkout@v3
+              with:
+                ref: "${{steps.ref.outputs.ref}}"
             - name: debug
               run: git for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)'
             - name: debug

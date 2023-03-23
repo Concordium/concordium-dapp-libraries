@@ -35,10 +35,12 @@ jobs:
             - name: Extract tag message
               id: tag-msg
               run: |
-                tag_msg="$(git for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)')"
+                msg="$(git for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)')"
                 echo "msg<<EOT
                 ${msg}
                 EOT" >> "${GITHUB_OUTPUT}"
+            - name: debug
+              run: echo "${{steps.tag-msg.outputs.msg}}"
             - name: Fail if tag is not "annotated" or the message is empty
               if: "steps.tag-msg.outputs.msg == ''"
               run: exit 1
@@ -68,7 +70,7 @@ jobs:
                   tag_name: "${{steps.tag.outputs.name}}"
                   # Release body is the message of the annotated tag followed by the changelog entries for the version.
                   body: |
-                      ${{steps.checkout.outputs.tag_msg}}
+                      ${{steps.tag-msg.outputs.msg}}
                       
                       # Changelog
                       

@@ -56,10 +56,12 @@ jobs:
             - name: Run yarn install
               run: yarn install --immutable
             # TODO Find a way to force target lib to not build against local build of dependent lib, but always against published build.
-            - name: Build all libraries and archive target one
-              run: |
-                  yarn build
-                  zip ./dist.zip "./packages/${{steps.tag.outputs.package}}"/*
+            - name: Build all libraries
+              run: yarn build
+            - name: Archive target library
+              run: zip ./dist.zip "./packages/${{steps.tag.outputs.package}}"/*
+            - name: debug
+              run: ls /home/runner/work/concordium-dapp-libraries/concordium-dapp-libraries/.github/actions/changelog-extract
             - name: Extract changelog entries
               uses: ./.github/actions/changelog-extract
               id: changelog

@@ -40,7 +40,7 @@ jobs:
                 ${msg}
                 EOT" >> "${GITHUB_OUTPUT}"
             - name: Fail if tag is not "annotated" or the message is empty
-              if: "steps.checkout.outputs.tag_msg == ''"
+              if: "steps.tag-msg.outputs.msg == ''"
               run: exit 1
             - name: Check that version matches 'package.json' up to build version
               run: |

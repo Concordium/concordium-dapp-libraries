@@ -60,8 +60,6 @@ jobs:
               run: yarn build
             - name: Archive target library
               run: zip ./dist.zip "./packages/${{steps.tag.outputs.package}}"/*
-            - name: debug
-              run: ls /home/runner/work/concordium-dapp-libraries/concordium-dapp-libraries/.github/actions/changelog-extract
             - name: Extract changelog entries
               uses: ./.github/actions/changelog-extract
               id: changelog

@@ -76,7 +76,7 @@ jobs:
                       
                       # Changelog
                       
-                      ${{steps.changelog.outputs.changelog}}
+                      ${{steps.changelog.outputs.section}}
                   files: "./dist.zip"
                   name: "${{steps.tag.outputs.package}}: ${{steps.tag.outputs.version}}"
                   # The method for auto-generating release notes just lists all commits, also those irrelevant to the subproject.

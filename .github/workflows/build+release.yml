@@ -64,7 +64,7 @@ jobs:
               uses: concordium/github-action-changelog-extract@v1
               id: changelog
               with:
-                  file: ./CHANGELOG.md
+                  file: "./packages/${{steps.tag.outputs.package}}/CHANGELOG.md"
                   version: "${{steps.tag.outputs.version}}"
             - name: Upload package as GitHub release
               uses: softprops/action-gh-release@v1

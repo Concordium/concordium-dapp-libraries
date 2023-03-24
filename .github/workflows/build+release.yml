@@ -61,7 +61,7 @@ jobs:
             - name: Archive target library
               run: zip ./dist.zip "./packages/${{steps.tag.outputs.package}}"/*
             - name: Extract changelog entries
-              uses: ./.github/actions/changelog-extract
+              uses: concordium/github-action-changelog-extract@v1
               id: changelog
               with:
                   file: ./CHANGELOG.md

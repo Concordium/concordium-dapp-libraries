@@ -37,10 +37,10 @@ jobs:
             - name: Extract tag message
               id: tag-msg
               run: |
-                msg="$(git for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)')"
-                echo "msg<<EOT
-                ${msg}
-                EOT" >> "${GITHUB_OUTPUT}"
+                  msg="$(git for-each-ref "${{steps.ref.outputs.ref}}" --format='%(contents)')"
+                  echo "msg<<EOT
+                  ${msg}
+                  EOT" >> "${GITHUB_OUTPUT}"
             - name: Fail if tag is not "annotated" or its message is empty
               if: "steps.tag-msg.outputs.msg == ''"
               run: exit 1

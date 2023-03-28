@@ -17,8 +17,6 @@ export interface Disconnect {
     isDisconnecting: boolean;
 }
 
-// TODO Take function 'setError' instead of keeping error state inside.
-
 /**
  * Hook for managing the action of disconnecting a connection.
  * @param connection The connection that the returned function may disconnect.

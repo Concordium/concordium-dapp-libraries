@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   `useDisconnect`: New hook for managing the action of disconnecting a connection.
+
+### Changed
+
+-   `useConnect`: Hook now accepts a function for handling a reported error instead of returning the error from the hook.
+    The new `useDisonnect` hook is implemented the same way, allowing them to share error handling.
+-   `useWalletConnectorSelector`: Hook no longer return a `select` function - it's now up to the app to determine what "select" means in different contexts.
+
 ## [0.2.1] - 2023-03-17
 
 ### Changed

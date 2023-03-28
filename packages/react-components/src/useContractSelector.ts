@@ -99,8 +99,6 @@ export interface ContractSelector {
     error: string;
 }
 
-// TODO Take function 'setError' instead of keeping error state inside.
-
 /**
  * React hook to look up a smart contract's data and state from its index.
  * @param rpc JSON-RPC proxy client through which to perform the lookup.

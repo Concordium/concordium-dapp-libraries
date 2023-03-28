@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `useConnect`: Hook now accepts a function for handling a reported error instead of returning the error from the hook.
     The new `useDisonnect` hook is implemented the same way, allowing them to share error handling.
--   `useWalletConnectorActivation`: Replacement of the hook `useWalletConnectorSelector` with renamed fields and a slightly different purpose:
+-   `useWalletConnectorTypeStatus`: Replacement of the hook `useWalletConnectorSelector` with renamed fields and a slightly different purpose:
     It no longer returns a `select` function, leaving the app free to decide what "select" means in different contexts.
 
 ## [0.2.1] - 2023-03-17

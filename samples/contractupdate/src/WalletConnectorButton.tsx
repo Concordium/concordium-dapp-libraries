@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Button } from 'react-bootstrap';
 import {
     ConnectorType,
-    useWalletConnectorActivation,
+    useWalletConnectorTypeStatus,
     WalletConnection,
     WalletConnectionProps,
 } from '@concordium/react-components';
@@ -26,7 +26,7 @@ export function WalletConnectorButton(props: Props) {
         isDisconnecting,
         disconnect,
     } = props;
-    const { isActive, isConnected, isOtherConnected } = useWalletConnectorActivation(
+    const { isActive, isConnected, isOtherConnected } = useWalletConnectorTypeStatus(
         connectorType,
         connection,
         activeConnectorType,

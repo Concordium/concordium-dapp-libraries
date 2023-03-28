@@ -11,17 +11,26 @@ interface Props extends WalletConnectionProps {
     connection: WalletConnection | undefined;
     connectorType: ConnectorType;
     connectorName: string;
-    disconnect: ()  => void;
+    disconnect: () => void;
     isDisconnecting: boolean;
 }
 
 export function WalletConnectorButton(props: Props) {
-    const { activeConnectorType, setActiveConnectorType, activeConnector, connection, connectorType, connectorName, isDisconnecting, disconnect } = props;
+    const {
+        activeConnectorType,
+        setActiveConnectorType,
+        activeConnector,
+        connection,
+        connectorType,
+        connectorName,
+        isDisconnecting,
+        disconnect,
+    } = props;
     const { isActive, isConnected, isOtherConnected } = useWalletConnectorSelector(
         connectorType,
         connection,
         activeConnectorType,
-        activeConnector,
+        activeConnector
     );
 
     const verb = isConnected ? 'Disconnect' : isActive ? 'Using' : 'Use';

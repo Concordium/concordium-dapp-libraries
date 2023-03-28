@@ -27,7 +27,14 @@ function Main(props: WalletConnectionProps) {
     const { activeConnectorType, activeConnector, activeConnectorError, network, connectedAccounts, genesisHashes } =
         props;
     const { connection, setConnection, account, genesisHash } = useConnection(connectedAccounts, genesisHashes);
-    const { connect, isConnecting, connectError } = useConnect(activeConnector, setConnection);
+    const [connectError, setConnectError] = useState('');
+    const { connect, isConnecting } = useConnect(activeConnector, setConnection, setConnectError);
+    const { disconnect, isDisconnecting } = useDisconnect(connection, setConnectError);
+    useEffect(() => {
+        if (connection) {
+            setConnectError('');
+        }
+    }, [connection]);
 
     const [rpcGenesisHash, setRpcGenesisHash] = useState<string>();
     const [rpcError, setRpcError] = useState('');
@@ -48,8 +55,6 @@ function Main(props: WalletConnectionProps) {
                 });
         }
     }, [connection, genesisHash, network]);
-
-    const {disconnect, isDisconnecting, disconnectError} = useDisconnect(connection);
     return (
         <>
             <Row className="mt-3 mb-3">
@@ -79,7 +84,6 @@ function Main(props: WalletConnectionProps) {
                     {activeConnectorError && <Alert variant="danger">Connector error: {activeConnectorError}.</Alert>}
                     {!activeConnectorError && activeConnectorType && !activeConnector && <Spinner />}
                     {connectError && <Alert variant="danger">Connection error: {connectError}.</Alert>}
-                    {disconnectError && <Alert variant="danger">Disconnect error: {disconnectError}.</Alert>}
                     {activeConnector && !account && (
                         <Button type="button" onClick={connect} disabled={isConnecting}>
                             {isConnecting && 'Connecting...'}

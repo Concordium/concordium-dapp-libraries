@@ -42,7 +42,7 @@ export function useWalletConnectorSelector(
     connectorType: ConnectorType,
     connection: WalletConnection | undefined,
     activeConnectorType: ConnectorType | undefined,
-    activeConnector: WalletConnector | undefined,
+    activeConnector: WalletConnector | undefined
 ): WalletConnectorSelector {
     const isActive = activeConnectorType === connectorType;
     const isConnected = Boolean(isActive && connection && connection.getConnector() === activeConnector);

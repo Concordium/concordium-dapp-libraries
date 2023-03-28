@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { TESTNET } from './config';
 import { useConnect, useConnection, WalletConnectionProps, WithWalletConnector } from '@concordium/react-components';
 import { Alert, Button, Col, Container, Form, InputGroup, Row, Spinner } from 'react-bootstrap';
@@ -19,7 +19,14 @@ export default function App() {
 function Main(props: WalletConnectionProps) {
     const { activeConnectorType, activeConnector, activeConnectorError, connectedAccounts, genesisHashes } = props;
     const { connection, setConnection, account } = useConnection(connectedAccounts, genesisHashes);
-    const { connect, isConnecting, connectError } = useConnect(activeConnector, setConnection);
+    const [connectError, setConnectError] = useState('');
+    const { connect, isConnecting } = useConnect(activeConnector, setConnection, setConnectError);
+    const { disconnect, isDisconnecting } = useDisconnect(connection, setConnectError);
+    useEffect(() => {
+        if (connection) {
+            setConnectError('');
+        }
+    }, [connection]);
 
     const [message, setMessage] = useState('');
     const [signature, setSignature] = useState<AccountTransactionSignature>('');
@@ -38,7 +45,6 @@ function Main(props: WalletConnectionProps) {
                 .finally(() => setIsWaiting(false));
         }
     }, [connection, account, message]);
-    const {disconnect, isDisconnecting, disconnectError} = useDisconnect(connection);
     return (
         <>
             <Row className="mt-3 mb-3">
@@ -68,7 +74,6 @@ function Main(props: WalletConnectionProps) {
                     {activeConnectorError && <Alert variant="danger">Connector error: {activeConnectorError}.</Alert>}
                     {!activeConnectorError && activeConnectorType && !activeConnector && <Spinner />}
                     {connectError && <Alert variant="danger">Connection error: {connectError}.</Alert>}
-                    {disconnectError && <Alert variant="danger">Disconnect error: {disconnectError}.</Alert>}
                     {activeConnector && !account && (
                         <Button type="button" onClick={connect} disabled={isConnecting}>
                             {isConnecting && 'Connecting...'}

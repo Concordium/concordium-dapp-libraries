@@ -15,11 +15,6 @@ export interface Connect {
      * Indicator on whether we're waiting for a connection to be established and approved.
      */
     isConnecting: boolean;
-
-    /**
-     * Error establishing the connection.
-     */
-    connectError: string;
 }
 
 // TODO Take function 'setError' instead of keeping error state inside.
@@ -30,13 +25,14 @@ export interface Connect {
  * The hook also exposes the status of the connection progress and error if initiation failed.
  * @param connector The connector from which new connections are to be initiated.
  * @param setConnection The setter function to which new connections are passed.
+ * @param setError Setter function to which connection errors is passed.
  */
 export function useConnect(
     connector: WalletConnector | undefined,
-    setConnection: (c: WalletConnection) => void
+    setConnection: (c: WalletConnection) => void,
+    setError: (err: string) => void
 ): Connect {
     const [isConnecting, setIsConnecting] = useState(false);
-    const [connectError, setConnectError] = useState('');
     const connect = useCallback(() => {
         if (!connector) {
             throw new Error('no connector to connect from');
@@ -47,11 +43,11 @@ export function useConnect(
             .then((c) => {
                 if (c) {
                     setConnection(c);
-                    setConnectError('');
+                    setError('');
                 }
             })
-            .catch((e) => setConnectError(errorString(e)))
+            .catch((e) => setError(errorString(e)))
             .finally(() => setIsConnecting(false));
     }, [connector, setConnection]);
-    return { connect, isConnecting, connectError };
+    return { connect, isConnecting };
 }

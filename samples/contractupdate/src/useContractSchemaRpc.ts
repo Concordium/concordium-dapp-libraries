@@ -1,8 +1,7 @@
+import { useEffect, useState } from 'react';
+import { Info, WalletConnection, withJsonRpcClient } from '@concordium/react-components';
 import { err, ok, Result, ResultAsync } from 'neverthrow';
 import { Buffer } from 'buffer/';
-import { WalletConnection, withJsonRpcClient } from '@concordium/react-components';
-import { Info } from '@concordium/react-components';
-import { useEffect, useState } from 'react';
 import { errorString } from './util';
 import { ModuleReference } from '@concordium/web-sdk';
 

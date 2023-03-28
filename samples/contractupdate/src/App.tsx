@@ -1,8 +1,7 @@
-import { Network, WalletConnection } from '@concordium/react-components';
-import { Col, Form, Row, Spinner } from 'react-bootstrap';
-import { useContractSelector } from '@concordium/react-components';
-import { ContractDetails } from './ContractDetails';
 import React, { useState } from 'react';
+import { Col, Form, Row, Spinner } from 'react-bootstrap';
+import { Network, WalletConnection, useContractSelector } from '@concordium/react-components';
+import { ContractDetails } from './ContractDetails';
 import { ContractInvoker } from './ContractInvoker';
 
 interface Props {

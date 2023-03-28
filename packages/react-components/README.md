@@ -83,7 +83,7 @@ See [the sample dApp](../../samples/contractupdate/src/Root.tsx) for a complete 
 
 ## Hooks
 
-### [`useWalletConnectorSelector`](./src/useWalletConnectorSelector.ts)
+### [`useWalletConnectorActivation`](./src/useWalletConnectorActivation.ts)
 
 Helper hook for computing the selected/connected/disabled state of a given connector type.
 
@@ -93,7 +93,7 @@ The button accepts all the `props` exposed by `WithWalletConnector`
 as well as the particular `ConnectorType` that it manages:
 
 ```typescript jsx
-import { ConnectorType, useWalletConnectorSelector, WalletConnectionProps } from '@concordium/react-components';
+import { ConnectorType, useWalletConnectorActivation, WalletConnectionProps } from '@concordium/react-components';
 
 interface Props extends WalletConnectionProps {
     connectorType: ConnectorType;
@@ -101,10 +101,15 @@ interface Props extends WalletConnectionProps {
 }
 
 export function WalletConnectorButton(props: Props) {
-    const { connectorType, connectorName } = props;
-    const { isSelected, isConnected, isDisabled, select } = useWalletConnectorSelector(connectorType, props);
+    const { connectorType, connectorName, connection, activeConnectorType, activeConnector, setActiveConnectorType } = props;
+    const { isActive, isConnected, isOtherConnected } = useWalletConnectorActivation(
+        connectorType,
+        connection,
+        activeConnectorType,
+        activeConnector,
+    );
     return (
-        // TODO Render button based on the computed properties and invoke `select` on click...
+        // TODO Render button based on the computed properties and invoke `setActiveConnectorType` etc. on click...
     );
 }
 ```

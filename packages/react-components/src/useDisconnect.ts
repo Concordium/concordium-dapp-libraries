@@ -21,6 +21,7 @@ export interface Disconnect {
  * Hook for managing the action of disconnecting a connection.
  * @param connection The connection that the returned function may disconnect.
  * @param setError Setter function to which connection errors is passed.
+ * @return The disconnect action and indicator of whether the connection is being terminated.
  */
 export function useDisconnect(connection: WalletConnection | undefined, setError: (err: string) => void): Disconnect {
     const [isDisconnecting, setIsDisconnecting] = useState(false);

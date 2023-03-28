@@ -1,11 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { TESTNET } from './config';
-import { useConnect, useConnection, WalletConnectionProps, WithWalletConnector } from '@concordium/react-components';
 import { Alert, Button, Col, Container, Form, InputGroup, Row, Spinner } from 'react-bootstrap';
-import { WalletConnectorButton } from './WalletConnectorButton';
-import { BROWSER_WALLET, WALLET_CONNECT } from './config';
+import {
+    useConnect,
+    useConnection,
+    useDisconnect,
+    WalletConnectionProps,
+    WithWalletConnector,
+} from '@concordium/react-components';
 import { AccountTransactionSignature } from '@concordium/web-sdk';
-import { useDisconnect } from '@concordium/react-components/dist/useDisconnect';
+import { WalletConnectorButton } from './WalletConnectorButton';
+import { BROWSER_WALLET, WALLET_CONNECT, TESTNET } from './config';
 
 export default function App() {
     return (

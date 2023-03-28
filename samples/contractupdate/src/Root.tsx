@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, Col, Container, Row, Spinner } from 'react-bootstrap';
-import { withJsonRpcClient } from '@concordium/react-components';
-import { WalletConnectionProps, WithWalletConnector } from '@concordium/react-components';
+import {
+    useConnect,
+    useConnection,
+    useDisconnect,
+    WalletConnectionProps,
+    WithWalletConnector,
+    withJsonRpcClient,
+} from '@concordium/react-components';
 import { WalletConnectorButton } from './WalletConnectorButton';
 import { ConnectedAccount } from './ConnectedAccount';
 import { App } from './App';
 import { NetworkSelector } from './NetworkSelector';
 import { BROWSER_WALLET, MAINNET, TESTNET, WALLET_CONNECT } from './config';
 import { errorString } from './util';
-import { useConnection } from '@concordium/react-components';
-import { useConnect } from '@concordium/react-components';
-import { useDisconnect } from '@concordium/react-components/dist/useDisconnect';
 
 export default function Root() {
     const [network, setNetwork] = useState(TESTNET);

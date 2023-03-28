@@ -24,6 +24,7 @@ export interface Connect {
  * @param connector The connector from which new connections are to be initiated.
  * @param setConnection The setter function to which new connections are passed.
  * @param setError Setter function to which connection errors is passed.
+ * @return The connect action and indicator of whether a connection is being established.
  */
 export function useConnect(
     connector: WalletConnector | undefined,

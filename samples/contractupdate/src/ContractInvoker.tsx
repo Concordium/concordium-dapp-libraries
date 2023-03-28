@@ -1,9 +1,8 @@
-import { Info } from '@concordium/react-components';
-import isBase64 from 'is-base64';
 import React, { ChangeEvent, Dispatch, useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Col, Dropdown, Form, Row } from 'react-bootstrap';
-import { Network, WalletConnection } from '@concordium/react-components';
+import { Info, Network, WalletConnection } from '@concordium/react-components';
 import { AccountAddress, AccountTransactionType, CcdAmount } from '@concordium/web-sdk';
+import isBase64 from 'is-base64';
 import { err, ok, Result, ResultAsync } from 'neverthrow';
 import { useContractSchemaRpc } from './useContractSchemaRpc';
 import { errorString } from './util';

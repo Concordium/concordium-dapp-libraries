@@ -11,6 +11,8 @@ interface Props extends WalletConnectionProps {
     connection: WalletConnection | undefined;
     connectorType: ConnectorType;
     connectorName: string;
+    connect: () => void;
+    isConnecting: boolean;
     disconnect: () => void;
     isDisconnecting: boolean;
 }
@@ -24,6 +26,7 @@ export function WalletConnectorButton(props: Props) {
         connectorType,
         connectorName,
         isDisconnecting,
+        connect,
         disconnect,
     } = props;
     const { isActive, isConnected, isOtherConnected } = useWalletConnectorActivation(
@@ -33,20 +36,27 @@ export function WalletConnectorButton(props: Props) {
         activeConnector
     );
 
-    const verb = isConnected ? 'Disconnect' : isActive ? 'Using' : 'Use';
+    // TODO Add 'isConnecting'.
+    const verb = !isActive ? 'Use' : isConnected ? 'Disconnect' : activeConnector ? 'Connect' : 'Initializing';
     const handleClick = useCallback(() => {
-        // Best to disconnect before unsetting the connector type as that (depending on the connector type variant used)
-        // may also disconnect as a side effect.
-        if (isConnected) {
+        if (!isActive) {
+            setActiveConnectorType(connectorType);
+        } else if (isConnected) {
+            // Best to disconnect before unsetting the connector type as that (depending on the connector type variant used)
+            // may also disconnect as a side effect.
             disconnect();
+            setActiveConnectorType(undefined);
+        } else if (activeConnector) {
+            connect();
+        } else {
+            // initializing (i.e. it's active but not connected and there's no active connector)
         }
-        setActiveConnectorType(isActive ? undefined : connectorType);
-    }, [isConnected, isActive, setActiveConnectorType, connectorType, disconnect]);
+    }, [isConnected, isActive, setActiveConnectorType, activeConnector, connectorType, connect, disconnect]);
     return (
         <Button
             className="w-100"
             disabled={isOtherConnected || (isActive && isDisconnecting)}
-            variant={isConnected ? 'danger' : isActive ? 'dark' : 'light'}
+            variant={isConnected ? 'danger' : isActive ? 'primary' : 'light'}
             onClick={handleClick}
         >
             {`${verb} ${connectorName}`}

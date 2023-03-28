@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { Alert, Col, Container, Row, Spinner } from 'react-bootstrap';
 import {
     useConnect,
     useConnection,
@@ -67,6 +67,8 @@ function Main(props: WalletConnectionProps) {
                         connectorName="Browser Wallet"
                         connection={connection}
                         isDisconnecting={isDisconnecting}
+                        connect={connect}
+                        isConnecting={isConnecting}
                         disconnect={disconnect}
                         {...props}
                     />
@@ -77,6 +79,8 @@ function Main(props: WalletConnectionProps) {
                         connectorName="WalletConnect"
                         connection={connection}
                         isDisconnecting={isDisconnecting}
+                        connect={connect}
+                        isConnecting={isConnecting}
                         disconnect={disconnect}
                         {...props}
                     />
@@ -87,13 +91,6 @@ function Main(props: WalletConnectionProps) {
                     {activeConnectorError && <Alert variant="danger">Connector error: {activeConnectorError}.</Alert>}
                     {!activeConnectorError && activeConnectorType && !activeConnector && <Spinner />}
                     {connectError && <Alert variant="danger">Connection error: {connectError}.</Alert>}
-                    {activeConnector && !account && (
-                        <Button type="button" onClick={connect} disabled={isConnecting}>
-                            {isConnecting && 'Connecting...'}
-                            {!isConnecting && activeConnectorType === BROWSER_WALLET && 'Connect Browser Wallet'}
-                            {!isConnecting && activeConnectorType === WALLET_CONNECT && 'Connect Mobile Wallet'}
-                        </Button>
-                    )}
                 </Col>
             </Row>
             <Row className="mt-3 mb-3">

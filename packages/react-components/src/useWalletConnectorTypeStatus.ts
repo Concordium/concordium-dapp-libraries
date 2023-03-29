@@ -4,6 +4,7 @@ import { WalletConnection, WalletConnector } from '@concordium/wallet-connectors
 /**
  * The state of the a {@link useWalletConnectorTypeStatus} instance.
  */
+// TODO Rename to 'ConnectorStatus'.
 export interface WalletConnectorTypeStatus {
     /**
      * Indicator of whether the connector type is active.
@@ -34,6 +35,7 @@ export interface WalletConnectorTypeStatus {
  * @param activeConnector The active connector.
  * @return The resolved status.
  */
+// TODO Rename to 'useConnectorStatus'.
 export function useWalletConnectorTypeStatus(
     connectorType: ConnectorType,
     connection: WalletConnection | undefined,

@@ -5,6 +5,7 @@ import { errorString } from './error';
 /**
  * Activation/deactivation controller of a given connector type.
  */
+// TODO Rename to 'ConnectorActivator' (and same with constructor funcs).
 export interface ConnectorType {
     /**
      * Called when the connection type is being activated.
@@ -143,6 +144,7 @@ interface Props {
 /**
  * The props to be passed to the child component.
  */
+// TODO Rename to 'ConnectorProps'.
 export interface WalletConnectionProps extends State {
     /**
      * The network provided to {@link WithWalletConnector} via its props.
@@ -177,7 +179,7 @@ export interface WalletConnectionProps extends State {
  * This component significantly reduces the complexity of integrating with wallets,
  * even if one only needs to support a single protocol and network.
  */
-// TODO Rename to WalletConnectionManager?
+// TODO Rename to 'ConnectorController'?
 export class WithWalletConnector extends Component<Props, State> implements WalletConnectionDelegate {
     constructor(props: Props) {
         super(props);

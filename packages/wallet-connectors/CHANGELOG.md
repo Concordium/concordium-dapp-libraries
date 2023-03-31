@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+-   Adds support for signing arbitrary data with signMessage.
 -   Added exported constant `CONCORDIUM_WALLET_CONNECT_PROJECT_ID` that dApps may use when connecting to a Concordium mobile wallet.
 
 ### Changed

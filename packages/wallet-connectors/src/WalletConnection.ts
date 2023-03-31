@@ -7,6 +7,7 @@ import {
     SchemaVersion,
     UpdateContractPayload,
 } from '@concordium/web-sdk';
+import { SignMessageObject } from '@concordium/browser-wallet-api-helpers';
 
 // Copied from 'wallet-api-types.ts' in 'browser-wallet-api-helpers' as it isn't exported.
 type SendTransactionPayload =
@@ -103,7 +104,7 @@ export interface WalletConnection {
      * @param message The message to sign.
      * @return A promise for the signatures of the message.
      */
-    signMessage(accountAddress: string, message: string): Promise<AccountTransactionSignature>;
+    signMessage(accountAddress: string, message: string | SignMessageObject): Promise<AccountTransactionSignature>;
 
     /**
      * Close the connection and clean up relevant resources.

@@ -1,4 +1,4 @@
-import { detectConcordiumProvider, WalletApi } from '@concordium/browser-wallet-api-helpers';
+import { detectConcordiumProvider, WalletApi, SignMessageObject } from '@concordium/browser-wallet-api-helpers';
 import {
     AccountTransactionPayload,
     AccountTransactionSignature,
@@ -122,7 +122,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         return this.client.sendTransaction(accountAddress, type, payload);
     }
 
-    async signMessage(accountAddress: string, message: string): Promise<AccountTransactionSignature> {
+    async signMessage(accountAddress: string, message: string | SignMessageObject): Promise<AccountTransactionSignature> {
         return this.client.signMessage(accountAddress, message);
     }
 }

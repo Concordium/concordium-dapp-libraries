@@ -1,6 +1,7 @@
 import SignClient from '@walletconnect/sign-client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import { ISignClient, SessionTypes, SignClientTypes } from '@walletconnect/types';
+import { SignMessageObject } from '@concordium/browser-wallet-api-helpers';
 import {
     AccountTransactionPayload,
     AccountTransactionSignature,
@@ -234,7 +235,7 @@ export class WalletConnectConnection implements WalletConnection {
         }
     }
 
-    async signMessage(accountAddress: string, message: string) {
+    async signMessage(accountAddress: string, message: string | SignMessageObject) {
         const params = { message };
         const signature = await this.connector.client.request({
             topic: this.session.topic,

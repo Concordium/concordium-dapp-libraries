@@ -7,7 +7,7 @@ import {
     SchemaVersion,
     UpdateContractPayload,
 } from '@concordium/web-sdk';
-import { SignMessageObject } from '@concordium/browser-wallet-api-helpers';
+import { SignMessageObject, SmartContractParameters } from '@concordium/browser-wallet-api-helpers';
 
 // Copied from 'wallet-api-types.ts' in 'browser-wallet-api-helpers' as it isn't exported.
 type SendTransactionPayload =
@@ -70,7 +70,7 @@ export interface WalletConnection {
         accountAddress: string,
         type: AccountTransactionType.Update | AccountTransactionType.InitContract,
         payload: SendTransactionPayload,
-        parameters: Record<string, unknown>,
+        parameters: SmartContractParameters,
         schema: string,
         schemaVersion?: SchemaVersion
     ): Promise<string>;

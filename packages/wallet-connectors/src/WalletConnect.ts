@@ -1,7 +1,7 @@
 import SignClient from '@walletconnect/sign-client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import { ISignClient, SessionTypes, SignClientTypes } from '@walletconnect/types';
-import { SignMessageObject } from '@concordium/browser-wallet-api-helpers';
+import { SignMessageObject, SmartContractParameters } from '@concordium/browser-wallet-api-helpers';
 import {
     AccountTransactionPayload,
     AccountTransactionSignature,
@@ -85,7 +85,7 @@ function accountTransactionPayloadToJson(data: AccountTransactionPayload) {
 function encodePayloadParameters(
     type: AccountTransactionType,
     payload: AccountTransactionPayload,
-    parameters?: Record<string, unknown>,
+    parameters?: SmartContractParameters,
     schema?: string,
     schemaVersion?: SchemaVersion
 ) {
@@ -205,7 +205,7 @@ export class WalletConnectConnection implements WalletConnection {
         accountAddress: string,
         type: AccountTransactionType,
         payload: AccountTransactionPayload,
-        parameters?: Record<string, unknown>,
+        parameters?: SmartContractParameters,
         schema?: string,
         schemaVersion?: SchemaVersion
     ) {

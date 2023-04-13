@@ -1,18 +1,45 @@
-import {
-    AccountTransactionPayload,
-    AccountTransactionSignature,
-    AccountTransactionType,
-    InitContractPayload,
-    JsonRpcClient,
-    SchemaVersion,
-    UpdateContractPayload,
-} from '@concordium/web-sdk';
+import { AccountTransactionSignature, AccountTransactionType, JsonRpcClient, SchemaVersion } from '@concordium/web-sdk';
+import { SendTransactionPayload, SmartContractParameters } from '@concordium/browser-wallet-api-helpers';
 
-// Copied from 'wallet-api-types.ts' in 'browser-wallet-api-helpers' as it isn't exported.
-type SendTransactionPayload =
-    | Exclude<AccountTransactionPayload, UpdateContractPayload | InitContractPayload>
-    | Omit<UpdateContractPayload, 'message'>
-    | Omit<InitContractPayload, 'param'>;
+export type ModuleSchema = {
+    kind: 'module';
+    value: string;
+    version?: SchemaVersion;
+};
+export type ParameterSchema = {
+    kind: 'parameter';
+    value: string;
+};
+
+/**
+ * Discriminated union type for contract invocation schemas.
+ * Is used to select the correct method for encoding the invocation parameters using the schema.
+ */
+export type Schema = ModuleSchema | ParameterSchema;
+
+/**
+ * {@link Schema} constructor for a module schema.
+ * @param schema The raw module schema.
+ * @param version The schema spec version.
+ */
+export function moduleSchema(schema: string, version?: SchemaVersion): ModuleSchema {
+    return {
+        kind: 'module',
+        value: schema,
+        version: version,
+    };
+}
+
+/**
+ * {@link Schema} constructor for a parameter schema.
+ * @param schema The raw parameter schema.
+ */
+export function parameterSchema(schema: string): ParameterSchema {
+    return {
+        kind: 'parameter',
+        value: schema,
+    };
+}
 
 /**
  * Interface for interacting with a wallet backend through a connection that's already been established.
@@ -56,22 +83,23 @@ export interface WalletConnection {
      * The returned promise resolves to the hash of the transaction once the request is approved in the wallet and successfully submitted.
      * If this doesn't happen, the promise rejects with an explanatory error message.
      *
-     * The parameters of the contract invocation must be provided in the {@link parameters} field, *not* {@link payload}.
+     * Contract parameters must be provided in {@link parameters}, *not* {@link payload}.
+     * The {@link schema} parameter must be present if {@link parameters} is.
+     * Both these parameters must be omitted if the contract invocation doesn't take parameters.
+     *
      * @param accountAddress The account whose keys are used to sign the transaction.
      * @param type Type of the transaction (i.e. {@link AccountTransactionType.InitContract} or {@link AccountTransactionType.Update}.
      * @param payload The payload of the transaction *not* including the parameters of the contract invocation.
      * @param parameters The parameters of the contract invocation, given as a non-encoded, structured JavaScript object.
-     * @param schema Schema for the contract invocation parameters.
-     * @param schemaVersion Version of the provided schema.
+     * @param schema Schema for the contract invocation parameters. Must be provided if {@link parameters} is and omitted otherwise.
      * @return A promise for the hash of the submitted transaction.
      */
     signAndSendTransaction(
         accountAddress: string,
         type: AccountTransactionType.Update | AccountTransactionType.InitContract,
         payload: SendTransactionPayload,
-        parameters: Record<string, unknown>,
-        schema: string,
-        schemaVersion?: SchemaVersion
+        parameters: SmartContractParameters,
+        schema: Schema
     ): Promise<string>;
 
     /**
@@ -81,7 +109,6 @@ export interface WalletConnection {
      * The returned promise resolves to the hash of the transaction once the request is approved in the wallet and successfully submitted.
      * If this doesn't happen, the promise rejects with an explanatory error message.
      *
-     * The parameters of the contract invocation must be provided in the {@link parameters} field, *not* {@link payload}.
      * @param accountAddress The account whose keys are used to sign the transaction.
      * @param type Type of the transaction.
      * @param payload The payload of the transaction.

@@ -45,7 +45,7 @@ function MyAppComponent(props: WalletConnectionProps) {
 
 Use `props.setActiveConnectorType(...)` from within `MyAppComponent` to set up a connector,
 and make it available on `props.activeConnector`.
-This is most easily done using [`useWalletConnectorTypeStatus`](#usewalletconnectortypestatus).
+This is most easily done using [`useConnectorTypeStatus`](#useconnectortypestatus).
 
 Connector types for the Browser Wallet and WalletConnect connectors are usually initialized like so:
 
@@ -104,7 +104,7 @@ See [the sample dApp](../../samples/contractupdate/src/Root.tsx) for a complete 
 
 ## Hooks
 
-### [`useWalletConnectorTypeStatus`](./src/useWalletConnectorTypeStatus.ts)
+### [`useConnectorTypeStatus`](./src/useConnectorTypeStatus.ts)
 
 Helper hook for computing the selected/connected/disabled state of a given connector type.
 
@@ -114,7 +114,7 @@ The button accepts all the `props` exposed by `WithWalletConnector`
 as well as the particular `ConnectorType` that it manages:
 
 ```typescript jsx
-import { ConnectorType, useWalletConnectorTypeStatus, WalletConnectionProps } from '@concordium/react-components';
+import { ConnectorType, useConnectorTypeStatus, WalletConnectionProps } from '@concordium/react-components';
 
 interface Props extends WalletConnectionProps {
     connectorType: ConnectorType;
@@ -123,7 +123,7 @@ interface Props extends WalletConnectionProps {
 
 export function WalletConnectorButton(props: Props) {
     const { connectorType, connectorName, connection, activeConnectorType, activeConnector, setActiveConnectorType } = props;
-    const { isActive, isConnected, isOtherConnected } = useWalletConnectorTypeStatus(
+    const { isActive, isConnected, isOtherConnected } = useConnectorTypeStatus(
         connectorType,
         connection,
         activeConnectorType,

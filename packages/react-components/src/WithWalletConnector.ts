@@ -5,7 +5,7 @@ import { errorString } from './error';
 /**
  * Activation/deactivation controller of a given connector type.
  */
-// TODO Rename to 'ConnectorActivator' (and same with constructor funcs).
+// TODO Rename to 'WalletConnectorActivator' (and same with constructor funcs).
 export interface ConnectorType {
     /**
      * Called when the connection type is being activated.

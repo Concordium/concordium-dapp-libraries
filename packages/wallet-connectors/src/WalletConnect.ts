@@ -73,7 +73,7 @@ function accountTransactionPayloadToJson(data: AccountTransactionPayload) {
     });
 }
 
-function encodeInitContractParam(
+function serializeInitContractParam(
     initName: string,
     parameters: SmartContractParameters | undefined,
     schema: Schema | undefined
@@ -90,15 +90,15 @@ function encodeInitContractParam(
     }
     switch (schema.kind) {
         case 'module':
-            return serializeInitContractParameters(initName, parameters, encodeSchema(schema.value), schema.version);
+            return serializeInitContractParameters(initName, parameters, schemaAsBuffer(schema.value), schema.version);
         case 'parameter':
-            return serializeTypeValue(parameters, encodeSchema(schema.value));
+            return serializeTypeValue(parameters, schemaAsBuffer(schema.value));
         default:
             throw new UnreachableCaseError('schema', schema);
     }
 }
 
-function encodeUpdateContractMessage(
+function serializeUpdateContractMessage(
     contractName: string,
     receiveName: string,
     parameters: SmartContractParameters | undefined,
@@ -120,17 +120,17 @@ function encodeUpdateContractMessage(
                 contractName,
                 receiveName,
                 parameters,
-                encodeSchema(schema.value),
+                schemaAsBuffer(schema.value),
                 schema.version
             );
         case 'parameter':
-            return serializeTypeValue(parameters, encodeSchema(schema.value));
+            return serializeTypeValue(parameters, schemaAsBuffer(schema.value));
         default:
             throw new UnreachableCaseError('schema', schema);
     }
 }
 
-function encodeSchema(schema: string) {
+function schemaAsBuffer(schema: string) {
     return toBuffer(schema, 'base64');
 }
 
@@ -156,7 +156,7 @@ function encodePayloadParameters(
             }
             return {
                 ...payload,
-                param: encodeInitContractParam(initContractPayload.initName, parameters, schema),
+                param: serializeInitContractParam(initContractPayload.initName, parameters, schema),
             };
         }
         case AccountTransactionType.Update: {
@@ -167,7 +167,7 @@ function encodePayloadParameters(
             const [contractName, receiveName] = updateContractPayload.receiveName.split('.');
             return {
                 ...payload,
-                message: encodeUpdateContractMessage(contractName, receiveName, parameters, schema),
+                message: serializeUpdateContractMessage(contractName, receiveName, parameters, schema),
             };
         }
         default: {

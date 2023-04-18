@@ -135,14 +135,14 @@ function schemaAsBuffer(schema: string) {
 }
 
 /**
- * Encode parameters into appropriate payload field ('payload.param' for 'InitContract' and 'payload.message' for 'Update').
+ * Serialize parameters into appropriate payload field ('payload.param' for 'InitContract' and 'payload.message' for 'Update').
  * This payload field must be not already set as that would indicate that the caller thought that was the right way to pass them.
  * @param type Type identifier of the transaction.
  * @param payload Payload of the transaction. Must not include the fields 'param' and 'message' for transaction types 'InitContract' and 'Update', respectively.
  * @param parameters Contract invocation parameters. May be provided optionally provided for transactions of type 'InitContract' or 'Update'.
  * @param schema Schema for the contract invocation parameters. Must be provided if {@link parameters} is and omitted otherwise.
  */
-function encodePayloadParameters(
+function serializePayloadParameters(
     type: AccountTransactionType,
     payload: AccountTransactionPayload,
     parameters: SmartContractParameters | undefined,
@@ -244,7 +244,7 @@ export class WalletConnectConnection implements WalletConnection {
         const params = {
             type: AccountTransactionType[type],
             sender: accountAddress,
-            payload: accountTransactionPayloadToJson(encodePayloadParameters(type, payload, parameters, schema)),
+            payload: accountTransactionPayloadToJson(serializePayloadParameters(type, payload, parameters, schema)),
             schema,
         };
         try {

@@ -1,38 +1,37 @@
 import { err, ok, Result, ResultAsync } from 'neverthrow';
 import { Buffer } from 'buffer/';
-import { WalletConnection, withJsonRpcClient } from '@concordium/react-components';
-import { Info } from '@concordium/react-components';
+import { Info, moduleSchema, Schema, WalletConnection, withJsonRpcClient } from '@concordium/react-components';
 import { useEffect, useState } from 'react';
 import { errorString } from './util';
 import { ModuleReference } from '@concordium/web-sdk';
 
 export interface SchemaRpcResult {
     sectionName: string;
-    schema: string;
+    schema: Schema;
 }
 
-function findCustomSection(m: WebAssembly.Module) {
-    function getCustomSection(name: string): [string, ArrayBuffer[]] | undefined {
-        const s = WebAssembly.Module.customSections(m, name);
-        return s.length === 0 ? undefined : [name, s];
+function findCustomSections(m: WebAssembly.Module) {
+    function getCustomSections(sectionName: string, schemaVersion: number) {
+        const s = WebAssembly.Module.customSections(m, sectionName);
+        return s.length === 0 ? undefined : { sectionName, schemaVersion, contents: s };
     }
     return (
-        getCustomSection('concordium-schema-v1') ||
-        getCustomSection('concordium-schema-v2') ||
-        getCustomSection('concordium-schema')
+        getCustomSections('concordium-schema-v1', 1) ||
+        getCustomSections('concordium-schema-v2', 2) ||
+        getCustomSections('concordium-schema', 0)
     );
 }
 
 function findSchema(m: WebAssembly.Module): Result<SchemaRpcResult | undefined, string> {
-    const section = findCustomSection(m);
-    if (!section) {
+    const sections = findCustomSections(m);
+    if (!sections) {
         return ok(undefined);
     }
-    const [name, schema] = section;
-    if (schema.length !== 1) {
-        return err(`unexpected size of custom section "${name}"`);
+    const { sectionName, schemaVersion, contents } = sections;
+    if (contents.length !== 1) {
+        return err(`unexpected size of custom section "${sectionName}"`);
     }
-    return ok({ sectionName: name, schema: Buffer.from(schema[0]).toString('base64') });
+    return ok({ sectionName, schema: moduleSchema(Buffer.from(contents[0]).toString('base64'), schemaVersion) });
 }
 
 export function useContractSchemaRpc(connection: WalletConnection, contract: Info) {

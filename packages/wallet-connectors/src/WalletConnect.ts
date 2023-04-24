@@ -136,7 +136,12 @@ function serializeUpdateContractMessage(
 }
 
 function schemaAsBuffer(schemaBase64: string) {
-    return toBuffer(schemaBase64, 'base64');
+    const res = toBuffer(schemaBase64, 'base64');
+    // Check round-trip. This requires the provided schema to be properly padded.
+    if (res.toString('base64') !== schemaBase64) {
+        throw new Error(`provided schema '${schemaBase64}' is not valid base64`);
+    }
+    return res;
 }
 
 /**

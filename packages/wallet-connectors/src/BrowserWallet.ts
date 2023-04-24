@@ -116,7 +116,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
             if (!schema) {
                 throw new Error(`'schema' must be provided when 'parameters' is present`);
             }
-            switch (schema.kind) {
+            switch (schema.type) {
                 case 'module':
                     return this.client.sendTransaction(
                         accountAddress,
@@ -125,14 +125,14 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
                         parameters,
                         {
                             type: SchemaType.Module,
-                            value: schema.value,
+                            value: schema.valueBase64,
                         },
                         schema.version
                     );
                 case 'parameter':
                     return this.client.sendTransaction(accountAddress, type, payload, parameters, {
                         type: SchemaType.Parameter,
-                        value: schema.value,
+                        value: schema.valueBase64,
                     });
                 default:
                     throw new UnreachableCaseError('schema', schema);

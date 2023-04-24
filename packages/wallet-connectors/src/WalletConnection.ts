@@ -2,13 +2,13 @@ import { AccountTransactionSignature, AccountTransactionType, JsonRpcClient, Sch
 import { SendTransactionPayload, SmartContractParameters } from '@concordium/browser-wallet-api-helpers';
 
 export type ModuleSchema = {
-    kind: 'module';
-    value: string;
+    type: 'module';
+    valueBase64: string;
     version?: SchemaVersion;
 };
 export type ParameterSchema = {
-    kind: 'parameter';
-    value: string;
+    type: 'parameter';
+    valueBase64: string;
 };
 
 /**
@@ -19,25 +19,25 @@ export type Schema = ModuleSchema | ParameterSchema;
 
 /**
  * {@link Schema} constructor for a module schema.
- * @param schema The raw module schema.
+ * @param schemaBase64 The raw module schema in base64 encoding.
  * @param version The schema spec version.
  */
-export function moduleSchema(schema: string, version?: SchemaVersion): ModuleSchema {
+export function moduleSchema(schemaBase64: string, version?: SchemaVersion): ModuleSchema {
     return {
-        kind: 'module',
-        value: schema,
+        type: 'module',
+        valueBase64: schemaBase64,
         version: version,
     };
 }
 
 /**
  * {@link Schema} constructor for a parameter schema.
- * @param schema The raw parameter schema.
+ * @param schemaBase64 The raw parameter schema in base64 encoding.
  */
-export function parameterSchema(schema: string): ParameterSchema {
+export function parameterSchema(schemaBase64: string): ParameterSchema {
     return {
-        kind: 'parameter',
-        value: schema,
+        type: 'parameter',
+        valueBase64: schemaBase64,
     };
 }
 

@@ -88,11 +88,16 @@ function serializeInitContractParam(
     if (!schema) {
         throw new Error(`schema not provided when 'parameters' is present`);
     }
-    switch (schema.kind) {
+    switch (schema.type) {
         case 'module':
-            return serializeInitContractParameters(initName, parameters, schemaAsBuffer(schema.value), schema.version);
+            return serializeInitContractParameters(
+                initName,
+                parameters,
+                schemaAsBuffer(schema.valueBase64),
+                schema.version
+            );
         case 'parameter':
-            return serializeTypeValue(parameters, schemaAsBuffer(schema.value));
+            return serializeTypeValue(parameters, schemaAsBuffer(schema.valueBase64));
         default:
             throw new UnreachableCaseError('schema', schema);
     }
@@ -100,7 +105,7 @@ function serializeInitContractParam(
 
 function serializeUpdateContractMessage(
     contractName: string,
-    receiveName: string,
+    entrypointName: string,
     parameters: SmartContractParameters | undefined,
     schema: Schema | undefined
 ) {
@@ -114,24 +119,24 @@ function serializeUpdateContractMessage(
     if (!schema) {
         throw new Error(`schema not provided when 'parameters' is present`);
     }
-    switch (schema.kind) {
+    switch (schema.type) {
         case 'module':
             return serializeUpdateContractParameters(
                 contractName,
-                receiveName,
+                entrypointName,
                 parameters,
-                schemaAsBuffer(schema.value),
+                schemaAsBuffer(schema.valueBase64),
                 schema.version
             );
         case 'parameter':
-            return serializeTypeValue(parameters, schemaAsBuffer(schema.value));
+            return serializeTypeValue(parameters, schemaAsBuffer(schema.valueBase64));
         default:
             throw new UnreachableCaseError('schema', schema);
     }
 }
 
-function schemaAsBuffer(schema: string) {
-    return toBuffer(schema, 'base64');
+function schemaAsBuffer(schemaBase64: string) {
+    return toBuffer(schemaBase64, 'base64');
 }
 
 /**
@@ -164,10 +169,10 @@ function serializePayloadParameters(
             if (updateContractPayload.message) {
                 throw new Error(`'message' field of 'Update' parameters must be empty`);
             }
-            const [contractName, receiveName] = updateContractPayload.receiveName.split('.');
+            const [contractName, entrypointName] = updateContractPayload.receiveName.split('.');
             return {
                 ...payload,
-                message: serializeUpdateContractMessage(contractName, receiveName, parameters, schema),
+                message: serializeUpdateContractMessage(contractName, entrypointName, parameters, schema),
             };
         }
         default: {

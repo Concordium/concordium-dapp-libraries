@@ -42,11 +42,11 @@ export function useContractSchemaRpc(connection: WalletConnection, contract: Inf
             errorString
         )
             .andThen((r) => {
-                if (!r || r.length < 12) {
+                if (!r) {
                     return err('module source is empty');
                 }
                 if (r.length < 12) {
-                    return err('module source is too short');
+                    return err(`module source ${r.length} bytes which is less than the header size (12 bytes)`);
                 }
                 return ResultAsync.fromPromise(WebAssembly.compile(r.slice(12)), errorString);
             })

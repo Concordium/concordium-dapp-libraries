@@ -90,14 +90,9 @@ function serializeInitContractParam(
     }
     switch (schema.type) {
         case 'module':
-            return serializeInitContractParameters(
-                initName,
-                parameters,
-                schemaAsBuffer(schema.valueBase64),
-                schema.version
-            );
+            return serializeInitContractParameters(initName, parameters, schema.value, schema.version);
         case 'parameter':
-            return serializeTypeValue(parameters, schemaAsBuffer(schema.valueBase64));
+            return serializeTypeValue(parameters, schema.value);
         default:
             throw new UnreachableCaseError('schema', schema);
     }
@@ -125,23 +120,14 @@ function serializeUpdateContractMessage(
                 contractName,
                 entrypointName,
                 parameters,
-                schemaAsBuffer(schema.valueBase64),
+                schema.value,
                 schema.version
             );
         case 'parameter':
-            return serializeTypeValue(parameters, schemaAsBuffer(schema.valueBase64));
+            return serializeTypeValue(parameters, schema.value);
         default:
             throw new UnreachableCaseError('schema', schema);
     }
-}
-
-function schemaAsBuffer(schemaBase64: string) {
-    const res = toBuffer(schemaBase64, 'base64');
-    // Check round-trip. This requires the provided schema to be properly padded.
-    if (res.toString('base64') !== schemaBase64) {
-        throw new Error(`provided schema '${schemaBase64}' is not valid base64`);
-    }
-    return res;
 }
 
 /**

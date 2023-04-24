@@ -5506,7 +5506,6 @@ __metadata:
     "@types/react-dom": ^18.0.0
     bootstrap: ^5.2.3
     buffer: ^6.0.3
-    is-base64: ^1.1.0
     neverthrow: ^6.0.0
     prettier: 2.8.1
     react: ^18.2.0
@@ -8341,16 +8340,6 @@ __metadata:
   version: 0.2.1
   resolution: "is-arrayish@npm:0.2.1"
   checksum: eef4417e3c10e60e2c810b6084942b3ead455af16c4509959a27e490e7aee87cfb3f38e01bbde92220b528a0ee1a18d52b787e1458ee86174d8c7f0e58cd488f
-  languageName: node
-  linkType: hard
-
-"is-base64@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "is-base64@npm:1.1.0"
-  bin:
-    is-base64: bin/is-base64
-    is_base64: bin/is-base64
-  checksum: 5935d054d04895cd617c20853b3cb6516db8c3852a2697ebcbda0d4889c9eb841ca0610c99108f83d4342b378fdd9d0f222227ec25f18528227479749d1833ac
   languageName: node
   linkType: hard
 

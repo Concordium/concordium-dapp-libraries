@@ -125,14 +125,14 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
                         parameters,
                         {
                             type: SchemaType.Module,
-                            value: schema.valueBase64,
+                            value: schema.value.toString('base64'),
                         },
                         schema.version
                     );
                 case 'parameter':
                     return this.client.sendTransaction(accountAddress, type, payload, parameters, {
                         type: SchemaType.Parameter,
-                        value: schema.valueBase64,
+                        value: schema.value.toString('base64'),
                     });
                 default:
                     throw new UnreachableCaseError('schema', schema);

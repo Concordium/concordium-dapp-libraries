@@ -1,14 +1,21 @@
-import { AccountTransactionSignature, AccountTransactionType, JsonRpcClient, SchemaVersion } from '@concordium/web-sdk';
+import {
+    AccountTransactionSignature,
+    AccountTransactionType,
+    JsonRpcClient,
+    SchemaVersion,
+    toBuffer,
+} from '@concordium/web-sdk';
+import { Buffer } from 'buffer/';
 import { SendTransactionPayload, SmartContractParameters } from '@concordium/browser-wallet-api-helpers';
 
 export type ModuleSchema = {
     type: 'module';
-    valueBase64: string;
+    value: Buffer;
     version?: SchemaVersion;
 };
 export type ParameterSchema = {
     type: 'parameter';
-    valueBase64: string;
+    value: Buffer;
 };
 
 /**
@@ -21,11 +28,12 @@ export type Schema = ModuleSchema | ParameterSchema;
  * {@link Schema} constructor for a module schema.
  * @param schemaBase64 The raw module schema in base64 encoding.
  * @param version The schema spec version.
+ * @throws Error if {@link schemaBase64} is not valid base64.
  */
 export function moduleSchema(schemaBase64: string, version?: SchemaVersion): ModuleSchema {
     return {
         type: 'module',
-        valueBase64: schemaBase64,
+        value: schemaAsBuffer(schemaBase64),
         version: version,
     };
 }
@@ -33,12 +41,22 @@ export function moduleSchema(schemaBase64: string, version?: SchemaVersion): Mod
 /**
  * {@link Schema} constructor for a parameter schema.
  * @param schemaBase64 The raw parameter schema in base64 encoding.
+ * @throws Error if {@link schemaBase64} is not valid base64.
  */
 export function parameterSchema(schemaBase64: string): ParameterSchema {
     return {
         type: 'parameter',
-        valueBase64: schemaBase64,
+        value: schemaAsBuffer(schemaBase64),
     };
+}
+
+function schemaAsBuffer(schemaBase64: string) {
+    const res = toBuffer(schemaBase64, 'base64');
+    // Check round-trip. This requires the provided schema to be properly padded.
+    if (res.toString('base64') !== schemaBase64) {
+        throw new Error(`provided schema '${schemaBase64}' is not valid base64`);
+    }
+    return res;
 }
 
 /**

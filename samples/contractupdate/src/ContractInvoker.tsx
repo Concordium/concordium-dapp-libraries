@@ -1,5 +1,4 @@
 import { Info, moduleSchema, Network, parameterSchema, Schema, WalletConnection } from '@concordium/react-components';
-import isBase64 from 'is-base64';
 import React, { ChangeEvent, Dispatch, useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Col, Dropdown, DropdownButton, Form, InputGroup, Row } from 'react-bootstrap';
 import { AccountAddress, AccountTransactionType, CcdAmount, SchemaVersion } from '@concordium/web-sdk';
@@ -105,9 +104,11 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
     const schemaResult = useMemo(() => {
         let input = schemaInput.trim();
         if (input) {
-            return isBase64(input)
-                ? ok({ fromRpc: false, schema: schemaOfType(schemaTypeInput, schemaInput) })
-                : err('schema must be valid base64');
+            try {
+                return ok({ fromRpc: false, schema: schemaOfType(schemaTypeInput, schemaInput) });
+            } catch (e) {
+                return err('Schema is not valid base64.');
+            }
         }
         return (
             schemaRpcResult?.map((r) => ({ fromRpc: true, schema: r?.schema })) ||
@@ -194,7 +195,7 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
                                 )}
                                 isInvalid={schemaResult.isErr()}
                                 placeholder={schemaRpcResult?.match(
-                                    (v) => v && v.schema.valueBase64,
+                                    (v) => v && v.schema.value.toString('base64'),
                                     () => undefined
                                 )}
                             />

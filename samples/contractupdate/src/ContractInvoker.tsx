@@ -1,4 +1,11 @@
-import { Info, moduleSchema, Network, parameterSchema, Schema, WalletConnection } from '@concordium/react-components';
+import {
+    Info,
+    moduleSchemaFromBase64,
+    Network,
+    parameterSchemaFromBase64,
+    Schema,
+    WalletConnection,
+} from '@concordium/react-components';
 import React, { ChangeEvent, Dispatch, useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Col, Dropdown, DropdownButton, Form, InputGroup, Row } from 'react-bootstrap';
 import { AccountAddress, AccountTransactionType, CcdAmount, SchemaVersion } from '@concordium/web-sdk';
@@ -19,10 +26,11 @@ interface ContractInvokerProps {
 }
 
 enum SchemaType {
-    ModuleV0 = 'Module (v0)',
-    ModuleV1 = 'Module (v1)',
-    ModuleV2 = 'Module (v2)',
     Parameter = 'Parameter',
+    Module = 'Module (auto)',
+    ModuleV2 = 'Module (v2)',
+    ModuleV1 = 'Module (v1)',
+    ModuleV0 = 'Module (v0)',
 }
 
 function schemaTypeFromSchema(schemaFromRpc: Schema | undefined, inputSchemaType: SchemaType) {
@@ -32,6 +40,8 @@ function schemaTypeFromSchema(schemaFromRpc: Schema | undefined, inputSchemaType
     switch (schemaFromRpc.type) {
         case 'module':
             switch (schemaFromRpc.version) {
+                case undefined:
+                    return SchemaType.Module;
                 case SchemaVersion.V0:
                     return SchemaType.ModuleV0;
                 case SchemaVersion.V1:
@@ -51,14 +61,18 @@ const DEFAULT_SCHEMA = schemaOfType(DEFAULT_SCHEMA_TYPE, '');
 
 function schemaOfType(type: SchemaType, schemaBase64: string): Schema {
     switch (type) {
+        case SchemaType.Module:
+            return moduleSchemaFromBase64(schemaBase64);
         case SchemaType.ModuleV0:
-            return moduleSchema(schemaBase64, SchemaVersion.V0);
+            return moduleSchemaFromBase64(schemaBase64, SchemaVersion.V0);
         case SchemaType.ModuleV1:
-            return moduleSchema(schemaBase64, SchemaVersion.V1);
+            return moduleSchemaFromBase64(schemaBase64, SchemaVersion.V1);
         case SchemaType.ModuleV2:
-            return moduleSchema(schemaBase64, SchemaVersion.V2);
+            return moduleSchemaFromBase64(schemaBase64, SchemaVersion.V2);
         case SchemaType.Parameter:
-            return parameterSchema(schemaBase64);
+            return parameterSchemaFromBase64(schemaBase64);
+        default:
+            throw new Error(`unsupported schema type "${type}"`);
     }
 }
 
@@ -107,7 +121,7 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
             try {
                 return ok({ fromRpc: false, schema: schemaOfType(schemaTypeInput, schemaInput) });
             } catch (e) {
-                return err('Schema is not valid base64.');
+                return err('schema is not valid base64');
             }
         }
         return (
@@ -212,6 +226,12 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
                                     () => false
                                 )}
                             >
+                                <Dropdown.Item onClick={() => setSchemaTypeInput(SchemaType.Parameter)}>
+                                    Parameter schema
+                                </Dropdown.Item>
+                                <Dropdown.Item onClick={() => setSchemaTypeInput(SchemaType.Module)}>
+                                    Module schema (auto)
+                                </Dropdown.Item>
                                 <Dropdown.Item onClick={() => setSchemaTypeInput(SchemaType.ModuleV2)}>
                                     Module schema (v2)
                                 </Dropdown.Item>
@@ -220,9 +240,6 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
                                 </Dropdown.Item>
                                 <Dropdown.Item onClick={() => setSchemaTypeInput(SchemaType.ModuleV0)}>
                                     Module schema (v0)
-                                </Dropdown.Item>
-                                <Dropdown.Item onClick={() => setSchemaTypeInput(SchemaType.Parameter)}>
-                                    Parameter schema
                                 </Dropdown.Item>
                             </DropdownButton>
                             {schemaResult.match(

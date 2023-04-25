@@ -1,9 +1,9 @@
 import { err, ok, Result, ResultAsync } from 'neverthrow';
 import { Buffer } from 'buffer/';
-import { Info, moduleSchema, Schema, WalletConnection, withJsonRpcClient } from '@concordium/react-components';
+import { Info, moduleSchemaUnchecked, Schema, WalletConnection, withJsonRpcClient } from '@concordium/react-components';
 import { useEffect, useState } from 'react';
 import { errorString } from './util';
-import { ModuleReference } from '@concordium/web-sdk';
+import { ModuleReference, SchemaVersion } from '@concordium/web-sdk';
 
 export interface SchemaRpcResult {
     sectionName: string;
@@ -11,14 +11,15 @@ export interface SchemaRpcResult {
 }
 
 function findCustomSections(m: WebAssembly.Module) {
-    function getCustomSections(sectionName: string, schemaVersion: number) {
+    function getCustomSections(sectionName: string, schemaVersion: SchemaVersion | undefined) {
         const s = WebAssembly.Module.customSections(m, sectionName);
         return s.length === 0 ? undefined : { sectionName, schemaVersion, contents: s };
     }
+    // First look for embedded version, then v1, then v0. The "v"s being off by 1 is not an error.
     return (
-        getCustomSections('concordium-schema-v1', 1) ||
-        getCustomSections('concordium-schema-v2', 2) ||
-        getCustomSections('concordium-schema', 0)
+        getCustomSections('concordium-schema', undefined) ||
+        getCustomSections('concordium-schema-v2', SchemaVersion.V1) ||
+        getCustomSections('concordium-schema-v1', SchemaVersion.V0)
     );
 }
 
@@ -31,7 +32,7 @@ function findSchema(m: WebAssembly.Module): Result<SchemaRpcResult | undefined, 
     if (contents.length !== 1) {
         return err(`unexpected size of custom section "${sectionName}"`);
     }
-    return ok({ sectionName, schema: moduleSchema(Buffer.from(contents[0]).toString('base64'), schemaVersion) });
+    return ok({ sectionName, schema: moduleSchemaUnchecked(Buffer.from(contents[0]), schemaVersion) });
 }
 
 export function useContractSchemaRpc(connection: WalletConnection, contract: Info) {
@@ -46,7 +47,7 @@ export function useContractSchemaRpc(connection: WalletConnection, contract: Inf
                     return err('module source is empty');
                 }
                 if (r.length < 12) {
-                    return err(`module source ${r.length} bytes which is less than the header size (12 bytes)`);
+                    return err(`module source is ${r.length} bytes which is not enough to fit a 12-byte header`);
                 }
                 return ResultAsync.fromPromise(WebAssembly.compile(r.slice(12)), errorString);
             })

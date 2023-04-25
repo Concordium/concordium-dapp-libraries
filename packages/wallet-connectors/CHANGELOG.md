@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 -   `WalletConnection` (breaking): Support both module and parameter schemas in `signAndSendTransaction`.
-    To migrate existing usage, wrap the schema string in the new function `moduleSchema(...)`.
+    To migrate existing usage, wrap the schema string in the new function `moduleSchemaFromBase64(...)`.
 
 ## [0.2.3] - 2023-04-03
 

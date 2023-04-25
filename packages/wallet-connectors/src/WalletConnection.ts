@@ -27,13 +27,22 @@ export type Schema = ModuleSchema | ParameterSchema;
 /**
  * {@link Schema} constructor for a module schema.
  * @param schemaBase64 The raw module schema in base64 encoding.
- * @param version The schema spec version.
+ * @param version The schema spec version. Omit if the version is embedded into the schema.
  * @throws Error if {@link schemaBase64} is not valid base64.
  */
-export function moduleSchema(schemaBase64: string, version?: SchemaVersion): ModuleSchema {
+export function moduleSchemaFromBase64(schemaBase64: string, version?: SchemaVersion): ModuleSchema {
+    return moduleSchemaUnchecked(schemaAsBuffer(schemaBase64), version);
+}
+
+/**
+ * {@link Schema} constructor for a module schema.
+ * @param schema The raw module schema in binary.
+ * @param version The schema spec version. Omit if the version is embedded into the schema.
+ */
+export function moduleSchemaUnchecked(schema: Buffer, version?: SchemaVersion): ModuleSchema {
     return {
         type: 'module',
-        value: schemaAsBuffer(schemaBase64),
+        value: schema,
         version: version,
     };
 }
@@ -43,10 +52,18 @@ export function moduleSchema(schemaBase64: string, version?: SchemaVersion): Mod
  * @param schemaBase64 The raw parameter schema in base64 encoding.
  * @throws Error if {@link schemaBase64} is not valid base64.
  */
-export function parameterSchema(schemaBase64: string): ParameterSchema {
+export function parameterSchemaFromBase64(schemaBase64: string): ParameterSchema {
+    return parameterSchemaUnchecked(schemaAsBuffer(schemaBase64));
+}
+
+/**
+ * {@link Schema} constructor for a parameter schema.
+ * @param schema The raw parameter schema in binary.
+ */
+export function parameterSchemaUnchecked(schema: Buffer): ParameterSchema {
     return {
         type: 'parameter',
-        value: schemaAsBuffer(schemaBase64),
+        value: schema,
     };
 }
 

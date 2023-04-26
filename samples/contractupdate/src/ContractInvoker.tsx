@@ -221,7 +221,7 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
                                     schemaTypeInput
                                 )}
                                 disabled={schemaResult.match(
-                                    ({ fromRpc }) => fromRpc,
+                                    ({ fromRpc, schema }) => fromRpc && Boolean(schema),
                                     () => false
                                 )}
                             >

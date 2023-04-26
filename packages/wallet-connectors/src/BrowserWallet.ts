@@ -1,11 +1,15 @@
 import {
     detectConcordiumProvider,
     WalletApi,
-    SmartContractParameters,
     SchemaType,
 } from '@concordium/browser-wallet-api-helpers';
 import { AccountTransactionPayload, AccountTransactionSignature, AccountTransactionType } from '@concordium/web-sdk';
-import { WalletConnectionDelegate, WalletConnection, WalletConnector, Schema } from './WalletConnection';
+import {
+    WalletConnectionDelegate,
+    WalletConnection,
+    WalletConnector,
+    TypedSmartContractParameters,
+} from './WalletConnection';
 import { UnreachableCaseError } from './error';
 
 const BROWSER_WALLET_DETECT_TIMEOUT = 2000;
@@ -109,15 +113,12 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         accountAddress: string,
         type: AccountTransactionType,
         payload: AccountTransactionPayload,
-        parameters?: SmartContractParameters,
-        schema?: Schema
+        typedParams?: TypedSmartContractParameters,
     ): Promise<string> {
-        if ((type === AccountTransactionType.InitContract || type === AccountTransactionType.Update) && parameters) {
-            if (!schema) {
-                throw new Error(`'schema' must be provided when 'parameters' is present`);
-            }
+        if ((type === AccountTransactionType.InitContract || type === AccountTransactionType.Update) && typedParams) {
+            const {parameters, schema } = typedParams;
             switch (schema.type) {
-                case 'module':
+                case 'ModuleSchema':
                     return this.client.sendTransaction(
                         accountAddress,
                         type,
@@ -129,7 +130,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
                         },
                         schema.version
                     );
-                case 'parameter':
+                case 'ParameterSchema':
                     return this.client.sendTransaction(accountAddress, type, payload, parameters, {
                         type: SchemaType.Parameter,
                         value: schema.value.toString('base64'),
@@ -138,11 +139,8 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
                     throw new UnreachableCaseError('schema', schema);
             }
         }
-        if (parameters) {
-            throw new Error(`'parameters' must not be provided for transaction of type '${type}'`);
-        }
-        if (schema) {
-            throw new Error(`'schema' must not be provided for transaction of type '${type}'`);
+        if (typedParams) {
+            throw new Error(`'typedParams' must not be provided for transaction of type '${type}'`);
         }
         return this.client.sendTransaction(accountAddress, type, payload);
     }

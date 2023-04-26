@@ -9,12 +9,12 @@ import { Buffer } from 'buffer/';
 import { SendTransactionPayload, SmartContractParameters } from '@concordium/browser-wallet-api-helpers';
 
 export type ModuleSchema = {
-    type: 'module';
+    type: 'ModuleSchema';
     value: Buffer;
     version?: SchemaVersion;
 };
 export type ParameterSchema = {
-    type: 'parameter';
+    type: 'ParameterSchema';
     value: Buffer;
 };
 
@@ -31,7 +31,7 @@ export type Schema = ModuleSchema | ParameterSchema;
  * @throws Error if {@link schemaBase64} is not valid base64.
  */
 export function moduleSchemaFromBase64(schemaBase64: string, version?: SchemaVersion): ModuleSchema {
-    return moduleSchemaUnchecked(schemaAsBuffer(schemaBase64), version);
+    return moduleSchema(schemaAsBuffer(schemaBase64), version);
 }
 
 /**
@@ -39,9 +39,9 @@ export function moduleSchemaFromBase64(schemaBase64: string, version?: SchemaVer
  * @param schema The raw module schema in binary.
  * @param version The schema spec version. Omit if the version is embedded into the schema.
  */
-export function moduleSchemaUnchecked(schema: Buffer, version?: SchemaVersion): ModuleSchema {
+export function moduleSchema(schema: Buffer, version?: SchemaVersion): ModuleSchema {
     return {
-        type: 'module',
+        type: 'ModuleSchema',
         value: schema,
         version: version,
     };
@@ -53,18 +53,27 @@ export function moduleSchemaUnchecked(schema: Buffer, version?: SchemaVersion): 
  * @throws Error if {@link schemaBase64} is not valid base64.
  */
 export function parameterSchemaFromBase64(schemaBase64: string): ParameterSchema {
-    return parameterSchemaUnchecked(schemaAsBuffer(schemaBase64));
+    return parameterSchema(schemaAsBuffer(schemaBase64));
 }
 
 /**
  * {@link Schema} constructor for a parameter schema.
  * @param schema The raw parameter schema in binary.
  */
-export function parameterSchemaUnchecked(schema: Buffer): ParameterSchema {
+export function parameterSchema(schema: Buffer): ParameterSchema {
     return {
-        type: 'parameter',
+        type: 'ParameterSchema',
         value: schema,
     };
+}
+
+/**
+ * Convenience function for creating
+ * @param parameters
+ * @param schema
+ */
+export function typedParams(parameters: SmartContractParameters, schema: Schema): TypedSmartContractParameters {
+    return { parameters, schema };
 }
 
 function schemaAsBuffer(schemaBase64: string) {
@@ -74,6 +83,11 @@ function schemaAsBuffer(schemaBase64: string) {
         throw new Error(`provided schema '${schemaBase64}' is not valid base64`);
     }
     return res;
+}
+
+export type TypedSmartContractParameters = {
+    parameters: SmartContractParameters,
+    schema: Schema
 }
 
 /**
@@ -125,16 +139,14 @@ export interface WalletConnection {
      * @param accountAddress The account whose keys are used to sign the transaction.
      * @param type Type of the transaction (i.e. {@link AccountTransactionType.InitContract} or {@link AccountTransactionType.Update}.
      * @param payload The payload of the transaction *not* including the parameters of the contract invocation.
-     * @param parameters The parameters of the contract invocation, given as a non-encoded, structured JavaScript object.
-     * @param schema Schema for the contract invocation parameters. Must be provided if {@link parameters} is and omitted otherwise.
+     * @param typedParams The parameters of the contract invocation and a schema describing how to serialize them. The parameters must be given as a plain JavaScript object.
      * @return A promise for the hash of the submitted transaction.
      */
     signAndSendTransaction(
         accountAddress: string,
         type: AccountTransactionType.Update | AccountTransactionType.InitContract,
         payload: SendTransactionPayload,
-        parameters: SmartContractParameters,
-        schema: Schema
+        typedParams: TypedSmartContractParameters,
     ): Promise<string>;
 
     /**

@@ -3,7 +3,7 @@ import {
     moduleSchemaFromBase64,
     Network,
     parameterSchemaFromBase64,
-    Schema,
+    Schema, typedParams,
     WalletConnection,
 } from '@concordium/react-components';
 import React, { ChangeEvent, Dispatch, useCallback, useEffect, useMemo, useState } from 'react';
@@ -38,7 +38,7 @@ function schemaTypeFromSchema(schemaFromRpc: Schema | undefined, inputSchemaType
         return inputSchemaType;
     }
     switch (schemaFromRpc.type) {
-        case 'module':
+        case 'ModuleSchema':
             switch (schemaFromRpc.version) {
                 case undefined:
                     return SchemaType.Module;
@@ -51,7 +51,7 @@ function schemaTypeFromSchema(schemaFromRpc: Schema | undefined, inputSchemaType
                 default:
                     throw new Error(`unexpected schema version "${schemaFromRpc.version}"`);
             }
-        case 'parameter':
+        case 'ParameterSchema':
             return SchemaType.Parameter;
     }
 }
@@ -158,8 +158,7 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
                                 receiveName: contract.methods[selectedMethodIndex],
                                 maxContractExecutionEnergy: BigInt(30000),
                             },
-                            params,
-                            schema.schema ?? DEFAULT_SCHEMA
+                            typedParams(params, schema.schema ?? DEFAULT_SCHEMA),
                         ),
                         errorString
                     )

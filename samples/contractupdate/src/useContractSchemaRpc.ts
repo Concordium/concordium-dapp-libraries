@@ -1,6 +1,6 @@
 import { err, ok, Result, ResultAsync } from 'neverthrow';
 import { Buffer } from 'buffer/';
-import { Info, moduleSchemaUnchecked, Schema, WalletConnection, withJsonRpcClient } from '@concordium/react-components';
+import { Info, moduleSchema, Schema, WalletConnection, withJsonRpcClient } from '@concordium/react-components';
 import { useEffect, useState } from 'react';
 import { errorString } from './util';
 import { ModuleReference, SchemaVersion } from '@concordium/web-sdk';
@@ -32,7 +32,7 @@ function findSchema(m: WebAssembly.Module): Result<SchemaRpcResult | undefined, 
     if (contents.length !== 1) {
         return err(`unexpected size of custom section "${sectionName}"`);
     }
-    return ok({ sectionName, schema: moduleSchemaUnchecked(Buffer.from(contents[0]), schemaVersion) });
+    return ok({ sectionName, schema: moduleSchema(Buffer.from(contents[0]), schemaVersion) });
 }
 
 export function useContractSchemaRpc(connection: WalletConnection, contract: Info) {
@@ -49,6 +49,7 @@ export function useContractSchemaRpc(connection: WalletConnection, contract: Inf
                 if (r.length < 12) {
                     return err(`module source is ${r.length} bytes which is not enough to fit a 12-byte header`);
                 }
+                // console.log('module', r.length, r.toString('hex'));
                 return ResultAsync.fromPromise(WebAssembly.compile(r.slice(12)), errorString);
             })
             .andThen(findSchema)

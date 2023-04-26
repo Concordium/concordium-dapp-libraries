@@ -1,7 +1,6 @@
 import SignClient from '@walletconnect/sign-client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import { ISignClient, SessionTypes, SignClientTypes } from '@walletconnect/types';
-import { SmartContractParameters } from '@concordium/browser-wallet-api-helpers';
 import {
     AccountTransactionPayload,
     AccountTransactionSignature,
@@ -15,7 +14,13 @@ import {
     toBuffer,
     UpdateContractPayload,
 } from '@concordium/web-sdk';
-import { Network, Schema, WalletConnection, WalletConnectionDelegate, WalletConnector } from './WalletConnection';
+import {
+    Network,
+    TypedSmartContractParameters,
+    WalletConnection,
+    WalletConnectionDelegate,
+    WalletConnector,
+} from './WalletConnection';
 import { UnreachableCaseError } from './error';
 
 const WALLET_CONNECT_SESSION_NAMESPACE = 'ccd';
@@ -75,23 +80,16 @@ function accountTransactionPayloadToJson(data: AccountTransactionPayload) {
 
 function serializeInitContractParam(
     initName: string,
-    parameters: SmartContractParameters | undefined,
-    schema: Schema | undefined
+    typedParams: TypedSmartContractParameters | undefined,
 ) {
-    if (!parameters) {
-        if (schema) {
-            throw new Error(`schema provided when 'parameters' is undefined`);
-        }
-        // No parameters provided.
+    if (!typedParams) {
         return toBuffer('');
     }
-    if (!schema) {
-        throw new Error(`schema not provided when 'parameters' is present`);
-    }
+    const { parameters, schema } = typedParams;
     switch (schema.type) {
-        case 'module':
+        case 'ModuleSchema':
             return serializeInitContractParameters(initName, parameters, schema.value, schema.version);
-        case 'parameter':
+        case 'ParameterSchema':
             return serializeTypeValue(parameters, schema.value);
         default:
             throw new UnreachableCaseError('schema', schema);
@@ -101,21 +99,14 @@ function serializeInitContractParam(
 function serializeUpdateContractMessage(
     contractName: string,
     entrypointName: string,
-    parameters: SmartContractParameters | undefined,
-    schema: Schema | undefined
+    typedParams: TypedSmartContractParameters | undefined,
 ) {
-    if (!parameters) {
-        if (schema) {
-            throw new Error(`schema provided when 'parameters' is undefined`);
-        }
-        // No parameters provided.
+    if (!typedParams) {
         return toBuffer('');
     }
-    if (!schema) {
-        throw new Error(`schema not provided when 'parameters' is present`);
-    }
+    const { parameters, schema } = typedParams;
     switch (schema.type) {
-        case 'module':
+        case 'ModuleSchema':
             return serializeUpdateContractParameters(
                 contractName,
                 entrypointName,
@@ -123,7 +114,7 @@ function serializeUpdateContractMessage(
                 schema.value,
                 schema.version
             );
-        case 'parameter':
+        case 'ParameterSchema':
             return serializeTypeValue(parameters, schema.value);
         default:
             throw new UnreachableCaseError('schema', schema);
@@ -135,14 +126,12 @@ function serializeUpdateContractMessage(
  * This payload field must be not already set as that would indicate that the caller thought that was the right way to pass them.
  * @param type Type identifier of the transaction.
  * @param payload Payload of the transaction. Must not include the fields 'param' and 'message' for transaction types 'InitContract' and 'Update', respectively.
- * @param parameters Contract invocation parameters. May be provided optionally provided for transactions of type 'InitContract' or 'Update'.
- * @param schema Schema for the contract invocation parameters. Must be provided if {@link parameters} is and omitted otherwise.
+ * @param typedParams Contract invocation parameters and associated schema. May be provided optionally provided for transactions of type 'InitContract' or 'Update'.
  */
 function serializePayloadParameters(
     type: AccountTransactionType,
     payload: AccountTransactionPayload,
-    parameters: SmartContractParameters | undefined,
-    schema: Schema | undefined
+    typedParams: TypedSmartContractParameters | undefined,
 ): AccountTransactionPayload {
     switch (type) {
         case AccountTransactionType.InitContract: {
@@ -152,7 +141,7 @@ function serializePayloadParameters(
             }
             return {
                 ...payload,
-                param: serializeInitContractParam(initContractPayload.initName, parameters, schema),
+                param: serializeInitContractParam(initContractPayload.initName, typedParams),
             };
         }
         case AccountTransactionType.Update: {
@@ -163,15 +152,12 @@ function serializePayloadParameters(
             const [contractName, entrypointName] = updateContractPayload.receiveName.split('.');
             return {
                 ...payload,
-                message: serializeUpdateContractMessage(contractName, entrypointName, parameters, schema),
+                message: serializeUpdateContractMessage(contractName, entrypointName, typedParams),
             };
         }
         default: {
-            if (parameters) {
-                throw new Error(`'parameters' must not be provided for transaction of type '${type}'`);
-            }
-            if (schema) {
-                throw new Error(`'schema' must not be provided for transaction of type '${type}'`);
+            if (typedParams) {
+                throw new Error(`'typedParams' must not be provided for transaction of type '${type}'`);
             }
             return payload;
         }
@@ -234,14 +220,13 @@ export class WalletConnectConnection implements WalletConnection {
         accountAddress: string,
         type: AccountTransactionType,
         payload: AccountTransactionPayload,
-        parameters?: SmartContractParameters,
-        schema?: Schema
+        typedParams?: TypedSmartContractParameters,
     ) {
         const params = {
             type: AccountTransactionType[type],
             sender: accountAddress,
-            payload: accountTransactionPayloadToJson(serializePayloadParameters(type, payload, parameters, schema)),
-            schema,
+            payload: accountTransactionPayloadToJson(serializePayloadParameters(type, payload, typedParams)),
+            schema: typedParams?.schema,
         };
         try {
             const { hash } = (await this.connector.client.request({

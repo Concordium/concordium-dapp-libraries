@@ -46,12 +46,11 @@ export function useContractSchemaRpc(connection: WalletConnection, contract: Inf
                 if (!r) {
                     return err('module source is empty');
                 }
-                // TODO Could simplify to "8" once 'https://github.com/Concordium/concordium-json-rpc/pull/24' has been rolled out.
-                const wasmIdx = r.indexOf(Buffer.from([0x00, 0x61, 0x73, 0x6D]));
-                if (wasmIdx < 0) {
-                    return err(`module source of ${r.length} bytes does not contain a Wasm module`);
+                // Skip 8-byte header (module version and length).
+                if (r.length < 8) {
+                    return err(`module source is ${r.length} bytes which is not enough to fit an 8-byte header`);
                 }
-                return ResultAsync.fromPromise(WebAssembly.compile(r.slice(wasmIdx)), errorString);
+                return ResultAsync.fromPromise(WebAssembly.compile(r.slice(8)), errorString);
             })
             .andThen(findSchema)
             .then(setResult);

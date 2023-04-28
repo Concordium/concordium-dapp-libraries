@@ -72,7 +72,10 @@ export function parameterSchema(schema: Buffer): ParameterSchema {
  * @param parameters
  * @param schema
  */
-export function typedParams(parameters: SmartContractParameters, schema: Schema): TypedSmartContractParameters {
+export function typedParams(parameters: SmartContractParameters, schema: Schema | undefined) {
+    if (!schema) {
+        return undefined;
+    }
     return { parameters, schema };
 }
 
@@ -127,14 +130,14 @@ export interface WalletConnection {
     getJsonRpcClient(): JsonRpcClient;
 
     /**
-     * Assembles a contract init/update transaction and sends it off to the wallet for approval and submission.
+     * Assembles a transaction and sends it off to the wallet for approval and submission.
      *
      * The returned promise resolves to the hash of the transaction once the request is approved in the wallet and successfully submitted.
      * If this doesn't happen, the promise rejects with an explanatory error message.
      *
-     * Contract parameters must be provided in {@link parameters}, *not* {@link payload}.
-     * The {@link schema} parameter must be present if {@link parameters} is.
-     * Both these parameters must be omitted if the contract invocation doesn't take parameters.
+     * If the transaction is a contract init/update, then any contract parameters and a corresponding schema
+     * must be provided in {@link typeParameters}. The parameters must be omitted from {@link payload}.
+     * It's an error to provide {@link typeParameters} for non-contract transactions and for contract transactions with empty
      *
      * @param accountAddress The account whose keys are used to sign the transaction.
      * @param type Type of the transaction (i.e. {@link AccountTransactionType.InitContract} or {@link AccountTransactionType.Update}.
@@ -144,27 +147,9 @@ export interface WalletConnection {
      */
     signAndSendTransaction(
         accountAddress: string,
-        type: AccountTransactionType.Update | AccountTransactionType.InitContract,
-        payload: SendTransactionPayload,
-        typedParams: TypedSmartContractParameters,
-    ): Promise<string>;
-
-    /**
-     * Assembles a transaction which is not a contract init/update (with parameters)
-     * and sends it off to the wallet for approval and submission.
-     *
-     * The returned promise resolves to the hash of the transaction once the request is approved in the wallet and successfully submitted.
-     * If this doesn't happen, the promise rejects with an explanatory error message.
-     *
-     * @param accountAddress The account whose keys are used to sign the transaction.
-     * @param type Type of the transaction.
-     * @param payload The payload of the transaction.
-     * @return A promise for the hash of the submitted transaction.
-     */
-    signAndSendTransaction(
-        accountAddress: string,
         type: AccountTransactionType,
-        payload: SendTransactionPayload
+        payload: SendTransactionPayload,
+        typedParams?: TypedSmartContractParameters,
     ): Promise<string>;
 
     /**

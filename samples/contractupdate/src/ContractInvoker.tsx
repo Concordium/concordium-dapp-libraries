@@ -56,8 +56,7 @@ function schemaTypeFromSchema(schemaFromRpc: Schema | undefined, inputSchemaType
     }
 }
 
-const DEFAULT_SCHEMA_TYPE = SchemaType.ModuleV2;
-const DEFAULT_SCHEMA = schemaOfType(DEFAULT_SCHEMA_TYPE, '');
+const DEFAULT_SCHEMA_TYPE = SchemaType.Module;
 
 function schemaOfType(type: SchemaType, schemaBase64: string): Schema {
     switch (type) {
@@ -158,7 +157,7 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
                                 receiveName: contract.methods[selectedMethodIndex],
                                 maxContractExecutionEnergy: BigInt(30000),
                             },
-                            typedParams(params, schema.schema ?? DEFAULT_SCHEMA),
+                            typedParams(params, schema.schema),
                         ),
                         errorString
                     )

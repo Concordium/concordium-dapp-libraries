@@ -1,8 +1,4 @@
-import {
-    detectConcordiumProvider,
-    WalletApi,
-    SchemaType,
-} from '@concordium/browser-wallet-api-helpers';
+import { detectConcordiumProvider, WalletApi, SchemaType } from '@concordium/browser-wallet-api-helpers';
 import { AccountTransactionPayload, AccountTransactionSignature, AccountTransactionType } from '@concordium/web-sdk';
 import {
     WalletConnectionDelegate,
@@ -113,10 +109,10 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         accountAddress: string,
         type: AccountTransactionType,
         payload: AccountTransactionPayload,
-        typedParams?: TypedSmartContractParameters,
+        typedParams?: TypedSmartContractParameters
     ): Promise<string> {
         if ((type === AccountTransactionType.InitContract || type === AccountTransactionType.Update) && typedParams) {
-            const {parameters, schema } = typedParams;
+            const { parameters, schema } = typedParams;
             switch (schema.type) {
                 case 'ModuleSchema':
                     return this.client.sendTransaction(

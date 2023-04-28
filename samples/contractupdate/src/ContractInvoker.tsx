@@ -3,7 +3,7 @@ import {
     moduleSchemaFromBase64,
     Network,
     parameterSchemaFromBase64,
-    Schema, typedParams,
+    Schema,
     WalletConnection,
 } from '@concordium/react-components';
 import React, { ChangeEvent, Dispatch, useCallback, useEffect, useMemo, useState } from 'react';
@@ -146,7 +146,7 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
         if (connectedAccount) {
             setIsAwaitingApproval(true);
             inputResult
-                .asyncAndThen(([params, schema, amount]) =>
+                .asyncAndThen(([parameters, { schema }, amount]) =>
                     ResultAsync.fromPromise(
                         connection.signAndSendTransaction(
                             connectedAccount,
@@ -157,7 +157,7 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
                                 receiveName: contract.methods[selectedMethodIndex],
                                 maxContractExecutionEnergy: BigInt(30000),
                             },
-                            typedParams(params, schema.schema),
+                            schema && { parameters, schema }
                         ),
                         errorString
                     )

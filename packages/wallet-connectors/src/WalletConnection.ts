@@ -67,18 +67,6 @@ export function parameterSchema(schema: Buffer): ParameterSchema {
     };
 }
 
-/**
- * Convenience function for creating
- * @param parameters
- * @param schema
- */
-export function typedParams(parameters: SmartContractParameters, schema: Schema | undefined) {
-    if (!schema) {
-        return undefined;
-    }
-    return { parameters, schema };
-}
-
 function schemaAsBuffer(schemaBase64: string) {
     const res = toBuffer(schemaBase64, 'base64');
     // Check round-trip. This requires the provided schema to be properly padded.
@@ -89,9 +77,9 @@ function schemaAsBuffer(schemaBase64: string) {
 }
 
 export type TypedSmartContractParameters = {
-    parameters: SmartContractParameters,
-    schema: Schema
-}
+    parameters: SmartContractParameters;
+    schema: Schema;
+};
 
 /**
  * Interface for interacting with a wallet backend through a connection that's already been established.
@@ -149,7 +137,7 @@ export interface WalletConnection {
         accountAddress: string,
         type: AccountTransactionType,
         payload: SendTransactionPayload,
-        typedParams?: TypedSmartContractParameters,
+        typedParams?: TypedSmartContractParameters
     ): Promise<string>;
 
     /**

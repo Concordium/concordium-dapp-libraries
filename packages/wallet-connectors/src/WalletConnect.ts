@@ -78,10 +78,7 @@ function accountTransactionPayloadToJson(data: AccountTransactionPayload) {
     });
 }
 
-function serializeInitContractParam(
-    initName: string,
-    typedParams: TypedSmartContractParameters | undefined,
-) {
+function serializeInitContractParam(initName: string, typedParams: TypedSmartContractParameters | undefined) {
     if (!typedParams) {
         return toBuffer('');
     }
@@ -99,7 +96,7 @@ function serializeInitContractParam(
 function serializeUpdateContractMessage(
     contractName: string,
     entrypointName: string,
-    typedParams: TypedSmartContractParameters | undefined,
+    typedParams: TypedSmartContractParameters | undefined
 ) {
     if (!typedParams) {
         return toBuffer('');
@@ -131,7 +128,7 @@ function serializeUpdateContractMessage(
 function serializePayloadParameters(
     type: AccountTransactionType,
     payload: AccountTransactionPayload,
-    typedParams: TypedSmartContractParameters | undefined,
+    typedParams: TypedSmartContractParameters | undefined
 ): AccountTransactionPayload {
     switch (type) {
         case AccountTransactionType.InitContract: {
@@ -220,7 +217,7 @@ export class WalletConnectConnection implements WalletConnection {
         accountAddress: string,
         type: AccountTransactionType,
         payload: AccountTransactionPayload,
-        typedParams?: TypedSmartContractParameters,
+        typedParams?: TypedSmartContractParameters
     ) {
         const params = {
             type: AccountTransactionType[type],

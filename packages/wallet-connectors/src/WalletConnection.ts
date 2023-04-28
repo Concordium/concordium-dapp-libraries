@@ -124,8 +124,8 @@ export interface WalletConnection {
      * If this doesn't happen, the promise rejects with an explanatory error message.
      *
      * If the transaction is a contract init/update, then any contract parameters and a corresponding schema
-     * must be provided in {@link typeParameters}. The parameters must be omitted from {@link payload}.
-     * It's an error to provide {@link typeParameters} for non-contract transactions and for contract transactions with empty
+     * must be provided in {@link typedParams} and parameters must be omitted from {@link payload}.
+     * It's an error to provide {@link typedParams} for non-contract transactions and for contract transactions with empty parameters.
      *
      * @param accountAddress The account whose keys are used to sign the transaction.
      * @param type Type of the transaction (i.e. {@link AccountTransactionType.InitContract} or {@link AccountTransactionType.Update}.

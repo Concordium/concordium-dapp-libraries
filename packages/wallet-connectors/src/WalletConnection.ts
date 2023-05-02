@@ -81,6 +81,43 @@ export type TypedSmartContractParameters = {
     schema: Schema;
 };
 
+export type StringMessage = {
+    type: 'StringMessage';
+    value: string;
+};
+
+export type BinaryMessage = {
+    type: 'BinaryMessage';
+    value: Buffer;
+    schema: ParameterSchema;
+};
+
+export type SignableMessage = StringMessage | BinaryMessage;
+
+export function stringMessage(msg: string): StringMessage {
+    return {
+        type: 'StringMessage',
+        value: msg,
+    };
+}
+
+export function binaryMessageFromHex(msgHex: string, schema: ParameterSchema): BinaryMessage {
+    return {
+        type: 'BinaryMessage',
+        value: messageAsBuffer(msgHex),
+        schema,
+    };
+}
+
+function messageAsBuffer(msgHex: string) {
+    const res = toBuffer(msgHex, 'hex');
+    // Check round-trip.
+    if (res.toString('hex') !== msgHex) {
+        throw new Error(`provided message '${msgHex}' is not valid hex`);
+    }
+    return res;
+}
+
 /**
  * Interface for interacting with a wallet backend through a connection that's already been established.
  * The connected account (and in turn connected network/chain) is managed by the wallet
@@ -150,7 +187,7 @@ export interface WalletConnection {
      * @param message The message to sign.
      * @return A promise for the signatures of the message.
      */
-    signMessage(accountAddress: string, message: string): Promise<AccountTransactionSignature>;
+    signMessage(accountAddress: string, message: SignableMessage): Promise<AccountTransactionSignature>;
 
     /**
      * Close the connection and clean up relevant resources.

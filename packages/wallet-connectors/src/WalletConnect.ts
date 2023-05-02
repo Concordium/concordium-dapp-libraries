@@ -15,6 +15,7 @@ import {
     UpdateContractPayload,
 } from '@concordium/web-sdk';
 import {
+    SignableMessage,
     Network,
     TypedSmartContractParameters,
     WalletConnection,
@@ -233,7 +234,7 @@ export class WalletConnectConnection implements WalletConnection {
                     params,
                 },
                 chainId: this.chainId,
-            })) as SignAndSendTransactionResult;
+            })) as SignAndSendTransactionResult; // TODO do proper type check
             return hash;
         } catch (e) {
             if (isSignAndSendTransactionError(e) && e.code === 500) {
@@ -243,17 +244,25 @@ export class WalletConnectConnection implements WalletConnection {
         }
     }
 
-    async signMessage(accountAddress: string, message: string) {
-        const params = { message };
-        const signature = await this.connector.client.request({
-            topic: this.session.topic,
-            request: {
-                method: 'sign_message',
-                params,
-            },
-            chainId: this.chainId,
-        });
-        return signature as AccountTransactionSignature;
+    async signMessage(accountAddress: string, message: SignableMessage) {
+        switch (message.type) {
+            case 'StringMessage': {
+                const params = { message };
+                const signature = await this.connector.client.request({
+                    topic: this.session.topic,
+                    request: {
+                        method: 'sign_message',
+                        params,
+                    },
+                    chainId: this.chainId,
+                });
+                return signature as AccountTransactionSignature; // TODO do proper type check
+            }
+            case 'BinaryMessage':
+                throw new Error(`signing 'BinaryMessage' is not yet supported by the mobile wallets`);
+            default:
+                throw new UnreachableCaseError('message', message);
+        }
     }
 
     async disconnect() {

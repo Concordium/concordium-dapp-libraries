@@ -100,7 +100,7 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
 
     const schemaRpcResult = useContractSchemaRpc(connection, contract);
 
-    const [schemaTypeInput, setSchemaTypeInput] = useState<SchemaType>(DEFAULT_SCHEMA_TYPE);
+    const [schemaTypeInput, setSchemaTypeInput] = useState(DEFAULT_SCHEMA_TYPE);
 
     const [contractParams, setContractParams] = useState<Array<ContractParamEntry>>([]);
     const [contractAmountInput, setContractAmountInput] = useState('');
@@ -197,7 +197,7 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
                         Schema (base64):
                     </Form.Label>
                     <Col sm={10}>
-                        <InputGroup hasValidation={true}>
+                        <InputGroup hasValidation>
                             <Form.Control
                                 value={schemaInput}
                                 onChange={onSchemaChange}

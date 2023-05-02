@@ -4,7 +4,7 @@ import {
     useConnect,
     useConnection,
     useDisconnect,
-    WalletConnectionProps,
+    WalletConnectionsProps,
     WithWalletConnector,
     withJsonRpcClient,
 } from '@concordium/react-components';
@@ -26,7 +26,7 @@ export default function Root() {
     );
 }
 
-function Main(props: WalletConnectionProps) {
+function Main(props: WalletConnectionsProps) {
     const { activeConnectorType, activeConnector, activeConnectorError, network, connectedAccounts, genesisHashes } =
         props;
     const { connection, setConnection, account, genesisHash } = useConnection(connectedAccounts, genesisHashes);

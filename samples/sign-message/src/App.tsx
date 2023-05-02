@@ -4,7 +4,7 @@ import {
     useConnect,
     useConnection,
     useDisconnect,
-    WalletConnectionProps,
+    WalletConnectionsProps,
     WithWalletConnector,
 } from '@concordium/react-components';
 import { AccountTransactionSignature } from '@concordium/web-sdk';
@@ -20,7 +20,7 @@ export default function App() {
     );
 }
 
-function Main(props: WalletConnectionProps) {
+function Main(props: WalletConnectionsProps) {
     const { activeConnectorType, activeConnector, activeConnectorError, connectedAccounts, genesisHashes } = props;
     const { connection, setConnection, account } = useConnection(connectedAccounts, genesisHashes);
     const [connectError, setConnectError] = useState('');

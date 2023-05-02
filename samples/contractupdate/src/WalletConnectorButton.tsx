@@ -4,10 +4,10 @@ import {
     ConnectorType,
     useConnectorTypeStatus,
     WalletConnection,
-    WalletConnectionProps,
+    WalletConnectionsProps,
 } from '@concordium/react-components';
 
-interface Props extends WalletConnectionProps {
+interface Props extends WalletConnectionsProps {
     connection: WalletConnection | undefined;
     connectorType: ConnectorType;
     connectorName: string;

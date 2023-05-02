@@ -5,7 +5,7 @@ import { errorString } from './error';
 /**
  * Activation/deactivation controller of a given connector type.
  */
-// TODO Rename to 'WalletConnectorActivator' (and same with constructor funcs).
+// TODO Rename to 'WalletConnectorActivator' (and same with constructor funcs and props).
 export interface ConnectorType {
     /**
      * Called when the connection type is being activated.
@@ -62,9 +62,13 @@ export function persistentConnectorType(create: (c: WithWalletConnector, n: Netw
 /**
  * The internal state of the component.
  */
+// TODO The component state should actually be just 'connectedAccounts' and 'genesisHashes'
+//      and the exposed props should be only that state and the component itself ('this')
+//      passed as 'delegate'.
+//      Activation/deactivation of connectors (along with 'network') can be moved to its own hook.
 interface State {
     /**
-     * The active connector type. This value is updated using {@link WalletConnectionProps.setActiveConnectorType}.
+     * The active connector type. This value is updated using {@link WalletConnectionsProps.setActiveConnectorType}.
      * Changes to this value trigger activation of a connector managed by the connector type.
      * This will cause {@link activeConnector} or {@link activeConnectorError} to change depending on the outcome.
      */
@@ -78,7 +82,7 @@ interface State {
      * In general, it is perfectly possible for the active connection to not originate from the active connector.
      *
      * If the application disconnects the active connector manually, they must also call
-     * {@link WalletConnectionProps.setActiveConnectorType} to
+     * {@link WalletConnectionsProps.setActiveConnectorType} to
      */
     activeConnector: WalletConnector | undefined;
 
@@ -138,14 +142,13 @@ interface Props {
      * @param props Connection state and management functions.
      * @return Child component.
      */
-    children: (props: WalletConnectionProps) => JSX.Element;
+    children: (props: WalletConnectionsProps) => JSX.Element;
 }
 
 /**
  * The props to be passed to the child component.
  */
-// TODO Rename to 'ConnectorProps'.
-export interface WalletConnectionProps extends State {
+export interface WalletConnectionsProps extends State {
     /**
      * The network provided to {@link WithWalletConnector} via its props.
      *
@@ -164,7 +167,7 @@ export interface WalletConnectionProps extends State {
 }
 
 /**
- * React component that helps managing wallet connections
+ * React component that helps manage wallet connections
  * by introducing a notion of "active" {@link WalletConnector} and {@link WalletConnection},
  * and maintaining their states as part of its own component state.
  * This allows child components to access all relevant information in a reactive manner
@@ -179,7 +182,6 @@ export interface WalletConnectionProps extends State {
  * This component significantly reduces the complexity of integrating with wallets,
  * even if one only needs to support a single protocol and network.
  */
-// TODO Rename to 'ConnectorController'?
 export class WithWalletConnector extends Component<Props, State> implements WalletConnectionDelegate {
     constructor(props: Props) {
         super(props);
@@ -193,7 +195,7 @@ export class WithWalletConnector extends Component<Props, State> implements Wall
     }
 
     /**
-     * @see WalletConnectionProps.setActiveConnectorType
+     * @see WalletConnectionsProps.setActiveConnectorType
      */
     setActiveConnectorType = (type: ConnectorType | undefined) => {
         console.debug("WithWalletConnector: calling 'setActiveConnectorType'", { type, state: this.state });

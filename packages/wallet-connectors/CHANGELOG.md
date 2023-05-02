@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   `WalletConnection` (breaking): Support both module and parameter schemas in `signAndSendTransaction`.
+    To migrate existing usage, wrap the schema string in the new function `moduleSchemaFromBase64(...)`.
+
+## [0.2.3] - 2023-04-03
+
+No changes. Had to bump version to fix NPM release.
+
+## [0.2.2] - 2023-04-03
+
 ### Added
 
 -   Added exported constant `CONCORDIUM_WALLET_CONNECT_PROJECT_ID` that dApps may use when connecting to a Concordium mobile wallet.

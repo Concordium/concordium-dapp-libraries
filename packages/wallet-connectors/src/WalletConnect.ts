@@ -247,7 +247,7 @@ export class WalletConnectConnection implements WalletConnection {
     async signMessage(accountAddress: string, msg: SignableMessage) {
         switch (msg.type) {
             case 'StringMessage': {
-                const params = { message: msg };
+                const params = { message: msg.value };
                 const signature = await this.connector.client.request({
                     topic: this.session.topic,
                     request: {

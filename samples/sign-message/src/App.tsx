@@ -183,7 +183,7 @@ function Main(props: WalletConnectionProps) {
                 </Col>
             </Form.Group>
             <Row>
-                {error && <Alert variant="danger"></Alert>}
+                {error && <Alert variant="danger">{error}</Alert>}
                 {signature && (
                     <>
                         <Col sm={3}>Signature:</Col>

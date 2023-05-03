@@ -85,15 +85,21 @@ export type StringMessage = {
     type: 'StringMessage';
     value: string;
 };
-
 export type BinaryMessage = {
     type: 'BinaryMessage';
     value: Buffer;
     schema: ParameterSchema;
 };
 
+/**
+ * Discriminated union type for signable messages.
+ */
 export type SignableMessage = StringMessage | BinaryMessage;
 
+/**
+ * {@link SignableMessage} constructor for a string message.
+ * @param msg The message as a plain string.
+ */
 export function stringMessage(msg: string): StringMessage {
     return {
         type: 'StringMessage',
@@ -101,6 +107,11 @@ export function stringMessage(msg: string): StringMessage {
     };
 }
 
+/**
+ * {@link SignableMessage} constructor for binary message.
+ * @param msgHex The message represented in hexadecimal notation.
+ * @param schema The schema describing the type of the binary message.
+ */
 export function binaryMessageFromHex(msgHex: string, schema: ParameterSchema): BinaryMessage {
     return {
         type: 'BinaryMessage',
@@ -184,10 +195,10 @@ export interface WalletConnection {
      * If this doesn't happen, the promise rejects with an explanatory error message.
      *
      * @param accountAddress The account whose keys are used to sign the message.
-     * @param message The message to sign.
+     * @param msg The message to sign.
      * @return A promise for the signatures of the message.
      */
-    signMessage(accountAddress: string, message: SignableMessage): Promise<AccountTransactionSignature>;
+    signMessage(accountAddress: string, msg: SignableMessage): Promise<AccountTransactionSignature>;
 
     /**
      * Close the connection and clean up relevant resources.

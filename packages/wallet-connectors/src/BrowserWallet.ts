@@ -142,17 +142,17 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         return this.client.sendTransaction(accountAddress, type, payload);
     }
 
-    async signMessage(accountAddress: string, message: SignableMessage): Promise<AccountTransactionSignature> {
-        switch (message.type) {
+    async signMessage(accountAddress: string, msg: SignableMessage): Promise<AccountTransactionSignature> {
+        switch (msg.type) {
             case 'StringMessage':
-                return this.client.signMessage(accountAddress, message.value);
+                return this.client.signMessage(accountAddress, msg.value);
             case 'BinaryMessage':
                 return this.client.signMessage(accountAddress, {
-                    schema: message.schema.value.toString('base64'),
-                    data: message.value.toString('hex'),
+                    schema: msg.schema.value.toString('base64'),
+                    data: msg.value.toString('hex'),
                 });
             default:
-                throw new UnreachableCaseError('message', message);
+                throw new UnreachableCaseError('message', msg);
         }
     }
 }

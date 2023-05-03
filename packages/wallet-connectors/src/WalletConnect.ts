@@ -244,10 +244,10 @@ export class WalletConnectConnection implements WalletConnection {
         }
     }
 
-    async signMessage(accountAddress: string, message: SignableMessage) {
-        switch (message.type) {
+    async signMessage(accountAddress: string, msg: SignableMessage) {
+        switch (msg.type) {
             case 'StringMessage': {
-                const params = { message };
+                const params = { message: msg };
                 const signature = await this.connector.client.request({
                     topic: this.session.topic,
                     request: {
@@ -261,7 +261,7 @@ export class WalletConnectConnection implements WalletConnection {
             case 'BinaryMessage':
                 throw new Error(`signing 'BinaryMessage' is not yet supported by the mobile wallets`);
             default:
-                throw new UnreachableCaseError('message', message);
+                throw new UnreachableCaseError('message', msg);
         }
     }
 

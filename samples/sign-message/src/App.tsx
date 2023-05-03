@@ -55,7 +55,10 @@ function Main(props: WalletConnectionProps) {
         try {
             // Map schema result to message with input.
             // Return undefined if schema result is an error to avoid double reporting it.
-            return schemaResult.match(s => ok(binaryMessageFromHex(messageInput, s)), () => undefined);
+            return schemaResult.match(
+                (s) => ok(binaryMessageFromHex(messageInput, s)),
+                () => undefined
+            );
         } catch (e) {
             return err(errorString(e));
         }
@@ -135,9 +138,12 @@ function Main(props: WalletConnectionProps) {
                             autoFocus
                         />
                         <InputGroup.Text>Base64</InputGroup.Text>
-                        {schemaResult?.match(() => undefined, (e) => (
-                            <Form.Control.Feedback type="invalid">{e}</Form.Control.Feedback>
-                        ))}
+                        {schemaResult?.match(
+                            () => undefined,
+                            (e) => (
+                                <Form.Control.Feedback type="invalid">{e}</Form.Control.Feedback>
+                            )
+                        )}
                     </InputGroup>
                 </Col>
             </Form.Group>
@@ -147,25 +153,32 @@ function Main(props: WalletConnectionProps) {
                 </Form.Label>
                 <Col sm={9}>
                     <InputGroup hasValidation={messageResult?.isErr()}>
-                        <Form.Control type="text" value={messageInput} onChange={handleMessageInput} isInvalid={messageResult?.isErr()} autoFocus />
+                        <Form.Control
+                            type="text"
+                            value={messageInput}
+                            onChange={handleMessageInput}
+                            isInvalid={messageResult?.isErr()}
+                            autoFocus
+                        />
                         <InputGroup.Text>{schemaInput ? 'Hex' : 'String'}</InputGroup.Text>
-                        {messageResult?.match(() => undefined, (e) => (
-                            <Form.Control.Feedback type="invalid">{e}</Form.Control.Feedback>
-                        ))}
+                        {messageResult?.match(
+                            () => undefined,
+                            (e) => (
+                                <Form.Control.Feedback type="invalid">{e}</Form.Control.Feedback>
+                            )
+                        )}
                     </InputGroup>
                 </Col>
             </Form.Group>
             <Form.Group as={Row} className="mb-3">
-                <Form.Label column sm={3}/>
+                <Form.Label column sm={3} />
                 <Col sm={9}>
                     <Button
                         variant="primary"
                         onClick={handleSubmit}
                         disabled={!connection || !messageInput || isWaiting || !messageResult?.isOk()}
                     >
-                        {isWaiting
-                            ? 'Signing...'
-                            : schemaInput ? 'Sign binary message' : 'Sign string message'}
+                        {isWaiting ? 'Signing...' : schemaInput ? 'Sign binary message' : 'Sign string message'}
                     </Button>
                 </Col>
             </Form.Group>

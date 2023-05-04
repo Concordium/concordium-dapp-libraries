@@ -87,7 +87,7 @@ function serializeInitContractParam(initName: string, typedParams: TypedSmartCon
     switch (schema.type) {
         case 'ModuleSchema':
             return serializeInitContractParameters(initName, parameters, schema.value, schema.version);
-        case 'ParameterSchema':
+        case 'TypeSchema':
             return serializeTypeValue(parameters, schema.value);
         default:
             throw new UnreachableCaseError('schema', schema);
@@ -112,7 +112,7 @@ function serializeUpdateContractMessage(
                 schema.value,
                 schema.version
             );
-        case 'ParameterSchema':
+        case 'TypeSchema':
             return serializeTypeValue(parameters, schema.value);
         default:
             throw new UnreachableCaseError('schema', schema);

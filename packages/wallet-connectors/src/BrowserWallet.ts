@@ -127,7 +127,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
                         },
                         schema.version
                     );
-                case 'ParameterSchema':
+                case 'TypeSchema':
                     return this.client.sendTransaction(accountAddress, type, payload, parameters, {
                         type: SchemaType.Parameter,
                         value: schema.value.toString('base64'),

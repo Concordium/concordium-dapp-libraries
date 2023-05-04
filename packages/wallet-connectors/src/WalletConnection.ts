@@ -13,8 +13,8 @@ export type ModuleSchema = {
     value: Buffer;
     version?: SchemaVersion;
 };
-export type ParameterSchema = {
-    type: 'ParameterSchema';
+export type TypeSchema = {
+    type: 'TypeSchema';
     value: Buffer;
 };
 
@@ -22,7 +22,7 @@ export type ParameterSchema = {
  * Discriminated union type for contract invocation schemas.
  * Is used to select the correct method for encoding the invocation parameters using the schema.
  */
-export type Schema = ModuleSchema | ParameterSchema;
+export type Schema = ModuleSchema | TypeSchema;
 
 /**
  * {@link Schema} constructor for a module schema.
@@ -48,21 +48,21 @@ export function moduleSchema(schema: Buffer, version?: SchemaVersion): ModuleSch
 }
 
 /**
- * {@link Schema} constructor for a parameter schema.
+ * {@link Schema} constructor for a type schema.
  * @param schemaBase64 The raw parameter schema in base64 encoding.
  * @throws Error if {@link schemaBase64} is not valid base64.
  */
-export function parameterSchemaFromBase64(schemaBase64: string): ParameterSchema {
-    return parameterSchema(schemaAsBuffer(schemaBase64));
+export function typeSchemaFromBase64(schemaBase64: string): TypeSchema {
+    return typeSchema(schemaAsBuffer(schemaBase64));
 }
 
 /**
- * {@link Schema} constructor for a parameter schema.
+ * {@link Schema} constructor for a type schema.
  * @param schema The raw parameter schema in binary.
  */
-export function parameterSchema(schema: Buffer): ParameterSchema {
+export function typeSchema(schema: Buffer): TypeSchema {
     return {
-        type: 'ParameterSchema',
+        type: 'TypeSchema',
         value: schema,
     };
 }
@@ -88,7 +88,7 @@ export type StringMessage = {
 export type BinaryMessage = {
     type: 'BinaryMessage';
     value: Buffer;
-    schema: ParameterSchema;
+    schema: TypeSchema;
 };
 
 /**
@@ -112,7 +112,7 @@ export function stringMessage(msg: string): StringMessage {
  * @param msgHex The message represented in hexadecimal notation.
  * @param schema The schema describing the type of the binary message.
  */
-export function binaryMessageFromHex(msgHex: string, schema: ParameterSchema): BinaryMessage {
+export function binaryMessageFromHex(msgHex: string, schema: TypeSchema): BinaryMessage {
     return {
         type: 'BinaryMessage',
         value: messageAsBuffer(msgHex),

@@ -8,7 +8,7 @@ import {
     WithWalletConnector,
     binaryMessageFromHex,
     stringMessage,
-    parameterSchemaFromBase64,
+    typeSchemaFromBase64,
 } from '@concordium/react-components';
 import { Alert, Button, Col, Container, Form, InputGroup, Row, Spinner } from 'react-bootstrap';
 import { WalletConnectorButton } from './WalletConnectorButton';
@@ -38,7 +38,7 @@ function Main(props: WalletConnectionProps) {
             return undefined;
         }
         try {
-            return ok(parameterSchemaFromBase64(schemaInput));
+            return ok(typeSchemaFromBase64(schemaInput));
         } catch (e) {
             return err(errorString(e));
         }

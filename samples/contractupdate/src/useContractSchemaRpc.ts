@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { err, ok, Result, ResultAsync } from 'neverthrow';
 import { Buffer } from 'buffer/';
-import { Info, moduleSchema, Schema, WalletConnection, withJsonRpcClient } from '@concordium/react-components';
-import { errorString } from './util';
+import { Result, ResultAsync, err, ok } from 'neverthrow';
+import { useEffect, useState } from 'react';
+import { Info, Schema, WalletConnection, moduleSchema, withJsonRpcClient } from '@concordium/react-components';
 import { ModuleReference, SchemaVersion } from '@concordium/web-sdk';
+import { errorString } from './util';
 
 export interface SchemaRpcResult {
     sectionName: string;

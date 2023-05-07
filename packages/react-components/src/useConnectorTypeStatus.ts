@@ -1,5 +1,5 @@
-import { ConnectorType } from './WithWalletConnector';
 import { WalletConnection, WalletConnector } from '@concordium/wallet-connectors';
+import { ConnectorType } from './WithWalletConnector';
 
 /**
  * The state of the a {@link useConnectorTypeStatus} instance.

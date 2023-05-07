@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 import { Button } from 'react-bootstrap';
 import {
     ConnectorType,
-    useConnectorTypeStatus,
     WalletConnection,
     WalletConnectionsProps,
+    useConnectorTypeStatus,
 } from '@concordium/react-components';
 
 interface Props extends WalletConnectionsProps {

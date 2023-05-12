@@ -9,10 +9,10 @@ import {
     typeSchemaFromBase64,
     useConnect,
     useConnection,
+    TESTNET,
 } from '@concordium/react-components';
 import { AccountTransactionSignature } from '@concordium/web-sdk';
 import { WalletConnectorButton } from './WalletConnectorButton';
-import { TESTNET } from './config';
 import { BROWSER_WALLET, WALLET_CONNECT } from './config';
 import { errorString } from './util';
 

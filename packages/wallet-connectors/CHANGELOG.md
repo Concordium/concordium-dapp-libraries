@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   `WalletConnection`: Add method `getGrpcClient` for obtaining a preconfigured gRPC Web client for querying a Node via API version 2.
+    This deprecates the existing method `getJsonRpcClient` in favor of the new one.
+
 ### Changed
 
 -   `WalletConnection` (breaking): Support both module and type/parameter schemas in `signAndSendTransaction`.

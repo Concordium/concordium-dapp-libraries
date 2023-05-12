@@ -90,6 +90,10 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         return this.client.getJsonRpcClient();
     }
 
+    getGrpcClient() {
+        return this.client.getGrpcClient();
+    }
+
     /**
      * Deregister event handlers on the API client and notify the delegate.
      * As there's no way to actually disconnect the Browser Wallet, this is all that we can reasonably do.

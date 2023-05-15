@@ -2,6 +2,7 @@ import { ResultAsync, err, ok } from 'neverthrow';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Alert, Button, Col, Container, Form, InputGroup, Row, Spinner } from 'react-bootstrap';
 import {
+    TESTNET,
     WalletConnectionProps,
     WithWalletConnector,
     binaryMessageFromHex,
@@ -9,7 +10,6 @@ import {
     typeSchemaFromBase64,
     useConnect,
     useConnection,
-    TESTNET,
 } from '@concordium/react-components';
 import { AccountTransactionSignature } from '@concordium/web-sdk';
 import { WalletConnectorButton } from './WalletConnectorButton';

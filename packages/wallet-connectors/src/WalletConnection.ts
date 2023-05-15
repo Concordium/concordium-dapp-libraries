@@ -158,13 +158,14 @@ export interface WalletConnection {
      *
      * This method is included because it's part of the Browser Wallet's API.
      * It should be used with care as it's hard to guarantee that it actually connects to the expected network.
-     * The application may easily instantiate its own client and use that instead for more control.
+     * As explained in {@link Network.jsonRpcUrl}, the application may easily instantiate its own client and use that instead.
      *
-     * Note that this method cannot be moved to {@link WalletConnector} as the Browser Wallet's RPC client doesn't work
-     * until a connection has been established.
+     * Implementation detail: The method cannot be moved to {@link WalletConnector}
+     * as the Browser Wallet's internal client doesn't work until a connection has been established.
      *
      * @return A JSON-RPC client for performing requests against a Concordium Node connected to the appropriate network.
      * @throws If the connection uses {@link Network.jsonRpcUrl} and that value is undefined.
+     * @throws If the connection is to the Browser Wallet and the installed version doesn't support the method.
      * @deprecated Use {@link getGrpcClient} instead.
      */
     getJsonRpcClient(): JsonRpcClient;
@@ -174,15 +175,17 @@ export interface WalletConnection {
      * that the connected account lives on.
      * The client implements version 2 of the Node's API and is preferred over {@link getJsonRpcClient}.
      *
-     * This method is included because it's part of the Browser Wallet's API.
+     * This method is included because it's part of the Browser Wallet's API to ensure that one uses the same backend as the wallet.
      * It should be used with care as it's hard to guarantee that it actually connects to the expected network.
-     * The application may easily instantiate its own client and use that instead for more control.
+     * As the mobile wallets don't currently use gRPC, the implementation for WalletConnect connections create their own local client.
+     * As explained in {@link Network.grpcOpts}, the application may easily instantiate its own client and use that instead.
      *
-     * Note that this method cannot be moved to {@link WalletConnector} as the Browser Wallet's RPC client doesn't work
-     * until a connection has been established.
+     * Implementation detail: The method cannot be moved to {@link WalletConnector}
+     * as the Browser Wallet's internal client doesn't work until a connection has been established.
      *
      * @return A gRPC client for performing requests against a Concordium Node connected to the appropriate network.
      * @throws If the connection uses {@link Network.grpcOpts} and that value is undefined.
+     * @throws If the connection is to the Browser Wallet and the installed version doesn't support the method.
      */
     getGrpcClient(): ConcordiumGRPCClient;
 

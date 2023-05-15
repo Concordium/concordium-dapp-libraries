@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-bootstrap';
-import { Network, WalletConnection, withJsonRpcClient } from '@concordium/react-components';
-import { AccountInfo } from '@concordium/web-sdk';
+import { Network, WalletConnection } from '@concordium/react-components';
+import { AccountAddress, AccountInfo } from '@concordium/web-sdk';
+import { errorString } from './util';
 
 interface Props {
     network: Network;
@@ -19,14 +20,16 @@ export function ConnectedAccount({ connection, account, network }: Props) {
     useEffect(() => {
         if (connection && account) {
             setInfo(undefined);
-            withJsonRpcClient(connection, (rpc) => rpc.getAccountInfo(account))
+            connection
+                .getGrpcClient()
+                .getAccountInfo(new AccountAddress(account))
                 .then((res) => {
                     setInfo(res);
                     setInfoError('');
                 })
                 .catch((err) => {
                     setInfo(undefined);
-                    setInfoError(err);
+                    setInfoError(errorString(err));
                 });
         }
     }, [connection, account]);

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, Col, Container, Row, Spinner } from 'react-bootstrap';
-import { withJsonRpcClient } from '@concordium/react-components';
-import { WalletConnectionProps, WithWalletConnector, MAINNET, TESTNET } from '@concordium/react-components';
+import { MAINNET, TESTNET, WalletConnectionProps, WithWalletConnector } from '@concordium/react-components';
 import { useConnection } from '@concordium/react-components';
 import { useConnect } from '@concordium/react-components';
 import { App } from './App';
@@ -33,10 +32,10 @@ function Main(props: WalletConnectionProps) {
     useEffect(() => {
         if (connection) {
             setRpcGenesisHash(undefined);
-            withJsonRpcClient(connection, async (rpc) => {
-                const status = await rpc.getConsensusStatus();
-                return status.genesisBlock;
-            })
+            connection
+                .getGrpcClient()
+                .getConsensusStatus()
+                .then((status) => status.genesisBlock)
                 .then((hash) => {
                     setRpcGenesisHash(hash);
                     setRpcError('');

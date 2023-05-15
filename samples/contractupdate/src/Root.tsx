@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { MAINNET, TESTNET, WalletConnectionProps, WithWalletConnector } from '@concordium/react-components';
-import { useConnection } from '@concordium/react-components';
-import { useConnect } from '@concordium/react-components';
+import { useConnect, useConnection, useGrpcClient } from '@concordium/react-components';
 import { App } from './App';
 import { ConnectedAccount } from './ConnectedAccount';
 import { NetworkSelector } from './NetworkSelector';
@@ -29,11 +28,12 @@ function Main(props: WalletConnectionProps) {
 
     const [rpcGenesisHash, setRpcGenesisHash] = useState<string>();
     const [rpcError, setRpcError] = useState('');
+
+    const { grpcClient } = useGrpcClient(network);
     useEffect(() => {
-        if (connection) {
+        if (grpcClient) {
             setRpcGenesisHash(undefined);
-            connection
-                .getGrpcClient()
+            grpcClient
                 .getConsensusStatus()
                 .then((status) => status.genesisBlock)
                 .then((hash) => {
@@ -45,7 +45,7 @@ function Main(props: WalletConnectionProps) {
                     setRpcError(errorString(err));
                 });
         }
-    }, [connection, genesisHash, network]);
+    }, [grpcClient]);
     return (
         <>
             <Row className="mt-3 mb-3">
@@ -82,7 +82,7 @@ function Main(props: WalletConnectionProps) {
             </Row>
             <Row className="mt-3 mb-3">
                 <Col>
-                    <ConnectedAccount connection={connection} account={account} network={network} />
+                    <ConnectedAccount network={network} rpcClient={grpcClient} account={account} />
                 </Col>
             </Row>
             <Row className="mt-3 mb-3">
@@ -95,7 +95,7 @@ function Main(props: WalletConnectionProps) {
                         />
                     )}
                     {rpcError && <Alert variant="warning">RPC error: {rpcError}</Alert>}
-                    <App network={network} connection={connection} connectedAccount={account} />
+                    <App network={network} rpcClient={grpcClient} connection={connection} connectedAccount={account} />
                 </Col>
             </Row>
         </>

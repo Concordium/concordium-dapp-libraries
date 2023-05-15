@@ -90,6 +90,22 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         return this.client.getJsonRpcClient();
     }
 
+    /**
+     * Returns a gRPC client that is ready to perform requests against some Concordium Node connected to network/chain
+     * that the connected account lives on.
+     * The client implements version 2 of the Node's API.
+     *
+     * This method is included because it's part of the Browser Wallet's API.
+     * It should be used with care as it's hard to guarantee that it actually connects to the expected network.
+     * The recommended alternative is to have the application instantiate its own instance
+     * that is independent of any connection.
+     * See {@link Network.grpcOpts} for more details.
+     *
+     * Note that this method cannot be moved to {@link WalletConnector} as the Browser Wallet's RPC client doesn't work
+     * until a connection has been established.
+     *
+     * @return The Browser Wallet's internal gRPC client.
+     */
     getGrpcClient() {
         return this.client.getGrpcClient();
     }

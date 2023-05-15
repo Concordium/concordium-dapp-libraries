@@ -4,16 +4,18 @@ import { Network, WalletConnection } from '@concordium/react-components';
 import { useContractSelector } from '@concordium/react-components';
 import { ContractDetails } from './ContractDetails';
 import { ContractInvoker } from './ContractInvoker';
+import { ConcordiumGRPCClient } from '@concordium/web-sdk';
 
 interface Props {
     network: Network;
+    rpcClient: ConcordiumGRPCClient | undefined;
     connection: WalletConnection | undefined;
     connectedAccount: string | undefined;
 }
 
-export function App({ network, connection, connectedAccount }: Props) {
+export function App({ network, rpcClient, connection, connectedAccount }: Props) {
     const [input, setInput] = useState('');
-    const contract = useContractSelector(connection?.getJsonRpcClient(), input);
+    const contract = useContractSelector(rpcClient, input);
     return (
         <>
             {connection && (

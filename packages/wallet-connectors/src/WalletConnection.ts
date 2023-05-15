@@ -3,7 +3,6 @@ import { SendTransactionPayload, SmartContractParameters } from '@concordium/bro
 import {
     AccountTransactionSignature,
     AccountTransactionType,
-    ConcordiumGRPCClient,
     JsonRpcClient,
     SchemaVersion,
     toBuffer,
@@ -154,7 +153,15 @@ export interface WalletConnection {
     /**
      * Returns a JSON-RPC client that is ready to perform requests against some Concordium Node connected to network/chain
      * that the connected account lives on.
-     * The client implements version 1 of the Node's API which is deprecated. Prefer using {@link getGrpcClient} instead.
+     * The client implements version 1 of the Node's API which is deprecated in favor of
+     * {@link https://www.npmjs.com/package/@concordium/web-sdk#ConcordiumNodeClient ConcordiumGRPCClient}
+     * from <code>@concordium/web-sdk</code>.
+     *
+     * The method {@link BrowserWalletConnector.getGrpcClient} exists for exposing the wallet's internal gRPC Web client for API version 2,
+     * but it's not recommended for common cases as there's no reason for the client to be associated with a particular connection.
+     *
+     * The hook <code>useGrpcClient</code> in <code>@concordium/react-libraries</code>
+     * makes it very easy to instantiate a client connected to the appropriate network in React projects.
      *
      * This method is included because it's part of the Browser Wallet's API.
      * It should be used with care as it's hard to guarantee that it actually connects to the expected network.
@@ -169,25 +176,6 @@ export interface WalletConnection {
      * @deprecated Use {@link getGrpcClient} instead.
      */
     getJsonRpcClient(): JsonRpcClient;
-
-    /**
-     * Returns a gRPC client that is ready to perform requests against some Concordium Node connected to network/chain
-     * that the connected account lives on.
-     * The client implements version 2 of the Node's API and is preferred over {@link getJsonRpcClient}.
-     *
-     * This method is included because it's part of the Browser Wallet's API to ensure that one uses the same backend as the wallet.
-     * It should be used with care as it's hard to guarantee that it actually connects to the expected network.
-     * As the mobile wallets don't currently use gRPC, the implementation for WalletConnect connections create their own local client.
-     * As explained in {@link Network.grpcOpts}, the application may easily instantiate its own client and use that instead.
-     *
-     * Implementation detail: The method cannot be moved to {@link WalletConnector}
-     * as the Browser Wallet's internal client doesn't work until a connection has been established.
-     *
-     * @return A gRPC client for performing requests against a Concordium Node connected to the appropriate network.
-     * @throws If the connection uses {@link Network.grpcOpts} and that value is undefined.
-     * @throws If the connection is to the Browser Wallet and the installed version doesn't support the method.
-     */
-    getGrpcClient(): ConcordiumGRPCClient;
 
     /**
      * Assembles a transaction and sends it off to the wallet for approval and submission.
@@ -254,16 +242,6 @@ export interface Network {
      * The connection configuration for a gRPC Web endpoint for performing API (v2) queries against a
      * Concordium Node instance connected to this network.
      *
-     * The value is currently used only for {@link WalletConnectConnection WalletConnect connections}
-     * as {@link BrowserWalletConnector Browser Wallet connections} use the Browser Wallet's internal client.
-     *
-     * Making the field undefined disables the automatic initialization of the client for WalletConnect connections.
-     * Instead of returning a client instance, {@link WalletConnectConnection.getGrpcClient} will throw an exception
-     * in this case.
-     *
-     * There's no fundamental difference between using a manually configured client compared to the one belonging to the connections.
-     * Keeping it separate from connection puts the dApp in control and also allows it to use the client
-     * before any connections have been established.
      * The initialization is straightforward:
      * <pre>
      *   import { ConcordiumGRPCClient } from '@concordium/web-sdk';
@@ -281,7 +259,7 @@ export interface Network {
      * The value is currently used only for {@link WalletConnectConnection WalletConnect connections}
      * as {@link BrowserWalletConnector Browser Wallet connections} use the Browser Wallet's internal client.
      *
-     * Making the field undefined disables the automatic initialization of the client for WalletConnect connections.
+     * Setting the URL to the empty string disables the automatic initialization of the client for WalletConnect connections.
      * Instead of returning a client instance, {@link WalletConnectConnection.getJsonRpcClient} will throw an exception
      * in this case.
      *
@@ -295,7 +273,7 @@ export interface Network {
      *   const client = new JsonRpcClient(new HttpProvider(network.jsonRpcUrl!));
      * </pre>
      */
-    jsonRpcUrl: string | undefined;
+    jsonRpcUrl: string;
 
     /**
      * The base URL of a <a href="https://github.com/Concordium/concordium-scan">CCDScan</a> instance

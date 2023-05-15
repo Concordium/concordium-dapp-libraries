@@ -2,7 +2,6 @@ import {
     AccountTransactionPayload,
     AccountTransactionSignature,
     AccountTransactionType,
-    ConcordiumGRPCClient,
     HttpProvider,
     InitContractPayload,
     JsonRpcClient,
@@ -12,7 +11,6 @@ import {
     serializeUpdateContractParameters,
     toBuffer,
 } from '@concordium/web-sdk';
-import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import SignClient from '@walletconnect/sign-client';
 import { ISignClient, SessionTypes, SignClientTypes } from '@walletconnect/types';
@@ -180,21 +178,17 @@ export class WalletConnectConnection implements WalletConnection {
 
     session: SessionTypes.Struct;
 
-    readonly jsonRpcClient?: JsonRpcClient;
-
-    readonly grpcClient?: ConcordiumGRPCClient;
+    readonly jsonRpcClient: JsonRpcClient | undefined;
 
     constructor(
         connector: WalletConnectConnector,
         chainId: string,
         session: SessionTypes.Struct,
-        grpcClient?: ConcordiumGRPCClient,
-        jsonRpcClient?: JsonRpcClient
+        jsonRpcClient: JsonRpcClient | undefined
     ) {
         this.connector = connector;
         this.chainId = chainId;
         this.session = session;
-        this.grpcClient = grpcClient;
         this.jsonRpcClient = jsonRpcClient;
     }
 
@@ -221,13 +215,6 @@ export class WalletConnectConnection implements WalletConnection {
             throw new Error('no JSON RPC URL provided to network configuration');
         }
         return this.jsonRpcClient;
-    }
-
-    getGrpcClient(): ConcordiumGRPCClient {
-        if (!this.grpcClient) {
-            throw new Error('no gpRPC Web options provided to network configuration');
-        }
-        return this.grpcClient;
     }
 
     async signAndSendTransaction(
@@ -378,7 +365,7 @@ export class WalletConnectConnector implements WalletConnector {
     }
 
     async connect() {
-        const { name, jsonRpcUrl, grpcOpts } = this.network;
+        const { name, jsonRpcUrl} = this.network;
 
         const chainId = `${WALLET_CONNECT_SESSION_NAMESPACE}:${name}`;
         const session = await new Promise<SessionTypes.Struct | undefined>((resolve) => {
@@ -389,8 +376,7 @@ export class WalletConnectConnector implements WalletConnector {
             return undefined;
         }
         const jsonRpcClient = jsonRpcUrl ? new JsonRpcClient(new HttpProvider(jsonRpcUrl)) : undefined;
-        const grpcClient = grpcOpts && new ConcordiumGRPCClient(new GrpcWebFetchTransport(grpcOpts));
-        const connection = new WalletConnectConnection(this, chainId, session, grpcClient, jsonRpcClient);
+        const connection = new WalletConnectConnection(this, chainId, session, jsonRpcClient);
         this.connections.set(session.topic, connection);
         this.delegate.onConnected(connection, connection.getConnectedAccount());
         return connection;

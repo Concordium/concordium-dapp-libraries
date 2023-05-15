@@ -82,7 +82,7 @@ function Main(props: WalletConnectionProps) {
             </Row>
             <Row className="mt-3 mb-3">
                 <Col>
-                    <ConnectedAccount network={network} rpcClient={grpcClient} account={account} />
+                    <ConnectedAccount network={network} rpc={grpcClient} account={account} />
                 </Col>
             </Row>
             <Row className="mt-3 mb-3">
@@ -95,7 +95,7 @@ function Main(props: WalletConnectionProps) {
                         />
                     )}
                     {rpcError && <Alert variant="warning">RPC error: {rpcError}</Alert>}
-                    <App network={network} rpcClient={grpcClient} connection={connection} connectedAccount={account} />
+                    <App network={network} rpc={grpcClient} connection={connection} connectedAccount={account} />
                 </Col>
             </Row>
         </>

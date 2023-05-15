@@ -8,14 +8,14 @@ import { ConcordiumGRPCClient } from '@concordium/web-sdk';
 
 interface Props {
     network: Network;
-    rpcClient: ConcordiumGRPCClient | undefined;
+    rpc: ConcordiumGRPCClient | undefined;
     connection: WalletConnection | undefined;
     connectedAccount: string | undefined;
 }
 
-export function App({ network, rpcClient, connection, connectedAccount }: Props) {
+export function App({ network, rpc, connection, connectedAccount }: Props) {
     const [input, setInput] = useState('');
-    const contract = useContractSelector(rpcClient, input);
+    const contract = useContractSelector(rpc, input);
     return (
         <>
             {connection && (

@@ -6,7 +6,7 @@ import { errorString } from './util';
 
 interface Props {
     network: Network;
-    rpcClient: ConcordiumGRPCClient | undefined;
+    rpc: ConcordiumGRPCClient | undefined;
     account: string | undefined;
 }
 
@@ -14,13 +14,13 @@ function ccdScanUrl(network: Network, activeConnectedAccount: string | undefined
     return `${network.ccdScanBaseUrl}/?dcount=1&dentity=account&daddress=${activeConnectedAccount}`;
 }
 
-export function ConnectedAccount({ network, rpcClient, account }: Props) {
+export function ConnectedAccount({ network, rpc, account }: Props) {
     const [info, setInfo] = useState<AccountInfo>();
     const [infoError, setInfoError] = useState('');
     useEffect(() => {
-        if (rpcClient && account) {
+        if (rpc && account) {
             setInfo(undefined);
-            rpcClient
+            rpc
                 .getAccountInfo(new AccountAddress(account))
                 .then((res) => {
                     setInfo(res);
@@ -31,7 +31,7 @@ export function ConnectedAccount({ network, rpcClient, account }: Props) {
                     setInfoError(errorString(err));
                 });
         }
-    }, [rpcClient, account]);
+    }, [rpc, account]);
     return (
         <>
             {infoError && <Alert variant="danger">Error querying account info: {infoError}</Alert>}

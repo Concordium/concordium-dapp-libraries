@@ -21,7 +21,7 @@ export const TESTNET: Network = {
     name: 'testnet',
     genesisHash: TESTNET_GENESIS_BLOCK_HASH,
     grpcOpts: {
-        baseUrl: 'https://grpc.testnet.concordium.com',
+        baseUrl: 'https://grpc.testnet.concordium.com:20000',
     },
     jsonRpcUrl: 'https://json-rpc.testnet.concordium.com',
     ccdScanBaseUrl: 'https://testnet.ccdscan.io',
@@ -34,7 +34,7 @@ export const MAINNET: Network = {
     name: 'mainnet',
     genesisHash: MAINNET_GENESIS_BLOCK_HASH,
     grpcOpts: {
-        baseUrl: 'https://grpc.mainnet.concordium.software',
+        baseUrl: 'https://grpc.mainnet.concordium.software:20000',
     },
     jsonRpcUrl: 'https://json-rpc.mainnet.concordium.software',
     ccdScanBaseUrl: 'https://ccdscan.io',

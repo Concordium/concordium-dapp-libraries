@@ -42,7 +42,7 @@ export interface Info {
     moduleRef: string;
 }
 
-async function refresh(rpc: ConcordiumGRPCClient | JsonRpcClient , index: bigint) {
+async function refresh(rpc: ConcordiumGRPCClient | JsonRpcClient, index: bigint) {
     const info = await rpc.getInstanceInfo({ index, subindex: BigInt(0) });
     if (!info) {
         throw new Error(`contract ${index} not found`);
@@ -105,7 +105,10 @@ export interface ContractSelector {
  * @param input The index of the contract to look up.
  * @return The resolved contract and related state.
  */
-export function useContractSelector(rpc: ConcordiumGRPCClient | JsonRpcClient | undefined, input: string): ContractSelector {
+export function useContractSelector(
+    rpc: ConcordiumGRPCClient | JsonRpcClient | undefined,
+    input: string
+): ContractSelector {
     const [selected, setSelected] = useState<Info>();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');

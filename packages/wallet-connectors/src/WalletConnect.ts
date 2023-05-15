@@ -365,7 +365,7 @@ export class WalletConnectConnector implements WalletConnector {
     }
 
     async connect() {
-        const { name, jsonRpcUrl} = this.network;
+        const { name, jsonRpcUrl } = this.network;
 
         const chainId = `${WALLET_CONNECT_SESSION_NAMESPACE}:${name}`;
         const session = await new Promise<SessionTypes.Struct | undefined>((resolve) => {

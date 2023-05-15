@@ -20,8 +20,7 @@ export function ConnectedAccount({ network, rpc, account }: Props) {
     useEffect(() => {
         if (rpc && account) {
             setInfo(undefined);
-            rpc
-                .getAccountInfo(new AccountAddress(account))
+            rpc.getAccountInfo(new AccountAddress(account))
                 .then((res) => {
                     setInfo(res);
                     setInfoError('');

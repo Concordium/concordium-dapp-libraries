@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Col, Form, Row, Spinner } from 'react-bootstrap';
 import { Network, WalletConnection } from '@concordium/react-components';
 import { useContractSelector } from '@concordium/react-components';
+import { ConcordiumGRPCClient } from '@concordium/web-sdk';
 import { ContractDetails } from './ContractDetails';
 import { ContractInvoker } from './ContractInvoker';
-import { ConcordiumGRPCClient } from '@concordium/web-sdk';
 
 interface Props {
     network: Network;

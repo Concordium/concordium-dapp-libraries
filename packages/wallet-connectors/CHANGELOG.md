@@ -9,8 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   `WalletConnection`: Add method `getGrpcClient` for obtaining a preconfigured gRPC Web client for querying a Node via API version 2.
-    This deprecates the existing method `getJsonRpcClient` in favor of the new one.
+-   Standard values of `Network` for testnet and mainnet, exposed as constants `TESTNET` and `MAINNET`.
 
 ### Changed
 
@@ -18,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     To migrate existing usage, wrap the schema string in the new function `moduleSchemaFromBase64(...)`.
 -   `WalletConnection` (breaking): Support both string and binary messages in `signMessage`.
     To migrate existing usage, wrap the message string in the new function `stringMessage(...)`.
+-   `WalletConnection`: Deprecate the method `getJsonRpcClient` on `WalletConnection`
+    in favor of the gRPC Web client `ConcordiumGRPCClient` for querying a Node via API version 2.
+    The client should be managed independently of this library, e.g. using `useGrpcClient` in `@concordium/react-components`.
 
 ## [0.2.3] - 2023-04-03
 

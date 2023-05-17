@@ -28,17 +28,7 @@ function Main(props: WalletConnectionProps) {
 
     const [rpcGenesisHash, setRpcGenesisHash] = useState<string>();
     const [rpcError, setRpcError] = useState('');
-
     const { grpcClient } = useGrpcClient(network);
-
-    // For debugging the Browser Wallet client: It looks like the first call always fails...
-    // const [grpcClient, setGrpcClient] = useState<ConcordiumGRPCClient>();
-    // useEffect(() => {
-    //     if (connection && connection instanceof BrowserWalletConnector) {
-    //         setGrpcClient(connection.getGrpcClient());
-    //     }
-    // }, [connection]);
-
     useEffect(() => {
         if (grpcClient) {
             setRpcGenesisHash(undefined);

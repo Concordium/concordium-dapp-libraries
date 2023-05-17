@@ -212,7 +212,7 @@ export class WalletConnectConnection implements WalletConnection {
 
     getJsonRpcClient() {
         if (!this.jsonRpcClient) {
-            throw new Error('no JSON RPC URL provided to network configuration');
+            throw new Error('no JSON RPC URL provided in network configuration');
         }
         return this.jsonRpcClient;
     }

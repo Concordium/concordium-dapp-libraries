@@ -13,6 +13,7 @@ export function useGrpcClient({ grpcOpts }: Network): GrpcClient {
         if (!grpcOpts) {
             return setGrpcClient(undefined);
         }
+        // No exceptions should be thrown from here.
         setGrpcClient(new ConcordiumGRPCClient(new GrpcWebFetchTransport(grpcOpts)));
     }, [grpcOpts]);
     return { grpcClient };

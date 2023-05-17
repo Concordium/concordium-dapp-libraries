@@ -153,15 +153,6 @@ export interface WalletConnection {
     /**
      * Returns a JSON-RPC client that is ready to perform requests against some Concordium Node connected to network/chain
      * that the connected account lives on.
-     * The client implements version 1 of the Node's API which is deprecated in favor of
-     * {@link https://www.npmjs.com/package/@concordium/web-sdk#ConcordiumNodeClient ConcordiumGRPCClient}
-     * from <code>@concordium/web-sdk</code>.
-     *
-     * The method {@link BrowserWalletConnector.getGrpcClient} exists for exposing the wallet's internal gRPC Web client for API version 2,
-     * but it's not recommended for common cases as there's no reason for the client to be associated with a particular connection.
-     *
-     * The hook <code>useGrpcClient</code> in <code>@concordium/react-libraries</code>
-     * makes it very easy to instantiate a client connected to the appropriate network in React projects.
      *
      * This method is included because it's part of the Browser Wallet's API.
      * It should be used with care as it's hard to guarantee that it actually connects to the expected network.
@@ -170,10 +161,20 @@ export interface WalletConnection {
      * Implementation detail: The method cannot be moved to {@link WalletConnector}
      * as the Browser Wallet's internal client doesn't work until a connection has been established.
      *
+     * The client implements version 1 of the Node's API which is deprecated in favor of
+     * <code>ConcordiumGRPCClient</code> from {@link https://www.npmjs.com/package/@concordium/web-sdk @concordium/web-sdk}.
+     *
+     * The method {@link BrowserWalletConnector.getGrpcClient} exists for exposing the wallet's internal gRPC Web client for API version 2,
+     * but it's not recommended for use in most cases as there's no need for the client to be associated with a particular connection.
+     *
+     * Instead, instantiate the client manually as described in {@link Network.grpcOpts}.
+     * For React projects, the hook <code>useGrpcClient</code> in {@link https://www.npmjs.com/package/@concordium/react-components @concordium/react-components}.
+     * makes it very easy to obtain a client that's always connecting to the expected network.
+     *
      * @return A JSON-RPC client for performing requests against a Concordium Node connected to the appropriate network.
      * @throws If the connection uses {@link Network.jsonRpcUrl} and that value is undefined.
      * @throws If the connection is to the Browser Wallet and the installed version doesn't support the method.
-     * @deprecated Use {@link getGrpcClient} instead.
+     * @deprecated Use <code>ConcordiumGRPCClient<code> instead.
      */
     getJsonRpcClient(): JsonRpcClient;
 
@@ -270,7 +271,7 @@ export interface Network {
      * <pre>
      *   import { HttpProvider, JsonRpcClient } from '@concordium/web-sdk';
      *   ...
-     *   const client = new JsonRpcClient(new HttpProvider(network.jsonRpcUrl!));
+     *   const client = new JsonRpcClient(new HttpProvider(network.jsonRpcUrl));
      * </pre>
      */
     jsonRpcUrl: string;

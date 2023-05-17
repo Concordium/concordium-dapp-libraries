@@ -256,7 +256,7 @@ export interface Network {
     grpcOpts: GrpcWebOptions | undefined;
 
     /**
-     * The URL of a <a href="https://github.com/Concordium/concordium-json-rpc">Concordium JSON-RPC proxy</a> instance
+     * The URL of a {@link https://github.com/Concordium/concordium-json-rpc Concordium JSON-RPC proxy} instance
      * for performing API (v1) queries against a Concordium Node instance connected to this network.
      *
      * The value is currently used only for {@link WalletConnectConnection WalletConnect connections}
@@ -264,13 +264,13 @@ export interface Network {
      *
      * Setting the URL to the empty string disables the automatic initialization of the client returned by
      * {@link WalletConnection.getJsonRpcClient} for WalletConnect connections.
-     * Instead of returning a client instance,
-     * the concrete implementation {@link WalletConnectConnection.getJsonRpcClient} will throw an exception in this case.
+     * The concrete implementation {@link WalletConnectConnection.getJsonRpcClient} will then throw an exception
+     * as there is no client instance to return.
      *
-     * There's no fundamental difference between using a manually configured client compared to the one belonging to the connections.
-     * Keeping it separate from connection puts the dApp in control and also allows it to use the client
-     * before any connections have been established.
-     * The initialization is straightforward:
+     * There is no fundamental difference between using a client belonging to a connection compared to one that is initialized directly.
+     * Keeping it separate from connections gives the dApp more control and allows the client to be used even if no connections have been established.
+     *
+     * Initializing a separate client is straightforward:
      * <pre>
      *   import { HttpProvider, JsonRpcClient } from '@concordium/web-sdk';
      *   ...
@@ -280,7 +280,7 @@ export interface Network {
     jsonRpcUrl: string;
 
     /**
-     * The base URL of a <a href="https://github.com/Concordium/concordium-scan">CCDScan</a> instance
+     * The base URL of a {@link https://github.com/Concordium/concordium-scan CCDScan} instance
      * connected to this network.
      * While CCDScan supports queries against its backend,
      * the main use of this URL is to construct links to the frontend.

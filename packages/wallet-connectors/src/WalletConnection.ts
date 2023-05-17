@@ -154,7 +154,7 @@ export interface WalletConnection {
      * Returns a JSON-RPC client that is ready to perform requests against some Concordium Node connected to network/chain
      * that the connected account lives on.
      *
-     * This method is included because it's part of the Browser Wallet's API.
+     * This method is included because it's part of the Browser Wallet API.
      * It should be used with care as it's hard to guarantee that it actually connects to the expected network.
      * As explained in {@link Network.jsonRpcUrl}, the application may easily instantiate its own client and use that instead.
      *

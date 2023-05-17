@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `WalletConnection`: Deprecate the method `getJsonRpcClient` on `WalletConnection`
     in favor of the gRPC Web client `ConcordiumGRPCClient` for querying a Node via API version 2.
     The client should be managed independently of this library, e.g. using `useGrpcClient` in `@concordium/react-components`.
+-   `Network`: Add field `grpcOpts` containing the initialization options for a gRPC Web client `ConcordiumGRPCClient` to connect to the given network.
 
 ## [0.2.3] - 2023-04-03
 

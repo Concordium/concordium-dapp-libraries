@@ -167,9 +167,7 @@ export interface WalletConnection {
      * The method {@link BrowserWalletConnector.getGrpcClient} exists for exposing the wallet's internal gRPC Web client for API version 2,
      * but it's not recommended for use in most cases as there's no need for the client to be associated with a particular connection.
      *
-     * Instead, instantiate the client manually as described in {@link Network.grpcOpts}.
-     * For React projects, the hook <code>useGrpcClient</code> in {@link https://www.npmjs.com/package/@concordium/react-components @concordium/react-components}.
-     * makes it very easy to obtain a client that's always connecting to the expected network.
+     * Instead, instantiate the client manually or using a hook (for React) as described in {@link Network.grpcOpts}.
      *
      * @return A JSON-RPC client for performing requests against a Concordium Node connected to the appropriate network.
      * @throws If the connection uses {@link Network.jsonRpcUrl} and that value is undefined.
@@ -250,6 +248,10 @@ export interface Network {
      *   ...
      *   const client = new ConcordiumGRPCClient(new GrpcWebFetchTransport(network.grpcOpts!));
      * </pre>
+     *
+     * For React projects, the hook <code>useGrpcClient</code> in
+     * {@link https://www.npmjs.com/package/@concordium/react-components @concordium/react-components}
+     * makes it very easy to obtain a client that's always connecting to the expected network.
      */
     grpcOpts: GrpcWebOptions | undefined;
 
@@ -260,9 +262,10 @@ export interface Network {
      * The value is currently used only for {@link WalletConnectConnection WalletConnect connections}
      * as {@link BrowserWalletConnector Browser Wallet connections} use the Browser Wallet's internal client.
      *
-     * Setting the URL to the empty string disables the automatic initialization of the client for WalletConnect connections.
-     * Instead of returning a client instance, {@link WalletConnectConnection.getJsonRpcClient} will throw an exception
-     * in this case.
+     * Setting the URL to the empty string disables the automatic initialization of the client returned by
+     * {@link WalletConnection.getJsonRpcClient} for WalletConnect connections.
+     * Instead of returning a client instance,
+     * the concrete implementation {@link WalletConnectConnection.getJsonRpcClient} will throw an exception in this case.
      *
      * There's no fundamental difference between using a manually configured client compared to the one belonging to the connections.
      * Keeping it separate from connection puts the dApp in control and also allows it to use the client

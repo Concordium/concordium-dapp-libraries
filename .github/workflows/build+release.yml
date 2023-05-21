@@ -49,7 +49,7 @@ jobs:
               run: |
                   workspace=@concordium/${{steps.tag.outputs.package}}
                   name=${{steps.tag.outputs.package}}
-                  version=$(npm pkg get version --workspaces | jq -r '.["${workspace}"]')
+                  version="$(npm pkg get version --workspaces | jq -r ".[\"${workspace}\"]")"
                   echo "
                   name=${name}
                   version=${version}

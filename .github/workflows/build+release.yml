@@ -47,24 +47,20 @@ jobs:
             - name: Resolve workspace name and path of package
               id: package
               run: |
-                  echo "
+                  workspace=@concordium/${{steps.tag.outputs.package}}
                   name=${{steps.tag.outputs.package}}
-                  version=${{steps.tag.outputs.version}}
-                  scoped-name=@concordium/${{steps.tag.outputs.package}}
-                  path=./packages/${{steps.tag.outputs.package}}
-                  " >> "${GITHUB_OUTPUT}"
-            - name: Resolve publish version and pack file
-              id: publish
-              run: |
-                  v="$(npm pkg get version --workspaces | jq -r '.["${{steps.package.outputs.scoped-name}}"]')"
+                  version=$(npm pkg get version --workspaces | jq -r '.["${workspace}"]')
                   echo "
-                  version=${v}
-                  pack-file=concordium-${{steps.package.outputs.name}}-${v}.tgz
-                  github-release-name=${{steps.package.outputs.name}}: ${{steps.package.outputs.version}}
-                  " >> $GITHUB_OUTPUT
-            - name: Check that version matches 'package.json' up to build version
+                  name=${name}
+                  version=${version}
+                  workspace=${workspace}
+                  path=./packages/${{steps.tag.outputs.package}}
+                  pack-file=concordium-${name}-${version}.tgz
+                  github-release-name=${name}: ${{steps.package.outputs.version}}
+                  " >> "${GITHUB_OUTPUT}"
+            - name: Check that tag version matches 'package.json' up to build version
               run: |
-                  [[ "${{steps.package.outputs.version}}" = "${{steps.publish.outputs.version}}"-* ]]
+                  [[ "${{steps.tag.outputs.version}}" = "${{steps.package.outputs.version}}"-* ]]
             - name: Setup Node
               uses: actions/setup-node@v3
               with:
@@ -76,15 +72,15 @@ jobs:
             - name: Build all libraries
               run: yarn build
             - name: Archive target library
-              run: npm pack --workspace="${{steps.package.outputs.scoped-name}}"
+              run: npm pack --workspace="${{steps.package.outputs.workspace}}"
             - name: Publish library to npm [dry run]
-              run: npm publish --dry-run "${{steps.publish.outputs.pack-file}}"
+              run: npm publish --dry-run "${{steps.package.outputs.pack-file}}"
             - name: Extract changelog entries
               uses: concordium/github-action-changelog-extract@v1
               id: changelog
               with:
                   file: "${{steps.tag.outputs.path}}/CHANGELOG.md"
-                  version: "${{steps.publish.outputs.version}}"
+                  version: "${{steps.package.outputs.version}}"
             - name: Upload package as GitHub release
               uses: softprops/action-gh-release@v1
               with:
@@ -96,7 +92,7 @@ jobs:
                       # Changelog
                       
                       ${{steps.changelog.outputs.section}}
-                  files: "${{steps.publish.outputs.pack-file}}"
-                  name: "${{steps.publish.outputs.github-release-name}}"
+                  files: "${{steps.package.outputs.pack-file}}"
+                  name: "${{steps.package.outputs.github-release-name}}"
                   # The method for auto-generating release notes just lists all commits (including those not relevant to the subproject).
                   generate_release_notes: false

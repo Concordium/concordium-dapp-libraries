@@ -58,6 +58,7 @@ jobs:
                   pack-file=concordium-${name}-${version}.tgz
                   github-release-name=${name}: ${{steps.package.outputs.version}}
                   " >> "${GITHUB_OUTPUT}"
+                  cat "${GITHUB_OUTPUT}"
             - name: Check that tag version matches 'package.json' up to build version
               run: |
                   [[ "${{steps.tag.outputs.version}}" = "${{steps.package.outputs.version}}"-* ]]

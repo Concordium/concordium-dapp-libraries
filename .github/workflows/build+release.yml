@@ -52,11 +52,19 @@ jobs:
                       version=${{steps.tag.outputs.version}}
                       scoped-name=@concordium/${{steps.tag.outputs.package}}
                       path=./packages/${{steps.tag.outputs.package}}
-                      publish-version=$(npm pkg get version --workspaces | jq -r '.["${{steps.package.outputs.scoped-name}}"]')
+                  " >> $GITHUB_OUTPUT
+            - name: Resolve publish version and pack file
+              id: publish
+              run: |
+                  v="$(npm pkg get version --workspaces | jq -r '.["${{steps.package.outputs.scoped-name}}"]')"
+                  echo "
+                      version=${v}
+                      pack-file=concordium-${{steps.package.outputs.name}}-${v}.tgz
+                      github-release-name=${{steps.package.outputs.name}}: ${{steps.package.outputs.version}}
                   " >> $GITHUB_OUTPUT
             - name: Check that version matches 'package.json' up to build version
               run: |
-                  [[ "${{steps.package.outputs.version}}" = "${{steps.package.outputs.publish-version}}"-* ]]
+                  [[ "${{steps.package.outputs.version}}" = "${{steps.publish.outputs.version}}"-* ]]
             - name: Setup Node
               uses: actions/setup-node@v3
               with:
@@ -70,13 +78,13 @@ jobs:
             - name: Archive target library
               run: npm pack --workspace="${{steps.package.outputs.scoped-name}}"
             - name: Publish library to npm [dry run]
-              run: npm publish --dry-run "concordium-${{steps.package.outputs.name}}-${{steps.package-json.outputs.version}}.tgz"
+              run: npm publish --dry-run "${{steps.publish.outputs.pack-file}}"
             - name: Extract changelog entries
               uses: concordium/github-action-changelog-extract@v1
               id: changelog
               with:
-                  file: "./packages/${{steps.tag.outputs.package}}/CHANGELOG.md"
-                  version: "${{steps.tag.outputs.version}}"
+                  file: "${{steps.tag.outputs.path}}/CHANGELOG.md"
+                  version: "${{steps.publish.outputs.version}}"
             - name: Upload package as GitHub release
               uses: softprops/action-gh-release@v1
               with:
@@ -88,7 +96,7 @@ jobs:
                       # Changelog
                       
                       ${{steps.changelog.outputs.section}}
-                  files: "concordium-${{steps.package.outputs.name}}-${{steps.package-json.outputs.version}}.tgz"
-                  name: "${{steps.package.outputs.name}}: ${{steps.package.outputs.version}}"
+                  files: "${{steps.publish.outputs.pack-file}}"
+                  name: "${{steps.publish.outputs.github-release-name}}"
                   # The method for auto-generating release notes just lists all commits (including those not relevant to the subproject).
                   generate_release_notes: false

@@ -48,21 +48,19 @@ jobs:
               id: package
               run: |
                   echo "
-                      name=${{steps.tag.outputs.package}}
-                      version=${{steps.tag.outputs.version}}
-                      scoped-name=@concordium/${{steps.tag.outputs.package}}
-                      path=./packages/${{steps.tag.outputs.package}}
+                  name=${{steps.tag.outputs.package}}
+                  version=${{steps.tag.outputs.version}}
+                  scoped-name=@concordium/${{steps.tag.outputs.package}}
+                  path=./packages/${{steps.tag.outputs.package}}
                   " >> "${GITHUB_OUTPUT}"
-                  echo "${GITHUB_OUTPUT}"
-                  cat "${GITHUB_OUTPUT}"
             - name: Resolve publish version and pack file
               id: publish
               run: |
                   v="$(npm pkg get version --workspaces | jq -r '.["${{steps.package.outputs.scoped-name}}"]')"
                   echo "
-                      version=${v}
-                      pack-file=concordium-${{steps.package.outputs.name}}-${v}.tgz
-                      github-release-name=${{steps.package.outputs.name}}: ${{steps.package.outputs.version}}
+                  version=${v}
+                  pack-file=concordium-${{steps.package.outputs.name}}-${v}.tgz
+                  github-release-name=${{steps.package.outputs.name}}: ${{steps.package.outputs.version}}
                   " >> $GITHUB_OUTPUT
             - name: Check that version matches 'package.json' up to build version
               run: |

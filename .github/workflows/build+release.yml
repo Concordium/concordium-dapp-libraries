@@ -54,10 +54,10 @@ jobs:
               uses: bisgardo/github-action-echo@v1
               id: release
               with:
-                  name: "${{steps.package}}"
+                  _name: "${{steps.package.outputs.name}}"
                   version: "${{steps.tag.outputs.version}}"
-                  npm-pack-file: "concordium-${name}-${{steps.package.outputs.version}}.tgz"
-                  github-release-name: "${name}: ${version}"
+                  npm-pack-file: "concordium-${_name}-${{steps.package.outputs.version}}.tgz"
+                  github-release-name: "${_name}: ${version}"
             - name: Check that tag version matches 'package.json' up to build version
               run: |
                   [[ "${{steps.tag.outputs.version}}" = "${{steps.package.outputs.version}}"-* ]]

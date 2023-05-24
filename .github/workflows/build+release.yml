@@ -92,7 +92,7 @@ jobs:
                       # Changelog
                       
                       ${{steps.changelog.outputs.section}}
-                  files: "${{steps.package.outputs.npm-pack-file}}"
-                  name: "${{steps.package.outputs.github-release-name}}"
+                  files: "${{steps.release.outputs.npm-pack-file}}"
+                  name: "${{steps.release.outputs.github-release-name}}"
                   # The method for auto-generating release notes just lists all commits (including those not relevant to the subproject).
                   generate_release_notes: false

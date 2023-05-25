@@ -14,7 +14,7 @@ env:
     node_version: "16.x"
 
 jobs:
-    build-and-upload-release:
+    build-and-test:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout project

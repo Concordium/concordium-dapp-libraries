@@ -31,4 +31,4 @@ jobs:
             - name: Build all libraries and samples
               run: yarn workspaces foreach -tv run build
             - name: Run tests
-              run: yarn workspaces foreach -tv run test
+              run: yarn workspaces foreach -tv run test --passWithNoTests

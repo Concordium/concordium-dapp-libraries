@@ -28,12 +28,11 @@ function Main(props: WalletConnectionProps) {
 
     const [rpcGenesisHash, setRpcGenesisHash] = useState<string>();
     const [rpcError, setRpcError] = useState('');
-    const { grpcClient } = useGrpcClient(network);
+    const rpc = useGrpcClient(network);
     useEffect(() => {
-        if (grpcClient) {
+        if (rpc) {
             setRpcGenesisHash(undefined);
-            grpcClient
-                .getConsensusStatus()
+            rpc.getConsensusStatus()
                 .then((status) => status.genesisBlock)
                 .then((hash) => {
                     setRpcGenesisHash(hash);
@@ -44,7 +43,7 @@ function Main(props: WalletConnectionProps) {
                     setRpcError(errorString(err));
                 });
         }
-    }, [grpcClient]);
+    }, [rpc]);
     return (
         <>
             <Row className="mt-3 mb-3">
@@ -81,7 +80,7 @@ function Main(props: WalletConnectionProps) {
             </Row>
             <Row className="mt-3 mb-3">
                 <Col>
-                    <ConnectedAccount network={network} rpc={grpcClient} account={account} />
+                    <ConnectedAccount network={network} rpc={rpc} account={account} />
                 </Col>
             </Row>
             <Row className="mt-3 mb-3">
@@ -94,7 +93,7 @@ function Main(props: WalletConnectionProps) {
                         />
                     )}
                     {rpcError && <Alert variant="warning">RPC error: {rpcError}</Alert>}
-                    <App network={network} rpc={grpcClient} connection={connection} connectedAccount={account} />
+                    <App network={network} rpc={rpc} connection={connection} connectedAccount={account} />
                 </Col>
             </Row>
         </>

@@ -13,10 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--   `WalletConnection` (breaking): Support both module and type/parameter schemas in `signAndSendTransaction`.
-    To migrate existing usage, wrap the schema string in the new function `moduleSchemaFromBase64(...)`.
--   `WalletConnection` (breaking): Support both string and binary messages in `signMessage`.
-    To migrate existing usage, wrap the message string in the new function `stringMessage(...)`.
 -   `WalletConnection`: Deprecate the method `getJsonRpcClient` on `WalletConnection`
     in favor of the gRPC Web client `ConcordiumGRPCClient` for querying a Node via API version 2.
     The client should be managed independently of this library, e.g. using `useGrpcClient` in `@concordium/react-components`.
@@ -24,6 +20,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     to connect to the given network.
     If field `jsonRpcUrl` is empty, the JSON-RPC client is not initialized for WalletConnect connections,
     and if so, `getJsonRpcClient` will throw an exception.
+
+## [0.3.0] - 2023-05-21
+
+### Changed
+
+-   `WalletConnection` (breaking): Support both module and type/parameter schemas in `signAndSendTransaction`.
+    To migrate existing usage, wrap the schema string in the new function `moduleSchemaFromBase64(...)`.
+-   `WalletConnection` (breaking): Support both string and binary messages in `signMessage`.
+    To migrate existing usage, wrap the message string in the new function `stringMessage(...)`.
 
 ## [0.2.3] - 2023-04-03
 

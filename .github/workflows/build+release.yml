@@ -74,7 +74,9 @@ jobs:
             - name: Archive target library
               run: npm pack --workspace="${{steps.package.outputs.workspace}}"
             - name: Publish library to npm [dry run]
-              run: npm publish --dry-run "${{steps.release.outputs.npm-pack-file}}"
+              run: npm publish "${{steps.release.outputs.npm-pack-file}}"
+              env:
+                NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
             - name: Extract changelog entries
               uses: concordium/github-action-changelog-extract@v1
               id: changelog

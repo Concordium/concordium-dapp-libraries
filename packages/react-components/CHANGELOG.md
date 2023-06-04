@@ -18,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `useConnectorTypeStatus`: Replacement of the hook `useWalletConnectorSelector` with renamed fields and a slightly different purpose:
     It no longer returns a `select` function, leaving the app free to decide what "select" means in different contexts.
 
+## [0.3.0] - 2023-06-04
+
+### Added
+
+-   Hook `useGrpcClient` for obtaining a gRPC Web client `ConcordiumGRPCClient` that connects to the appropriate network.
+
+### Changed
+
+-   Dependency on `@concordium/wallet-connectors` bumped to v0.3.1+.
+
 ## [0.2.1] - 2023-03-17
 
 ### Changed

@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2023-06-04
+
+### Added
+
+-   Standard values of `Network` for testnet and mainnet, exposed as constants `TESTNET` and `MAINNET`.
+
+### Changed
+
+-   `WalletConnection`: Deprecate the method `getJsonRpcClient` on `WalletConnection`
+    in favor of the gRPC Web client `ConcordiumGRPCClient` for querying a Node via API version 2.
+    The client should be managed independently of this library, e.g. using `useGrpcClient` in `@concordium/react-components`.
+-   `Network`: Add field `grpcOpts` containing the initialization options for a gRPC Web client `ConcordiumGRPCClient`
+    to connect to the given network.
+    If field `jsonRpcUrl` is empty, the JSON-RPC client is not initialized for WalletConnect connections,
+    and if so, `getJsonRpcClient` will throw an exception.
+
+## [0.3.0] - 2023-05-21
+
 ### Changed
 
 -   `WalletConnection` (breaking): Support both module and type/parameter schemas in `signAndSendTransaction`.

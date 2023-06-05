@@ -25,7 +25,7 @@ interface ContractParamEntry {
 }
 
 interface ContractInvokerProps {
-    rpc: ConcordiumGRPCClient,
+    rpc: ConcordiumGRPCClient;
     network: Network;
     connection: WalletConnection | undefined;
     connectedAccount: string | undefined;
@@ -310,11 +310,7 @@ export function ContractInvoker({ rpc, network, connection, connectedAccount, co
                 </Form.Group>
                 <Row>
                     <Col>
-                        {!connection && (
-                            <Button disabled={true}>
-                                Connect wallet to submit
-                            </Button>
-                        )}
+                        {!connection && <Button disabled={true}>Connect wallet to submit</Button>}
                         {connection && (
                             <Button onClick={submit} disabled={isAwaitingApproval || inputResult.isErr()}>
                                 {isAwaitingApproval && 'Waiting for approval...'}

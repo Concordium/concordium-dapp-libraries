@@ -38,10 +38,7 @@ function findSchema(m: WebAssembly.Module): Result<SchemaRpcResult | undefined, 
 export function useContractSchemaRpc(rpc: ConcordiumGRPCClient, contract: Info) {
     const [result, setResult] = useState<Result<SchemaRpcResult | undefined, string>>();
     useEffect(() => {
-        ResultAsync.fromPromise(
-            rpc.getModuleSource(new ModuleReference(contract.moduleRef)),
-            errorString
-        )
+        ResultAsync.fromPromise(rpc.getModuleSource(new ModuleReference(contract.moduleRef)), errorString)
             .andThen((r) => {
                 if (!r) {
                     return err('module source is empty');

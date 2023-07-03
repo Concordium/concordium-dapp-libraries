@@ -124,7 +124,7 @@ function serializeUpdateContractMessage(
  * Convert schema into the object format expected by the Mobile crypto library.
  * @param schema The schema object.
  */
-function serializeSchema(schema: Schema | undefined) {
+function convertSchemaFormat(schema: Schema | undefined) {
     if (!schema) {
         return null;
     }
@@ -253,7 +253,7 @@ export class WalletConnectConnection implements WalletConnection {
             type: AccountTransactionType[type],
             sender: accountAddress,
             payload: accountTransactionPayloadToJson(serializePayloadParameters(type, payload, typedParams)),
-            schema: serializeSchema(typedParams?.schema),
+            schema: convertSchemaFormat(typedParams?.schema),
         };
         try {
             const { hash } = (await this.connector.client.request({

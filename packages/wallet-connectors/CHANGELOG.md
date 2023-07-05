@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--   Schema object format conversion in `signAndSendTransaction` for WalletConnect requests.
+-   `WalletConnect`: Fix schema object format conversion in `signAndSendTransaction` in request payloads.
+-   `WalletConnect`: Use standard string identifiers for transaction type in request payload.
 
 ## [0.3.1] - 2023-06-04
 

@@ -68,7 +68,7 @@ function isSignAndSendTransactionError(obj: any): obj is SignAndSendTransactionE
 }
 
 function accountTransactionPayloadToJson(data: AccountTransactionPayload) {
-    return JSON.stringify(data, (key, value) => {
+    return JSON.stringify(data, (_key, value) => {
         if (value?.type === 'Buffer') {
             // Buffer has already been transformed by its 'toJSON' method.
             return toBuffer(value.data).toString('hex');
@@ -293,6 +293,12 @@ export class WalletConnectConnection implements WalletConnection {
     }
 
     async signMessage(accountAddress: string, msg: SignableMessage) {
+        const connectedAccount = this.getConnectedAccount();
+        if (accountAddress !== connectedAccount) {
+            throw new Error(
+                `cannot sign message with address '${accountAddress}' on connection for account '${connectedAccount}'`
+            );
+        }
         const params = convertSignableMessageFormat(msg);
         // TODO Catch thrown non-Error and rethrow it as a proper Error.
         const signature = await this.connector.client.request({

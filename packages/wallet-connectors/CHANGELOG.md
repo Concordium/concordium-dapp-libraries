@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   Bump dependency `@concordium/web-sdk` to v6.0.0+. This transitively bumps `@concordium/common-sdk` to v9.0.0.
+
 ### Fixed
 
 -   `WalletConnect`: Fix schema object format conversion in `signAndSendTransaction` in request payloads.

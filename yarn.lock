@@ -1748,7 +1748,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@concordium/web-sdk@npm:6.0.0":
+"@concordium/web-sdk@npm:^6.0.0":
   version: 6.0.0
   resolution: "@concordium/web-sdk@npm:6.0.0"
   dependencies:

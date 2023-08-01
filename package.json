@@ -31,6 +31,6 @@
         "pinst": "^3.0.0"
     },
     "resolutions": {
-        "@concordium/web-sdk": "6.0.0"
+        "@concordium/web-sdk": "^6.0.0"
     }
 }

@@ -5,8 +5,8 @@ import {
     HttpProvider,
     InitContractPayload,
     JsonRpcClient,
-    TransactionKindString,
     UpdateContractPayload,
+    getTransactionKindString,
     serializeInitContractParameters,
     serializeTypeValue,
     serializeUpdateContractParameters,
@@ -250,15 +250,8 @@ export class WalletConnectConnection implements WalletConnection {
         payload: AccountTransactionPayload,
         typedParams?: TypedSmartContractParameters
     ) {
-        // Look up transaction type name via the value in the enum 'TransactionKindString'
-        // with the same name as the provided 'AccountTransactionType' value.
-        // This is correct because the values have the same names in both enums.
-        // TypeScript isn't able to infer this, so we have to disable type checking for the lookup.
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const typeStr = TransactionKindString[AccountTransactionType[type]];
         const params = {
-            type: typeStr,
+            type: getTransactionKindString(type),
             sender: accountAddress,
             payload: accountTransactionPayloadToJson(serializePayloadParameters(type, payload, typedParams)),
             schema: convertSchemaFormat(typedParams?.schema),

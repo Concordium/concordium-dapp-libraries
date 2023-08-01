@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   `WalletConnect`: `signMessage` now supports passing binary message including schema to the wallet.
+
 ### Fixed
 
 -   Schema object format conversion in `signAndSendTransaction` for WalletConnect requests.

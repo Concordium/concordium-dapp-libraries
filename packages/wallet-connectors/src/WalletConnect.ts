@@ -6,6 +6,7 @@ import {
     InitContractPayload,
     JsonRpcClient,
     UpdateContractPayload,
+    getTransactionKindString,
     serializeInitContractParameters,
     serializeTypeValue,
     serializeUpdateContractParameters,
@@ -251,7 +252,7 @@ export class WalletConnectConnection implements WalletConnection {
         typedParams?: TypedSmartContractParameters
     ) {
         const params = {
-            type: AccountTransactionType[type],
+            type: getTransactionKindString(type),
             sender: accountAddress,
             payload: accountTransactionPayloadToJson(serializePayloadParameters(type, payload, typedParams)),
             schema: convertSchemaFormat(typedParams?.schema),

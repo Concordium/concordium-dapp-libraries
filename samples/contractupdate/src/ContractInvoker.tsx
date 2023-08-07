@@ -136,17 +136,14 @@ export function ContractInvoker({ rpc, network, connection, connectedAccount, co
         let input = schemaInput.trim();
         if (input) {
             try {
-                // return ok({type: 'SchemaResultFromInput', value: schemaOfType(schemaTypeInput, schemaInput)});
                 return ok({ fromRpc: false, schema: schemaOfType(schemaTypeInput, schemaInput) });
             } catch (e) {
                 return err('schema is not valid base64');
             }
         }
         if (schemaRpcResult) {
-            // return ok({type: 'SchemaFromRpc', value: schemaRpcResult});
             return ok({ ...schemaRpcResult, fromRpc: true });
         }
-        // return ok({ type: 'SchemaResultFromInput', schema: undefined });
         return ok({ fromRpc: false, schema: undefined });
     }, [schemaInput, schemaTypeInput, schemaRpcResult]);
     const amountResult = useMemo(() => {

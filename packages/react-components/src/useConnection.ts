@@ -32,6 +32,7 @@ export interface Connection {
  * The connection is automatically pruned from the state when it disconnects.
  * @param connectedAccounts Mapping from open connections to their selected accounts or the empty string if there isn't one.
  * @param genesisHashes Mapping from open connections to the hash of the genesis block for the chain that the selected accounts of the connections live on.
+ * @return The resolved state.
  */
 export function useConnection(
     connectedAccounts: Map<WalletConnection, string | undefined>,

@@ -38,13 +38,14 @@ function MyRootComponent() {
 }
 
 function MyAppComponent(props: WalletConnectionProps) {
-    // TODO Manage connections using the interface exposed through WalletConnectionProps (usually using useWalletConnectorSelector)...
+    // TODO Manage connections using the interface exposed through WalletConnectionProps
+    //      (usually using the helper hooks described below)...
 }
 ```
 
 Use `props.setActiveConnectorType(...)` from within `MyAppComponent` to set up a connector,
 and make it available on `props.activeConnector`.
-This is most easily done using [`useWalletConnectorSelector`](#usewalletconnectorselector).
+This is most easily done using [`useConnectorTypeStatus`](#useconnectortypestatus).
 
 Connector types for the Browser Wallet and WalletConnect connectors are usually initialized like so:
 
@@ -56,16 +57,36 @@ export const WALLET_CONNECT = ephemeralConnectorType(
 ```
 
 Initiate a connection by invoking `connect` on a connector.
-This is most easily done using the hooks `useConnection` and `useConnect`:
+This is most easily done using the helper hooks `useConnection`, `useConnect`, and `useDisconnect`:
 
 ```typescript
 const { activeConnector, network, connectedAccounts, genesisHashes, ... } = props;
 const { connection, setConnection, account, genesisHash } = useConnection(activeConnector, connectedAccounts, genesisHashes);
-const { connect, isConnecting, connectError } = useConnect(activeConnector, setConnection);
+const [connectionError, setConnectionError] = useState('');
+const { connect, isConnecting } = useConnect(activeConnector, setConnection, setConnectionError);
+const { disconnect, isDisconnecting } = useDisconnect(connection, setConnectionError);
 ```
 
-The app uses the function `connect` to initiate a new connection from `activeConnector`.
-The fields `isConnecting` and `connectError` are used to render the connection status.
+First `useConnection` maintains an "active" connection and extracts the available properties for this connection.
+The hooks `useConnect` and `useDisconnect` wrap the actions of establishing and tearing down connections
+for a given (in this case "active") connector.
+They may share an error handling function to ensure that the errors don't "stick around" indefinitely:
+They're easily dismissed, explicitly or implicitly, like for example when a connection is successfully established:
+
+```typescript
+useEffect(() => {
+    if (connection) {
+        setConnectionError('');
+    }
+}, [connection]);
+```
+
+While the two hook appear as companions in this example,
+one could also place the "disconnect" button in a sub-component with its own error handling, if so desired.
+
+With these hooks in place, the app uses the `connect` function to open a new connection from `activeConnector`
+and `disconnect` to close it.
+The fields `isConnecting`, `isDisconnecting`, and `connectionError` are used to render the connection status.
 Once established, the connection and its state are exposed in the following fields:
 
 -   `connection`: The `WalletConnection` object that the app uses to interact with the wallet.
@@ -83,7 +104,7 @@ See [the sample dApp](../../samples/contractupdate/src/Root.tsx) for a complete 
 
 ## Hooks
 
-### [`useWalletConnectorSelector`](./src/useWalletConnectorSelector.ts)
+### [`useConnectorTypeStatus`](./src/useConnectorTypeStatus.ts)
 
 Helper hook for computing the selected/connected/disabled state of a given connector type.
 
@@ -93,7 +114,7 @@ The button accepts all the `props` exposed by `WithWalletConnector`
 as well as the particular `ConnectorType` that it manages:
 
 ```typescript jsx
-import { ConnectorType, useWalletConnectorSelector, WalletConnectionProps } from '@concordium/react-components';
+import { ConnectorType, useConnectorTypeStatus, WalletConnectionProps } from '@concordium/react-components';
 
 interface Props extends WalletConnectionProps {
     connectorType: ConnectorType;
@@ -101,10 +122,15 @@ interface Props extends WalletConnectionProps {
 }
 
 export function WalletConnectorButton(props: Props) {
-    const { connectorType, connectorName } = props;
-    const { isSelected, isConnected, isDisabled, select } = useWalletConnectorSelector(connectorType, props);
+    const { connectorType, connectorName, connection, activeConnectorType, activeConnector, setActiveConnectorType } = props;
+    const { isActive, isConnected, isOtherConnected } = useConnectorTypeStatus(
+        connectorType,
+        connection,
+        activeConnectorType,
+        activeConnector,
+    );
     return (
-        // TODO Render button based on the computed properties and invoke `select` on click...
+        // TODO Render button based on the computed properties and invoke `setActiveConnectorType` etc. on click...
     );
 }
 ```

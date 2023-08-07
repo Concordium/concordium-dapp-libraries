@@ -1,15 +1,16 @@
 import { ResultAsync, err, ok } from 'neverthrow';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Col, Container, Form, InputGroup, Row, Spinner } from 'react-bootstrap';
 import {
     TESTNET,
-    WalletConnectionProps,
+    WalletConnectionsProps,
     WithWalletConnector,
     binaryMessageFromHex,
     stringMessage,
     typeSchemaFromBase64,
     useConnect,
     useConnection,
+    useDisconnect,
 } from '@concordium/react-components';
 import { AccountTransactionSignature } from '@concordium/web-sdk';
 import { WalletConnectorButton } from './WalletConnectorButton';
@@ -25,10 +26,17 @@ export default function App() {
     );
 }
 
-function Main(props: WalletConnectionProps) {
+function Main(props: WalletConnectionsProps) {
     const { activeConnectorType, activeConnector, activeConnectorError, connectedAccounts, genesisHashes } = props;
     const { connection, setConnection, account } = useConnection(connectedAccounts, genesisHashes);
-    const { connect, isConnecting, connectError } = useConnect(activeConnector, setConnection);
+    const [connectError, setConnectError] = useState('');
+    const { connect, isConnecting } = useConnect(activeConnector, setConnection, setConnectError);
+    const { disconnect, isDisconnecting } = useDisconnect(connection, setConnectError);
+    useEffect(() => {
+        if (connection) {
+            setConnectError('');
+        }
+    }, [connection]);
 
     const [messageInput, setMessageInput] = useState('');
     const [schemaInput, setSchemaInput] = useState('');
@@ -90,6 +98,8 @@ function Main(props: WalletConnectionProps) {
                         connectorType={BROWSER_WALLET}
                         connectorName="Browser Wallet"
                         connection={connection}
+                        isDisconnecting={isDisconnecting}
+                        disconnect={disconnect}
                         {...props}
                     />
                 </Col>
@@ -98,6 +108,8 @@ function Main(props: WalletConnectionProps) {
                         connectorType={WALLET_CONNECT}
                         connectorName="WalletConnect"
                         connection={connection}
+                        isDisconnecting={isDisconnecting}
+                        disconnect={disconnect}
                         {...props}
                     />
                 </Col>

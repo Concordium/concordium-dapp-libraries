@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   `WalletConnect`: `signMessage` now supports passing binary message including schema to the wallet.
+
+### Changed
+
+-   `WalletConnect`: `signMessage` now requires the provided account address to match the connected account rather than silently ignoring it.
+
 ### Fixed
 
 -   Schema object format conversion in `signAndSendTransaction` for WalletConnect requests.
@@ -15,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Standard values of `Network` for testnet and mainnet, exposed as constants `TESTNET` and `MAINNET`.
+-   Standard values of `Network` for testnet and mainnet are exposed as constants `TESTNET` and `MAINNET`.
 
 ### Changed
 

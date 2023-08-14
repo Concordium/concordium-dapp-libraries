@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `WalletConnect`: Fix schema object format conversion in `signAndSendTransaction` in request payloads.
 -   `WalletConnect`: Use standard string identifiers for transaction type in request payload.
 
+### Removed
+
+-   `WalletConnection`: The deprecated method `getJsonRpcClient()` and related symbols has been removed
+    in favor of the new gRPC client (`ConcordiumGRPCClient`) for the Node API v2.
+    Existing usage is migrated by simply constructing and using this client instead of the one fetched with `connection.getJsonRpcClient`.
+    The `Network` type has a field `grpcOpts` which may be used to construct the client (see its docstring for details).
+    The field is optional, but present on the predefined constants `TESTNET` and `MAINNET`.
+    For users of `@concordium/react-components`, this all wrapped into the hook `useGrpcClient`.
+
 ## [0.3.1] - 2023-06-04
 
 ### Added

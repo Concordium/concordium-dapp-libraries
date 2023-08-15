@@ -24,16 +24,10 @@ Initialize the network configuration and wrap the component `MyAppComponent` tha
 in `WithWalletConnector`:
 
 ```typescript jsx
-import { Network, WalletConnectionProps, WithWalletConnector } from '@concordium/react-components';
-
-const testnet: Network = {
-    name: 'testnet',
-    genesisHash: '4221332d34e1694168c2a0c0b3fd0f273809612cb13d000d5c2e00e85f50f796',
-    ccdScanBaseUrl: 'https://testnet.ccdscan.io',
-};
+import { Network, TESTNET, WalletConnectionProps, WithWalletConnector } from '@concordium/react-components';
 
 function MyRootComponent() {
-    return <WithWalletConnector network={network}>{(props) => <MyAppComponent {...props} />}</WithWalletConnector>;
+    return <WithWalletConnector network={TESTNET}>{(props) => <MyAppComponent {...props} />}</WithWalletConnector>;
 }
 
 function MyAppComponent(props: WalletConnectionProps) {

@@ -29,7 +29,6 @@ import { Network, WalletConnectionProps, WithWalletConnector } from '@concordium
 const testnet: Network = {
     name: 'testnet',
     genesisHash: '4221332d34e1694168c2a0c0b3fd0f273809612cb13d000d5c2e00e85f50f796',
-    jsonRpcUrl: 'https://json-rpc.testnet.concordium.com',
     ccdScanBaseUrl: 'https://testnet.ccdscan.io',
 };
 
@@ -139,7 +138,7 @@ export function ContractStuff({ rpc }: Props) {
 ```
 
 Use the hook [`useGrpcClient`](#usegrpcclient) below to obtain a `ConcordiumGRPCClient` instance.
-See [the sample dApp](../../samples/contractupdate/src/App.tsx) for a complete example.
+See [the sample dApp](../../samples/contractupdate/src/Root.tsx) for a complete example.
 
 ### [`useGrpcClient`](./src/useGrpcClient.ts)
 

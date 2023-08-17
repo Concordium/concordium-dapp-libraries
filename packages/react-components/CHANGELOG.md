@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Hook `useContractSchemaRpc` for fetching the schema of a smart contract from the chain.
+
 ## [0.3.0] - 2023-06-04
 
 ### Added

@@ -4,15 +4,14 @@
     "description": "Utility library of React components for building dApps that interact with the Concordium blockchain.",
     "author": "Concordium Software",
     "license": "Apache-2.0",
-    "browser": "./dist/esm/index.js",
-    "types": "./dist/esm/index.d.ts",
+    "browser": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
         ".": {
-            "browser": "./dist/esm/index.js",
-            "import": "./dist/esm/index.js",
-            "require": "./dist/cjs/index.js",
-            "default": "./dist/esm/index.js",
-            "types": "./dist/esm/index.d.ts"
+            "browser": "./dist/index.js",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js",
+            "types": "./dist/index.d.ts"
         }
     },
     "files": [
@@ -26,9 +25,7 @@
         "url": "https://github.com/Concordium/concordium-dapp-libraries/tree/main/packages/react-components"
     },
     "scripts": {
-        "build": "yarn build-esm && yarn build-cjs",
-        "build-esm": "tsc",
-        "build-cjs": "tsc -p tsconfig.cjs.json"
+        "build": "tsc"
     },
     "dependencies": {
         "@concordium/wallet-connectors": "^0.3.1"
@@ -38,7 +35,7 @@
         "@types/node": "^18.11.17",
         "@types/react": "^18",
         "prettier": "2.8.1",
-        "typescript": "^4.9.4"
+        "typescript": "^5.2.2"
     },
     "peerDependencies": {
         "react": "^18"

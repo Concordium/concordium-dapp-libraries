@@ -4,9 +4,11 @@
         "declaration": true,
         "declarationMap": true,
         "module": "ES2020",
-        "moduleResolution": "node16",
+        "moduleResolution": "bundler",
         "sourceMap": true,
-        "outDir": "./dist/esm"
+        "outDir": "./dist"
     },
-    "include": ["./src"]
+    "include": [
+        "./src"
+    ]
 }

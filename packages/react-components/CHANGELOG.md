@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Changed
 
--   In addition to building as CommonJS, ES module is added as a build target to facilitate tree-shaking.
+-   Build as ES module to facilitate tree-shaking.
 
 ## [0.3.0] - 2023-06-04
 

@@ -8,10 +8,8 @@
     "types": "./dist/index.d.ts",
     "exports": {
         ".": {
-            "browser": "./dist/index.js",
-            "import": "./dist/index.js",
-            "default": "./dist/index.js",
-            "types": "./dist/index.d.ts"
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
         }
     },
     "files": [

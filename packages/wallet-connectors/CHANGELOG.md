@@ -26,7 +26,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `WalletConnection`: The deprecated method `getJsonRpcClient()` and related symbols have been removed
     in favor of the new gRPC client (`ConcordiumGRPCClient`) for the Node API v2.
-    Existing usage is migrated by simply constructing and using this client instead of the one fetched with `connection.getJsonRpcClient`.
+    Existing usage is migrated by simply constructing and using this client directly
+    instead of using the one previously fetched with `connection.getJsonRpcClient`.
+    Usage of `withJsonRpcClient`, i.e.,
+    ```typescript
+    if (connection) {
+      const res = await withJsonRpcClient(connection, func);
+      ...
+    }
+    ```
+    may be directly replaced by
+    ```typescript
+    if (grpcClient) {
+      const res = await func(grpcClient);
+      ...
+    }
+    ```
     The `Network` type has a field `grpcOpts` which may be used to construct the client (see its docstring for details).
     The field is optional, but present on the predefined constants `TESTNET` and `MAINNET`.
     For users of `@concordium/react-components`, this is all wrapped into the hook `useGrpcClient`.

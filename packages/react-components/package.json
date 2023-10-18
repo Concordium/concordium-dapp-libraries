@@ -1,6 +1,6 @@
 {
     "name": "@concordium/react-components",
-    "version": "0.4.0-rc.4",
+    "version": "0.4.0-rc.5",
     "description": "Utility library of React components for building dApps that interact with the Concordium blockchain.",
     "author": "Concordium Software",
     "license": "Apache-2.0",
@@ -26,7 +26,7 @@
         "build": "tsc"
     },
     "dependencies": {
-        "@concordium/wallet-connectors": "^0.4.0-rc.3"
+        "@concordium/wallet-connectors": "^0.4.0-rc.4"
     },
     "devDependencies": {
         "@tsconfig/recommended": "^1.0.1",

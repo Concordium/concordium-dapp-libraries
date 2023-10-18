@@ -1,5 +1,10 @@
 import { SchemaType, WalletApi, detectConcordiumProvider } from '@concordium/browser-wallet-api-helpers';
-import { AccountTransactionPayload, AccountTransactionSignature, AccountTransactionType } from '@concordium/web-sdk';
+import {
+    AccountTransactionPayload,
+    AccountTransactionSignature,
+    AccountTransactionType,
+    ConcordiumGRPCClient,
+} from '@concordium/web-sdk';
 import {
     SignableMessage,
     TypedSmartContractParameters,
@@ -18,6 +23,7 @@ const BROWSER_WALLET_DETECT_TIMEOUT = 2000;
  */
 export class BrowserWalletConnector implements WalletConnector, WalletConnection {
     readonly client: WalletApi;
+    readonly grpc: ConcordiumGRPCClient;
 
     readonly delegate: WalletConnectionDelegate;
 
@@ -45,6 +51,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
                 .then((a) => delegate.onAccountChanged(this, a))
                 .catch(console.error)
         );
+        this.grpc = new ConcordiumGRPCClient(this.client.grpcTransport);
     }
 
     static async create(delegate: WalletConnectionDelegate) {
@@ -101,11 +108,10 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
      * as the Browser Wallet's RPC client doesn't work until a connection has been established.
      *
      * @return The Browser Wallet's internal gRPC client.
-    readonly grpc: ConcordiumGRPCClient;
      * @throws If the installed version of the Browser Wallet doesn't support the method.
      */
     getGrpcClient() {
-        return this.client.getGrpcClient();
+        return this.grpc;
     }
 
     /**

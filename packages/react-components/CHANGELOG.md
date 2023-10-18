@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Breaking changes
+
+-   Make compatible with `@concordium/web-sdk@^7`, add this as peer dependency.
+
 ### Changed
 
 -   Build as ES module to facilitate tree-shaking.

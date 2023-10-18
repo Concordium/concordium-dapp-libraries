@@ -2,7 +2,10 @@ import {
     AccountTransactionPayload,
     AccountTransactionSignature,
     AccountTransactionType,
+    ContractName,
+    EntrypointName,
     InitContractPayload,
+    Parameter,
     UpdateContractPayload,
     getTransactionKindString,
     serializeInitContractParameters,
@@ -79,14 +82,22 @@ function accountTransactionPayloadToJson(data: AccountTransactionPayload) {
     });
 }
 
-function serializeInitContractParam(initName: string, typedParams: TypedSmartContractParameters | undefined) {
+function serializeInitContractParam(
+    initName: string,
+    typedParams: TypedSmartContractParameters | undefined
+): Parameter.Type {
     if (!typedParams) {
-        return toBuffer('');
+        return Parameter.empty();
     }
     const { parameters, schema } = typedParams;
     switch (schema.type) {
         case 'ModuleSchema':
-            return serializeInitContractParameters(initName, parameters, schema.value, schema.version);
+            return serializeInitContractParameters(
+                ContractName.fromString(initName),
+                parameters,
+                schema.value,
+                schema.version
+            );
         case 'TypeSchema':
             return serializeTypeValue(parameters, schema.value);
         default:
@@ -98,16 +109,16 @@ function serializeUpdateContractMessage(
     contractName: string,
     entrypointName: string,
     typedParams: TypedSmartContractParameters | undefined
-) {
+): Parameter.Type {
     if (!typedParams) {
-        return toBuffer('');
+        return Parameter.empty();
     }
     const { parameters, schema } = typedParams;
     switch (schema.type) {
         case 'ModuleSchema':
             return serializeUpdateContractParameters(
-                contractName,
-                entrypointName,
+                ContractName.fromString(contractName),
+                EntrypointName.fromString(entrypointName),
                 parameters,
                 schema.value,
                 schema.version
@@ -165,7 +176,7 @@ function serializePayloadParameters(
             }
             return {
                 ...payload,
-                param: serializeInitContractParam(initContractPayload.initName, typedParams),
+                param: serializeInitContractParam(initContractPayload.initName.value, typedParams),
             };
         }
         case AccountTransactionType.Update: {
@@ -173,7 +184,7 @@ function serializePayloadParameters(
             if (updateContractPayload.message) {
                 throw new Error(`'message' field of 'Update' parameters must be empty`);
             }
-            const [contractName, entrypointName] = updateContractPayload.receiveName.split('.');
+            const [contractName, entrypointName] = updateContractPayload.receiveName.value.split('.');
             return {
                 ...payload,
                 message: serializeUpdateContractMessage(contractName, entrypointName, typedParams),

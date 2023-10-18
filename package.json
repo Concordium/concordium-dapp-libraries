@@ -22,6 +22,7 @@
         ]
     },
     "devDependencies": {
+        "@concordium/web-sdk": "7.0.0-rc.4",
         "@trivago/prettier-plugin-sort-imports": "^4.1.1",
         "@typescript-eslint/eslint-plugin": "^6.7.0",
         "@typescript-eslint/parser": "^6.7.0",
@@ -29,8 +30,5 @@
         "husky": "^8.0.0",
         "lint-staged": "^13.1.0",
         "pinst": "^3.0.0"
-    },
-    "resolutions": {
-        "@concordium/web-sdk": "7.0.0-rc.4"
     }
 }

@@ -1683,14 +1683,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@concordium/browser-wallet-api-helpers@npm:3.0.0-rc.1":
-  version: 3.0.0-rc.1
-  resolution: "@concordium/browser-wallet-api-helpers@npm:3.0.0-rc.1"
+"@concordium/browser-wallet-api-helpers@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "@concordium/browser-wallet-api-helpers@npm:2.8.0"
   dependencies:
-    "@protobuf-ts/runtime-rpc": ^2.9.1
-  peerDependencies:
-    "@concordium/web-sdk": 7.0.0-rc.4
-  checksum: ddf28e049ddf562845f611a3a8cbe770433e8d139b4859ce6162a727d9c4108ef477c5365c8836519f912888b8f293a7f3c8edb3b35860290ee434954e2f63c1
+    "@concordium/web-sdk": ^6.3.0
+  checksum: ce62acd34db7b107ee7a6a3a730ecf875e33932fbe0f8743d7e1a4ee16724cd2ac7430d90714771bac2291dc411775ba807b0a38b45830bf4b665e14e1a6693a
   languageName: node
   linkType: hard
 
@@ -1723,7 +1721,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@concordium/wallet-connectors@workspace:packages/wallet-connectors"
   dependencies:
-    "@concordium/browser-wallet-api-helpers": 3.0.0-rc.1
+    "@concordium/browser-wallet-api-helpers": ^2.8.0
     "@tsconfig/recommended": ^1.0.1
     "@walletconnect/qrcode-modal": ^1.8.0
     "@walletconnect/sign-client": ^2.1.4

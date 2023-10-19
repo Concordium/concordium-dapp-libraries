@@ -31,7 +31,7 @@
         "@walletconnect/sign-client": "^2.1.4"
     },
     "peerDependencies": {
-        "@concordium/web-sdk": "7.0.0-rc.4"
+        "@concordium/web-sdk": "7.0.0"
     },
     "devDependencies": {
         "@tsconfig/recommended": "^1.0.1",

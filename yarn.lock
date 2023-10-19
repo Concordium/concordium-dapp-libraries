@@ -1705,17 +1705,17 @@ __metadata:
     prettier: 2.8.1
     typescript: ^5.2.2
   peerDependencies:
-    "@concordium/web-sdk": 7.0.0-rc.4
+    "@concordium/web-sdk": 7.0.0
     react: ^18
   languageName: unknown
   linkType: soft
 
-"@concordium/rust-bindings@npm:2.0.0-rc.2":
-  version: 2.0.0-rc.2
-  resolution: "@concordium/rust-bindings@npm:2.0.0-rc.2"
+"@concordium/rust-bindings@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@concordium/rust-bindings@npm:2.0.0"
   dependencies:
     buffer: ^6.0.3
-  checksum: 09124d40712fa97606e7af0ae42dbabd7dad6e95b1e3575bf465642545b442a5017f7ef1c8e82159471ffccd89d85036c3775f541edc8b15065505e18561fcfc
+  checksum: f436926de9959d45971f317da6510c887cbb55a26ce6f7080aa32f66c9550fba9bdff68c6e34565e32eb10c8b332295af01c21b039c6fa5bd1d82bc8fb079111
   languageName: node
   linkType: hard
 
@@ -1731,15 +1731,15 @@ __metadata:
     prettier: 2.8.1
     typescript: ^5.2.2
   peerDependencies:
-    "@concordium/web-sdk": 7.0.0-rc.4
+    "@concordium/web-sdk": 7.0.0
   languageName: unknown
   linkType: soft
 
-"@concordium/web-sdk@npm:7.0.0-rc.4":
-  version: 7.0.0-rc.4
-  resolution: "@concordium/web-sdk@npm:7.0.0-rc.4"
+"@concordium/web-sdk@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@concordium/web-sdk@npm:7.0.0"
   dependencies:
-    "@concordium/rust-bindings": 2.0.0-rc.2
+    "@concordium/rust-bindings": 2.0.0
     "@grpc/grpc-js": ^1.9.4
     "@noble/ed25519": ^2.0.0
     "@protobuf-ts/grpc-transport": ^2.9.1
@@ -1754,7 +1754,7 @@ __metadata:
     iso-3166-1: ^2.1.1
     json-bigint: ^1.0.0
     uuid: ^8.3.2
-  checksum: cd868bf0114932c8f57f979461cc9465417d2a63ced8d80b1e04119532ebd5250c6709eb5f8d732ae54bdb378e389349c62b85d62715fdb4b4e72e0c21e50f21
+  checksum: 8cd6a9c9bad7bd999f6aa14c32bdf977ce4a12825fac54e9a9b544aefc74a3d36b3b005200ef1da473695284438f8ff1a89079f65953959d230eb2b2b6fb615e
   languageName: node
   linkType: hard
 
@@ -13031,7 +13031,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@concordium/web-sdk": 7.0.0-rc.4
+    "@concordium/web-sdk": ^7.0.0
     "@trivago/prettier-plugin-sort-imports": ^4.1.1
     "@typescript-eslint/eslint-plugin": ^6.7.0
     "@typescript-eslint/parser": ^6.7.0

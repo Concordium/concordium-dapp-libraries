@@ -12,7 +12,6 @@ import {
     serializeUpdateContractParameters,
     toBuffer,
 } from '@concordium/web-sdk';
-import QRCodeModal from '@walletconnect/qrcode-modal';
 import SignClient from '@walletconnect/sign-client';
 import { ISignClient, SessionTypes, SignClientTypes } from '@walletconnect/types';
 import {
@@ -25,10 +24,23 @@ import {
     WalletConnector,
 } from './WalletConnection';
 import { UnreachableCaseError } from './error';
+import { WalletConnectModal } from '@walletconnect/modal';
+import { MobileWallet } from '@walletconnect/modal-core'
 
+const projectId = 'c2a2db59ae0bd53a6dc7404f815862ba';
 const WALLET_CONNECT_SESSION_NAMESPACE = 'ccd';
+const mobileWallet: MobileWallet = {
+    id: 'concordium',
+    name: 'Concordium',
+    links: {
+        native: 'concordiumwallet://',
+        universal: 'https://wallet.concordium.software/'
+    }
+}
 
 async function connect(client: ISignClient, chainId: string, cancel: () => void) {
+    const modal = new WalletConnectModal({ projectId, mobileWallets: [mobileWallet], chains: ['ccd:4221332d34e1694168c2a0c0b3fd0f27', 'ccd:9dd9ca4d19e9393877d2c44b70f89acb'] });
+
     try {
         const { uri, approval } = await client.connect({
             requiredNamespaces: {
@@ -41,7 +53,7 @@ async function connect(client: ISignClient, chainId: string, cancel: () => void)
         });
         if (uri) {
             // Open modal as we're not connecting to an existing pairing.
-            QRCodeModal.open(uri, cancel);
+            modal.openModal({ uri });
         }
         return await approval();
     } catch (e) {
@@ -51,7 +63,7 @@ async function connect(client: ISignClient, chainId: string, cancel: () => void)
         }
         cancel();
     } finally {
-        QRCodeModal.close();
+        modal.closeModal();
     }
 }
 

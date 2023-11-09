@@ -100,9 +100,6 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
      * The recommended alternative is to construct your own client using {@link Network.grpcOpts} which is
      * independent of any connection.
      *
-     * Implementation detail: The method cannot be moved to {@link BrowserWalletConnector}
-     * as the Browser Wallet's RPC client doesn't work until a connection has been established.
-     *
      * @return The Browser Wallet's internal gRPC client.
      * @throws If the installed version of the Browser Wallet doesn't support the method.
      */

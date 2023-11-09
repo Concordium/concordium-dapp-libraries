@@ -35,7 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     The field is optional, but present on the predefined constants `TESTNET` and `MAINNET`.
     For users of `@concordium/react-components`, this is all wrapped into the hook `useGrpcClient`.
 
-
 ## [0.3.2] - 2023-08-17
 
 ### Changed

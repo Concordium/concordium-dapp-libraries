@@ -142,8 +142,8 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
                 case 'ModuleSchema':
                     return this.client.sendTransaction(
                         accountAddress,
-                        type,
-                        payload,
+                        type as any, // wallet API types enforce strict coupling of transaction types and corresponding payloads.
+                        payload as any, // wallet API types enforce strict coupling of transaction types and corresponding payloads.
                         parameters,
                         {
                             type: SchemaType.Module,
@@ -152,7 +152,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
                         schema.version
                     );
                 case 'TypeSchema':
-                    return this.client.sendTransaction(accountAddress, type, payload, parameters, {
+                    return this.client.sendTransaction(accountAddress, type as any, payload as any, parameters, {
                         type: SchemaType.Parameter,
                         value: schema.value.toString('base64'),
                     });
@@ -163,7 +163,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         if (typedParams) {
             throw new Error(`'typedParams' must not be provided for transaction of type '${type}'`);
         }
-        return this.client.sendTransaction(accountAddress, type, payload);
+        return this.client.sendTransaction(accountAddress, type as any, payload as any); // wallet API types enforce strict coupling of transaction types and corresponding payloads.
     }
 
     async signMessage(accountAddress: string, msg: SignableMessage): Promise<AccountTransactionSignature> {

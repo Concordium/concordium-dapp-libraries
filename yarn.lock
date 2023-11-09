@@ -1710,15 +1710,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@concordium/rust-bindings@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@concordium/rust-bindings@npm:2.0.0"
-  dependencies:
-    buffer: ^6.0.3
-  checksum: f436926de9959d45971f317da6510c887cbb55a26ce6f7080aa32f66c9550fba9bdff68c6e34565e32eb10c8b332295af01c21b039c6fa5bd1d82bc8fb079111
-  languageName: node
-  linkType: hard
-
 "@concordium/rust-bindings@npm:2.0.1":
   version: 2.0.1
   resolution: "@concordium/rust-bindings@npm:2.0.1"
@@ -1742,30 +1733,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@concordium/web-sdk@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@concordium/web-sdk@npm:7.0.0"
-  dependencies:
-    "@concordium/rust-bindings": 2.0.0
-    "@grpc/grpc-js": ^1.9.4
-    "@noble/ed25519": ^2.0.0
-    "@protobuf-ts/grpc-transport": ^2.9.1
-    "@protobuf-ts/grpcweb-transport": ^2.9.1
-    "@protobuf-ts/runtime-rpc": ^2.8.2
-    "@scure/bip39": ^1.2.1
-    "@types/big.js": ^6.2.0
-    big.js: ^6.2.0
-    bs58check: ^3.0.1
-    buffer: ^6.0.3
-    hash.js: ^1.1.7
-    iso-3166-1: ^2.1.1
-    json-bigint: ^1.0.0
-    uuid: ^8.3.2
-  checksum: 8cd6a9c9bad7bd999f6aa14c32bdf977ce4a12825fac54e9a9b544aefc74a3d36b3b005200ef1da473695284438f8ff1a89079f65953959d230eb2b2b6fb615e
-  languageName: node
-  linkType: hard
-
-"@concordium/web-sdk@npm:^7.0.3":
+"@concordium/web-sdk@npm:^7.0.0, @concordium/web-sdk@npm:^7.0.3":
   version: 7.0.3
   resolution: "@concordium/web-sdk@npm:7.0.3"
   dependencies:

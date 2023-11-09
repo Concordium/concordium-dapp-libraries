@@ -3,7 +3,6 @@ import {
     AccountTransactionPayload,
     AccountTransactionSignature,
     AccountTransactionType,
-    ConcordiumGRPCClient,
 } from '@concordium/web-sdk';
 import {
     SignableMessage,
@@ -23,7 +22,6 @@ const BROWSER_WALLET_DETECT_TIMEOUT = 2000;
  */
 export class BrowserWalletConnector implements WalletConnector, WalletConnection {
     readonly client: WalletApi;
-    readonly grpc: ConcordiumGRPCClient;
 
     readonly delegate: WalletConnectionDelegate;
 
@@ -51,7 +49,6 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
                 .then((a) => delegate.onAccountChanged(this, a))
                 .catch(console.error)
         );
-        this.grpc = new ConcordiumGRPCClient(this.client.grpcTransport);
     }
 
     static async create(delegate: WalletConnectionDelegate) {
@@ -94,15 +91,14 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
     }
 
     /**
-     * Returns a gRPC client that is ready to perform requests against some Concordium Node connected to network/chain
-     * that the connected account lives on.
+     * Returns the transport object of the gRPC client that the Browser Wallet uses to perform requests
+     * against some Concordium Node connected to network/chain that the connected account lives on.
      * The client implements version 2 of the Node API.
      *
      * This method is included because it's part of the Browser Wallet API.
      * It should be used with care as it's hard to guarantee that it actually connects to the expected network.
-     * The recommended alternative is to have the application instantiate its own instance
-     * that is independent of any connection.
-     * See {@link Network.grpcOpts} for more details.
+     * The recommended alternative is to construct your own client using {@link Network.grpcOpts} which is
+     * independent of any connection.
      *
      * Implementation detail: The method cannot be moved to {@link BrowserWalletConnector}
      * as the Browser Wallet's RPC client doesn't work until a connection has been established.
@@ -110,8 +106,8 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
      * @return The Browser Wallet's internal gRPC client.
      * @throws If the installed version of the Browser Wallet doesn't support the method.
      */
-    getGrpcClient() {
-        return this.grpc;
+    getGrpcTransport() {
+        return this.client.grpcTransport;
     }
 
     /**

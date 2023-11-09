@@ -37,7 +37,7 @@
         "typescript": "^5.2.2"
     },
     "peerDependencies": {
-        "@concordium/web-sdk": "^7",
+        "@concordium/web-sdk": "^7.0.4-rc.1",
         "react": "^18"
     }
 }

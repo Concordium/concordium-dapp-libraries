@@ -83,7 +83,7 @@ function accountTransactionPayloadToJson(data: AccountTransactionPayload) {
 }
 
 function serializeInitContractParam(
-    initName: string,
+    contractName: ContractName.Type,
     typedParams: TypedSmartContractParameters | undefined
 ): Parameter.Type {
     if (!typedParams) {
@@ -92,12 +92,7 @@ function serializeInitContractParam(
     const { parameters, schema } = typedParams;
     switch (schema.type) {
         case 'ModuleSchema':
-            return serializeInitContractParameters(
-                ContractName.fromString(initName),
-                parameters,
-                schema.value,
-                schema.version
-            );
+            return serializeInitContractParameters(contractName, parameters, schema.value, schema.version);
         case 'TypeSchema':
             return serializeTypeValue(parameters, schema.value);
         default:
@@ -106,8 +101,8 @@ function serializeInitContractParam(
 }
 
 function serializeUpdateContractMessage(
-    contractName: string,
-    entrypointName: string,
+    contractName: ContractName.Type,
+    entrypointName: EntrypointName.Type,
     typedParams: TypedSmartContractParameters | undefined
 ): Parameter.Type {
     if (!typedParams) {
@@ -117,8 +112,8 @@ function serializeUpdateContractMessage(
     switch (schema.type) {
         case 'ModuleSchema':
             return serializeUpdateContractParameters(
-                ContractName.fromString(contractName),
-                EntrypointName.fromString(entrypointName),
+                contractName,
+                entrypointName,
                 parameters,
                 schema.value,
                 schema.version
@@ -176,7 +171,7 @@ function serializePayloadParameters(
             }
             return {
                 ...payload,
-                param: serializeInitContractParam(initContractPayload.initName.value, typedParams),
+                param: serializeInitContractParam(initContractPayload.initName, typedParams),
             };
         }
         case AccountTransactionType.Update: {
@@ -187,7 +182,11 @@ function serializePayloadParameters(
             const [contractName, entrypointName] = updateContractPayload.receiveName.value.split('.');
             return {
                 ...payload,
-                message: serializeUpdateContractMessage(contractName, entrypointName, typedParams),
+                message: serializeUpdateContractMessage(
+                    ContractName.fromString(contractName),
+                    EntrypointName.fromString(entrypointName),
+                    typedParams
+                ),
             };
         }
         default: {

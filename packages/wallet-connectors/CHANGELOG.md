@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 -   Build as ES module to facilitate tree-shaking.
+-   `BrowserWalletConnector` (breaking): Change method `getGrpcClient` to `getGrpcTransport`
+    and expose the transport object instead of a full client.
 
 ### Removed
 

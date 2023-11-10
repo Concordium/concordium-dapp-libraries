@@ -8,6 +8,7 @@ import {
     Parameter,
     UpdateContractPayload,
     getTransactionKindString,
+    jsonUnwrapStringify,
     serializeInitContractParameters,
     serializeTypeValue,
     serializeUpdateContractParameters,
@@ -70,13 +71,10 @@ function isSignAndSendTransactionError(obj: any): obj is SignAndSendTransactionE
 }
 
 function accountTransactionPayloadToJson(data: AccountTransactionPayload) {
-    return JSON.stringify(data, (key, value) => {
+    return jsonUnwrapStringify(data, 'number', (key, value) => {
         if (value?.type === 'Buffer') {
             // Buffer has already been transformed by its 'toJSON' method.
             return toBuffer(value.data).toString('hex');
-        }
-        if (typeof value === 'bigint') {
-            return Number(value);
         }
         return value;
     });

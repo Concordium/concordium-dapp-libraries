@@ -1705,7 +1705,7 @@ __metadata:
     prettier: 2.8.1
     typescript: ^5.2.2
   peerDependencies:
-    "@concordium/web-sdk": ^7.0.4-rc.1
+    "@concordium/web-sdk": ^7.0.4-rc.2
     react: ^18
   languageName: unknown
   linkType: soft
@@ -1729,13 +1729,13 @@ __metadata:
     prettier: 2.8.1
     typescript: ^5.2.2
   peerDependencies:
-    "@concordium/web-sdk": ^7.0.4-rc.1
+    "@concordium/web-sdk": ^7.0.4-rc.2
   languageName: unknown
   linkType: soft
 
-"@concordium/web-sdk@npm:^7.0.4-rc.1":
-  version: 7.0.4-rc.1
-  resolution: "@concordium/web-sdk@npm:7.0.4-rc.1"
+"@concordium/web-sdk@npm:^7.0.4-rc.2":
+  version: 7.0.4-rc.2
+  resolution: "@concordium/web-sdk@npm:7.0.4-rc.2"
   dependencies:
     "@concordium/rust-bindings": 2.0.1
     "@grpc/grpc-js": ^1.9.4
@@ -1753,7 +1753,7 @@ __metadata:
     iso-3166-1: ^2.1.1
     json-bigint: ^1.0.0
     uuid: ^8.3.2
-  checksum: 1506dd06727e2252f73d19c3ff9f61ab35ee85d46d0b2d92af6cb86bb126ac040dbc6742bda220e88cc6e93bbefb87ab3c090031cf6c8cfdcd6840823f8d36b5
+  checksum: 21a87eeafbc07813dcfe852e0ab079a84d631f50d1a4bacce588b08ffbc1145587e9beeba4e0cf9ae7b836cd51ca3bf0cefd8f605a7738586de8c9c713789d56
   languageName: node
   linkType: hard
 
@@ -5860,7 +5860,7 @@ __metadata:
   resolution: "concordium-dapp-contractupdate@workspace:samples/contractupdate"
   dependencies:
     "@concordium/react-components": "workspace:^"
-    "@concordium/web-sdk": ^7.0.4-rc.1
+    "@concordium/web-sdk": ^7.0.4-rc.2
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^13.0.0
     "@testing-library/user-event": ^13.2.1
@@ -5889,7 +5889,7 @@ __metadata:
   resolution: "concordium-dapp-sign-message@workspace:samples/sign-message"
   dependencies:
     "@concordium/react-components": "workspace:^"
-    "@concordium/web-sdk": ^7.0.4-rc.1
+    "@concordium/web-sdk": ^7.0.4-rc.2
     "@types/node": ^16.18.16
     "@types/react": ^18.0.28
     "@types/react-dom": ^18.0.11
@@ -13032,7 +13032,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@concordium/web-sdk": ^7.0.4-rc.1
+    "@concordium/web-sdk": ^7.0.4-rc.2
     "@trivago/prettier-plugin-sort-imports": ^4.1.1
     "@typescript-eslint/eslint-plugin": ^6.7.0
     "@typescript-eslint/parser": ^6.7.0

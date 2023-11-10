@@ -22,7 +22,7 @@
         ]
     },
     "devDependencies": {
-        "@concordium/web-sdk": "^7.0.4-rc.2",
+        "@concordium/web-sdk": "beta",
         "@trivago/prettier-plugin-sort-imports": "^4.1.1",
         "@typescript-eslint/eslint-plugin": "^6.7.0",
         "@typescript-eslint/parser": "^6.7.0",

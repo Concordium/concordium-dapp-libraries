@@ -10,8 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 -   Build as ES module to facilitate tree-shaking.
--   (breaking) Make compatible with `@concordium/web-sdk@^7`, add this as peer dependency.
--   `useContractSelector` (breaking): Support for supplying `JsonRpcClient` has been removed
+-   (breaking) Make compatible with `@concordium/web-sdk@^7`, which is now a peer dependency.
+-   `useContractSelector` (breaking): Support for supplying `JsonRpcClient` has been removed.
 
 ### Fixed
 

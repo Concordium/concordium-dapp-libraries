@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2023-11-13
+
+### Changed
+
+-   Build as ES module to facilitate tree-shaking.
+-   (breaking) Make compatible with `@concordium/web-sdk@^7`, which is now a peer dependency.
+-   `useContractSelector` (breaking): Support for supplying `JsonRpcClient` has been removed.
+
+### Fixed
+
+-   `useContractSelector`: Fix docstring of `rpc` parameter.
+
 ## [0.3.0] - 2023-06-04
 
 ### Added

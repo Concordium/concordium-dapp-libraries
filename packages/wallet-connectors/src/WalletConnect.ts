@@ -1,11 +1,20 @@
 import {
+    SendTransactionInitContractPayload,
+    SendTransactionPayload,
+    SendTransactionUpdateContractPayload,
+} from '@concordium/browser-wallet-api-helpers';
+import {
     AccountTransactionPayload,
     AccountTransactionSignature,
     AccountTransactionType,
-    HttpProvider,
+    BigintFormatType,
+    ContractName,
+    EntrypointName,
     InitContractPayload,
-    JsonRpcClient,
+    Parameter,
     UpdateContractPayload,
+    getTransactionKindString,
+    jsonUnwrapStringify,
     serializeInitContractParameters,
     serializeTypeValue,
     serializeUpdateContractParameters,
@@ -16,6 +25,7 @@ import SignClient from '@walletconnect/sign-client';
 import { ISignClient, SessionTypes, SignClientTypes } from '@walletconnect/types';
 import {
     Network,
+    Schema,
     SignableMessage,
     TypedSmartContractParameters,
     WalletConnection,
@@ -67,26 +77,26 @@ function isSignAndSendTransactionError(obj: any): obj is SignAndSendTransactionE
 }
 
 function accountTransactionPayloadToJson(data: AccountTransactionPayload) {
-    return JSON.stringify(data, (key, value) => {
+    return jsonUnwrapStringify(data, BigintFormatType.Integer, (_key, value) => {
         if (value?.type === 'Buffer') {
             // Buffer has already been transformed by its 'toJSON' method.
             return toBuffer(value.data).toString('hex');
-        }
-        if (typeof value === 'bigint') {
-            return Number(value);
         }
         return value;
     });
 }
 
-function serializeInitContractParam(initName: string, typedParams: TypedSmartContractParameters | undefined) {
+function serializeInitContractParam(
+    contractName: ContractName.Type,
+    typedParams: TypedSmartContractParameters | undefined
+): Parameter.Type {
     if (!typedParams) {
-        return toBuffer('');
+        return Parameter.empty();
     }
     const { parameters, schema } = typedParams;
     switch (schema.type) {
         case 'ModuleSchema':
-            return serializeInitContractParameters(initName, parameters, schema.value, schema.version);
+            return serializeInitContractParameters(contractName, parameters, schema.value, schema.version);
         case 'TypeSchema':
             return serializeTypeValue(parameters, schema.value);
         default:
@@ -95,12 +105,12 @@ function serializeInitContractParam(initName: string, typedParams: TypedSmartCon
 }
 
 function serializeUpdateContractMessage(
-    contractName: string,
-    entrypointName: string,
+    contractName: ContractName.Type,
+    entrypointName: EntrypointName.Type,
     typedParams: TypedSmartContractParameters | undefined
-) {
+): Parameter.Type {
     if (!typedParams) {
-        return toBuffer('');
+        return Parameter.empty();
     }
     const { parameters, schema } = typedParams;
     switch (schema.type) {
@@ -120,6 +130,32 @@ function serializeUpdateContractMessage(
 }
 
 /**
+ * Convert schema into the object format expected by the Mobile crypto library (function 'parameter_to_json')
+ * which decodes the parameter before presenting it to the user for approval.
+ * @param schema The schema object.
+ */
+function convertSchemaFormat(schema: Schema | undefined) {
+    if (!schema) {
+        return null;
+    }
+    switch (schema.type) {
+        case 'ModuleSchema':
+            return {
+                type: 'module',
+                value: schema.value.toString('base64'),
+                version: schema.version,
+            };
+        case 'TypeSchema':
+            return {
+                type: 'parameter',
+                value: schema.value.toString('base64'),
+            };
+        default:
+            throw new UnreachableCaseError('schema', schema);
+    }
+}
+
+/**
  * Serialize parameters into appropriate payload field ('payload.param' for 'InitContract' and 'payload.message' for 'Update').
  * This payload field must be not already set as that would indicate that the caller thought that was the right way to pass them.
  * @param type Type identifier of the transaction.
@@ -128,7 +164,7 @@ function serializeUpdateContractMessage(
  */
 function serializePayloadParameters(
     type: AccountTransactionType,
-    payload: AccountTransactionPayload,
+    payload: SendTransactionPayload,
     typedParams: TypedSmartContractParameters | undefined
 ): AccountTransactionPayload {
     switch (type) {
@@ -140,24 +176,31 @@ function serializePayloadParameters(
             return {
                 ...payload,
                 param: serializeInitContractParam(initContractPayload.initName, typedParams),
-            };
+            } as InitContractPayload;
         }
         case AccountTransactionType.Update: {
             const updateContractPayload = payload as UpdateContractPayload;
             if (updateContractPayload.message) {
                 throw new Error(`'message' field of 'Update' parameters must be empty`);
             }
-            const [contractName, entrypointName] = updateContractPayload.receiveName.split('.');
+            const [contractName, entrypointName] = updateContractPayload.receiveName.value.split('.');
             return {
                 ...payload,
-                message: serializeUpdateContractMessage(contractName, entrypointName, typedParams),
-            };
+                message: serializeUpdateContractMessage(
+                    ContractName.fromString(contractName),
+                    EntrypointName.fromString(entrypointName),
+                    typedParams
+                ),
+            } as UpdateContractPayload;
         }
         default: {
             if (typedParams) {
                 throw new Error(`'typedParams' must not be provided for transaction of type '${type}'`);
             }
-            return payload;
+            return payload as Exclude<
+                SendTransactionPayload,
+                SendTransactionInitContractPayload | SendTransactionUpdateContractPayload
+            >;
         }
     }
 }
@@ -178,18 +221,10 @@ export class WalletConnectConnection implements WalletConnection {
 
     session: SessionTypes.Struct;
 
-    readonly jsonRpcClient: JsonRpcClient | undefined;
-
-    constructor(
-        connector: WalletConnectConnector,
-        chainId: string,
-        session: SessionTypes.Struct,
-        jsonRpcClient: JsonRpcClient | undefined
-    ) {
+    constructor(connector: WalletConnectConnector, chainId: string, session: SessionTypes.Struct) {
         this.connector = connector;
         this.chainId = chainId;
         this.session = session;
-        this.jsonRpcClient = jsonRpcClient;
     }
 
     getConnector() {
@@ -210,24 +245,17 @@ export class WalletConnectConnection implements WalletConnection {
         return fullAddress.substring(fullAddress.lastIndexOf(':') + 1);
     }
 
-    getJsonRpcClient() {
-        if (!this.jsonRpcClient) {
-            throw new Error('no JSON RPC URL provided in network configuration');
-        }
-        return this.jsonRpcClient;
-    }
-
     async signAndSendTransaction(
         accountAddress: string,
         type: AccountTransactionType,
-        payload: AccountTransactionPayload,
+        payload: SendTransactionPayload,
         typedParams?: TypedSmartContractParameters
     ) {
         const params = {
-            type: AccountTransactionType[type],
+            type: getTransactionKindString(type),
             sender: accountAddress,
             payload: accountTransactionPayloadToJson(serializePayloadParameters(type, payload, typedParams)),
-            schema: typedParams?.schema,
+            schema: convertSchemaFormat(typedParams?.schema),
         };
         try {
             const { hash } = (await this.connector.client.request({
@@ -365,7 +393,7 @@ export class WalletConnectConnector implements WalletConnector {
     }
 
     async connect() {
-        const { name, jsonRpcUrl } = this.network;
+        const { name } = this.network;
 
         const chainId = `${WALLET_CONNECT_SESSION_NAMESPACE}:${name}`;
         const session = await new Promise<SessionTypes.Struct | undefined>((resolve) => {
@@ -375,8 +403,7 @@ export class WalletConnectConnector implements WalletConnector {
             // Connect was cancelled.
             return undefined;
         }
-        const jsonRpcClient = jsonRpcUrl ? new JsonRpcClient(new HttpProvider(jsonRpcUrl)) : undefined;
-        const connection = new WalletConnectConnection(this, chainId, session, jsonRpcClient);
+        const connection = new WalletConnectConnection(this, chainId, session);
         this.connections.set(session.topic, connection);
         this.delegate.onConnected(connection, connection.getConnectedAccount());
         return connection;

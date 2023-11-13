@@ -1,13 +1,20 @@
 {
     "name": "@concordium/wallet-connectors",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "description": "Utility interface for dApps to interact with wallets without depending on the underlying protocol and implementations for Concordium Browser Wallet and Wallet Connect v2.",
     "author": "Concordium Software",
     "license": "Apache-2.0",
     "browser": "./dist/index.js",
     "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
+    },
     "files": [
-        "./dist"
+        "./dist",
+        "./src"
     ],
     "publishConfig": {
         "access": "public"
@@ -20,14 +27,17 @@
         "build": "tsc"
     },
     "dependencies": {
-        "@concordium/browser-wallet-api-helpers": "^2.5.0",
+        "@concordium/browser-wallet-api-helpers": "^3.0.0",
         "@walletconnect/qrcode-modal": "^1.8.0",
         "@walletconnect/sign-client": "^2.1.4"
+    },
+    "peerDependencies": {
+        "@concordium/web-sdk": "7.x"
     },
     "devDependencies": {
         "@tsconfig/recommended": "^1.0.1",
         "@walletconnect/types": "^2.1.4",
         "prettier": "2.8.1",
-        "typescript": "^4.9.4"
+        "typescript": "^5.2.2"
     }
 }

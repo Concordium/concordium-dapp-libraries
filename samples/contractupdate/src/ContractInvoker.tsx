@@ -9,7 +9,16 @@ import {
     moduleSchemaFromBase64,
     typeSchemaFromBase64,
 } from '@concordium/react-components';
-import { AccountAddress, AccountTransactionType, CcdAmount, SchemaVersion } from '@concordium/web-sdk';
+import {
+    AccountAddress,
+    AccountTransactionType,
+    CcdAmount,
+    ConcordiumGRPCClient,
+    ContractAddress,
+    Energy,
+    ReceiveName,
+    SchemaVersion,
+} from '@concordium/web-sdk';
 import { useContractSchemaRpc } from './useContractSchemaRpc';
 import { errorString } from './util';
 
@@ -19,8 +28,9 @@ interface ContractParamEntry {
 }
 
 interface ContractInvokerProps {
+    rpc: ConcordiumGRPCClient;
     network: Network;
-    connection: WalletConnection;
+    connection: WalletConnection | undefined;
     connectedAccount: string | undefined;
     contract: Info;
 }
@@ -78,7 +88,7 @@ function schemaOfType(type: SchemaType, schemaBase64: string): Schema {
 function parseParamValue(v: string) {
     try {
         // Assume that value is an account if it successfully parses as one.
-        return { Account: [new AccountAddress(v).address] };
+        return { Account: [AccountAddress.fromBase58(v).address] };
     } catch (e) {
         // Value is not an account.
         return v;
@@ -89,7 +99,7 @@ function ccdScanUrl(network: Network, txHash: string | undefined) {
     return `${network.ccdScanBaseUrl}/?dcount=1&dentity=transaction&dhash=${txHash}`;
 }
 
-export function ContractInvoker({ network, connection, connectedAccount, contract }: ContractInvokerProps) {
+export function ContractInvoker({ rpc, network, connection, connectedAccount, contract }: ContractInvokerProps) {
     const [selectedMethodIndex, setSelectedMethodIndex] = useState(0);
     const [schemaInput, setSchemaInput] = useState('');
     // Reset selected method and schema input on contract change.
@@ -98,8 +108,7 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
         setSchemaInput('');
     }, [contract]);
 
-    const schemaRpcResult = useContractSchemaRpc(connection, contract);
-
+    const schemaRpcResult = useContractSchemaRpc(rpc, contract);
     const [schemaTypeInput, setSchemaTypeInput] = useState(DEFAULT_SCHEMA_TYPE);
 
     const [contractParams, setContractParams] = useState<Array<ContractParamEntry>>([]);
@@ -143,7 +152,7 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
     const [isAwaitingApproval, setIsAwaitingApproval] = useState(false);
     const [submittedTxHash, setSubmittedTxHash] = useState<Result<string, string>>();
     const submit = useCallback(() => {
-        if (connectedAccount) {
+        if (connection && connectedAccount) {
             setIsAwaitingApproval(true);
             inputResult
                 .asyncAndThen(([parameters, { schema }, amount]) =>
@@ -152,10 +161,10 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
                             connectedAccount,
                             AccountTransactionType.Update,
                             {
-                                amount: new CcdAmount(amount),
-                                address: { index: contract.index, subindex: BigInt(0) },
-                                receiveName: contract.methods[selectedMethodIndex],
-                                maxContractExecutionEnergy: BigInt(30000),
+                                amount: CcdAmount.fromMicroCcd(amount),
+                                address: ContractAddress.create(contract.index, BigInt(0)),
+                                receiveName: ReceiveName.fromString(contract.methods[selectedMethodIndex]),
+                                maxContractExecutionEnergy: Energy.create(30000),
                             },
                             schema && { parameters, schema }
                         ),
@@ -304,10 +313,13 @@ export function ContractInvoker({ network, connection, connectedAccount, contrac
                 </Form.Group>
                 <Row>
                     <Col>
-                        <Button onClick={submit} disabled={isAwaitingApproval || inputResult.isErr()}>
-                            {isAwaitingApproval && 'Waiting for approval...'}
-                            {!isAwaitingApproval && 'Submit'}
-                        </Button>
+                        {!connection && <Button disabled={true}>Connect wallet to submit</Button>}
+                        {connection && (
+                            <Button onClick={submit} disabled={isAwaitingApproval || inputResult.isErr()}>
+                                {isAwaitingApproval && 'Waiting for approval...'}
+                                {!isAwaitingApproval && 'Submit'}
+                            </Button>
+                        )}
                     </Col>
                 </Row>
                 <Row>

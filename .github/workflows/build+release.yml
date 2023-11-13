@@ -13,9 +13,9 @@
 #
 # The workflow fails without uploading if the ref doesn't satisfy some of the requirements above or if any package fails to build.
 #
-# In addition to uploading a GitHub release, the workflow is intended to also publish the package to NPM registry in the future.
-# For now, the process of publishing is to download the pack file from the GitHub release to a box that is logged into the organization
-# (using 'npm login') and then publish it using the command 'npm publish <pack-file>'.
+# In addition to uploading a GitHub release, the workflow also publish the package to the npmjs registry.
+# If for whatever reason this step stops working, the process of publishing is to download the pack file from the GitHub release
+# to a box that is logged into the organization (using 'npm login') and then publish it using the command 'npm publish <pack-file>'.
 
 name: Build and publish release
 

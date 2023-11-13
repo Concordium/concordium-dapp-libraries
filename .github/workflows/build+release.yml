@@ -85,6 +85,7 @@ jobs:
               with:
                   node-version: '${{env.node_version}}'
                   cache: yarn
+                  registry-url: 'https://registry.npmjs.org'
             - name: Run yarn install
               run: yarn install --immutable
             # TODO Find a way to force target lib to not build against local build of dependent lib, but always against published build.

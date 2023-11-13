@@ -92,7 +92,7 @@ jobs:
               run: yarn build
             - name: Archive target library
               run: npm pack --workspace="${{steps.package.outputs.workspace}}"
-            - name: Publish library to npm [dry run]
+            - name: Publish library to npm
               run: npm publish "${{steps.release.outputs.npm-pack-file}}"
               env:
                 NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

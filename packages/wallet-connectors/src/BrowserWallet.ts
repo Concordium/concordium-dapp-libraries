@@ -1,5 +1,10 @@
-import { SchemaType, WalletApi, detectConcordiumProvider } from '@concordium/browser-wallet-api-helpers';
-import { AccountTransactionPayload, AccountTransactionSignature, AccountTransactionType } from '@concordium/web-sdk';
+import {
+    SchemaType,
+    SendTransactionPayload,
+    WalletApi,
+    detectConcordiumProvider,
+} from '@concordium/browser-wallet-api-helpers';
+import { AccountTransactionSignature, AccountTransactionType } from '@concordium/web-sdk';
 import {
     SignableMessage,
     TypedSmartContractParameters,
@@ -122,7 +127,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
     async signAndSendTransaction(
         accountAddress: string,
         type: AccountTransactionType,
-        payload: AccountTransactionPayload,
+        payload: SendTransactionPayload,
         typedParams?: TypedSmartContractParameters
     ): Promise<string> {
         if ((type === AccountTransactionType.InitContract || type === AccountTransactionType.Update) && typedParams) {

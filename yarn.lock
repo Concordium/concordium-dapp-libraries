@@ -1698,14 +1698,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@concordium/react-components@workspace:packages/react-components"
   dependencies:
-    "@concordium/wallet-connectors": ^0.4.0-rc.6
+    "@concordium/wallet-connectors": ^0.4.0-rc.7
     "@tsconfig/recommended": ^1.0.1
     "@types/node": ^18.11.17
     "@types/react": ^18
     prettier: 2.8.1
     typescript: ^5.2.2
   peerDependencies:
-    "@concordium/web-sdk": ^7.0.4-rc.3
+    "@concordium/web-sdk": ^7.1.0-rc.1
     react: ^18
   languageName: unknown
   linkType: soft
@@ -1717,7 +1717,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@concordium/wallet-connectors@^0.4.0-rc.6, @concordium/wallet-connectors@workspace:packages/wallet-connectors":
+"@concordium/wallet-connectors@^0.4.0-rc.7, @concordium/wallet-connectors@workspace:packages/wallet-connectors":
   version: 0.0.0-use.local
   resolution: "@concordium/wallet-connectors@workspace:packages/wallet-connectors"
   dependencies:
@@ -1729,13 +1729,13 @@ __metadata:
     prettier: 2.8.1
     typescript: ^5.2.2
   peerDependencies:
-    "@concordium/web-sdk": ^7.0.4-rc.3
+    "@concordium/web-sdk": ^7.1.0-rc.1
   languageName: unknown
   linkType: soft
 
-"@concordium/web-sdk@npm:beta":
-  version: 7.0.4-rc.3
-  resolution: "@concordium/web-sdk@npm:7.0.4-rc.3"
+"@concordium/web-sdk@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "@concordium/web-sdk@npm:7.1.0"
   dependencies:
     "@concordium/rust-bindings": 2.0.1
     "@grpc/grpc-js": ^1.9.4
@@ -1753,7 +1753,7 @@ __metadata:
     iso-3166-1: ^2.1.1
     json-bigint: ^1.0.0
     uuid: ^8.3.2
-  checksum: df85c9fbb9dd069b72df6dbd6ed6f0c1d29b479e1b56beab2267da46b8f2f78f5c5cd8fa3d1a103f4263c3e8c1b999693a3da7dfa7b99be04b0b6b1a6983cdd8
+  checksum: 471518fee52c45fc9bc826c4025f7da890c51a02cffaaaeab22c4b4eea0848c0ef47164719fa0c4053335c40c1e37dab323cc40c59b5b09e37790088caf517a5
   languageName: node
   linkType: hard
 
@@ -5860,7 +5860,7 @@ __metadata:
   resolution: "concordium-dapp-contractupdate@workspace:samples/contractupdate"
   dependencies:
     "@concordium/react-components": "workspace:^"
-    "@concordium/web-sdk": beta
+    "@concordium/web-sdk": ^7.1.0
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^13.0.0
     "@testing-library/user-event": ^13.2.1
@@ -5889,7 +5889,7 @@ __metadata:
   resolution: "concordium-dapp-sign-message@workspace:samples/sign-message"
   dependencies:
     "@concordium/react-components": "workspace:^"
-    "@concordium/web-sdk": beta
+    "@concordium/web-sdk": ^7.1.0
     "@types/node": ^16.18.16
     "@types/react": ^18.0.28
     "@types/react-dom": ^18.0.11

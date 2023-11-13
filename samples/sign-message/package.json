@@ -4,7 +4,7 @@
     "private": true,
     "dependencies": {
         "@concordium/react-components": "workspace:^",
-        "@concordium/web-sdk": "beta",
+        "@concordium/web-sdk": "^7.1.0",
         "@types/node": "^16.18.16",
         "@types/react": "^18.0.28",
         "@types/react-dom": "^18.0.11",

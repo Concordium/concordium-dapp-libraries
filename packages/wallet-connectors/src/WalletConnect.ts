@@ -1,7 +1,13 @@
 import {
+    SendTransactionInitContractPayload,
+    SendTransactionPayload,
+    SendTransactionUpdateContractPayload,
+} from '@concordium/browser-wallet-api-helpers';
+import {
     AccountTransactionPayload,
     AccountTransactionSignature,
     AccountTransactionType,
+    BigintFormatType,
     ContractName,
     EntrypointName,
     InitContractPayload,
@@ -71,7 +77,7 @@ function isSignAndSendTransactionError(obj: any): obj is SignAndSendTransactionE
 }
 
 function accountTransactionPayloadToJson(data: AccountTransactionPayload) {
-    return jsonUnwrapStringify(data, 'number', (key, value) => {
+    return jsonUnwrapStringify(data, BigintFormatType.Integer, (_key, value) => {
         if (value?.type === 'Buffer') {
             // Buffer has already been transformed by its 'toJSON' method.
             return toBuffer(value.data).toString('hex');
@@ -158,7 +164,7 @@ function convertSchemaFormat(schema: Schema | undefined) {
  */
 function serializePayloadParameters(
     type: AccountTransactionType,
-    payload: AccountTransactionPayload,
+    payload: SendTransactionPayload,
     typedParams: TypedSmartContractParameters | undefined
 ): AccountTransactionPayload {
     switch (type) {
@@ -170,7 +176,7 @@ function serializePayloadParameters(
             return {
                 ...payload,
                 param: serializeInitContractParam(initContractPayload.initName, typedParams),
-            };
+            } as InitContractPayload;
         }
         case AccountTransactionType.Update: {
             const updateContractPayload = payload as UpdateContractPayload;
@@ -185,13 +191,16 @@ function serializePayloadParameters(
                     EntrypointName.fromString(entrypointName),
                     typedParams
                 ),
-            };
+            } as UpdateContractPayload;
         }
         default: {
             if (typedParams) {
                 throw new Error(`'typedParams' must not be provided for transaction of type '${type}'`);
             }
-            return payload;
+            return payload as Exclude<
+                SendTransactionPayload,
+                SendTransactionInitContractPayload | SendTransactionUpdateContractPayload
+            >;
         }
     }
 }
@@ -239,7 +248,7 @@ export class WalletConnectConnection implements WalletConnection {
     async signAndSendTransaction(
         accountAddress: string,
         type: AccountTransactionType,
-        payload: AccountTransactionPayload,
+        payload: SendTransactionPayload,
         typedParams?: TypedSmartContractParameters
     ) {
         const params = {

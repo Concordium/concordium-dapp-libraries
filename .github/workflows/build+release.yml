@@ -1,4 +1,4 @@
-# Release/publish workflow to run on all pushed commits.
+# Workflow for building and publishing a release of one of the libraries based on an annotated tag.
 
 # The commit to be released is selected by ref using the input 'tag_override' and defaults to the ref that triggered the workflow.
 # The ref must be an annotated tag with a specific format and a message consisting of the release notes.

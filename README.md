@@ -36,3 +36,28 @@ yarn build
 ```
 
 to build all the libraries into the `dist` subfolder of their respective paths.
+
+## Release
+
+The libraries are released individually using the GitHub Actions workflow
+[`Build and publish release`](./.github/workflows/build+release.yml).
+The procedure is as follows:
+
+1. Add an annotated tag with the format `<package>/<version>` for the commit to build from,
+   where `<package>` is `wallet-connectors` or `react-components` and `<version>` is the version to release.
+   The version must match the version given in `package.json` of the package followed by a build version.
+   Example:
+   ```
+   git checkout <commit-to-release>
+   git tag -a wallet-connectors/1.2.3-0
+   ```
+2. Provide an overview of the changes in the release as the message of the annotated tag.
+   The release notes of the GitHub release will consist of this message followed by the items corresponding to the version
+   extracted from the library's `CHANGELOG.md`.
+3. Run the GitHub Actions workflow
+   [`Build and publish release`](https://github.com/Concordium/concordium-dapp-libraries/actions/workflows/build+release.yml)
+   using the "Run Workflow" button.
+   Keep `main` as the selected option of "Use workflow from" and provide the annotated tag as the value of "Tag".
+   Hit "Run workflow" to start the workflow.
+4. If the tag satisfies all the requirements, the workflow will build the package and publish it as both a GitHub release and to the npm registry.
+   Note that the procedure has to be done once for each package to release.

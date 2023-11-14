@@ -13,9 +13,9 @@
 #
 # The workflow fails without uploading if the ref doesn't satisfy some of the requirements above or if any package fails to build.
 #
-# In addition to uploading a GitHub release, the workflow also publish the package to the npmjs registry.
-# If for whatever reason this step stops working, the process of publishing is to download the pack file from the GitHub release
-# to a box that is logged into the organization (using 'npm login') and then publish it using the command 'npm publish <pack-file>'.
+# In addition to uploading a GitHub release, the workflow also publishes the package to the npmjs registry.
+# If, for whatever reason, this step stops working, download the pack file from the GitHub release to a box
+# that is logged into the organization (using 'npm login') and publish it manually using the command 'npm publish <pack-file>'.
 
 name: Build and publish release
 
@@ -96,7 +96,7 @@ jobs:
             - name: Publish library to npm
               run: npm publish "${{steps.release.outputs.npm-pack-file}}"
               env:
-                NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                NODE_AUTH_TOKEN: '${{secrets.NPM_TOKEN}}'
             - name: Extract changelog entries
               uses: concordium/github-action-changelog-extract@v1
               id: changelog

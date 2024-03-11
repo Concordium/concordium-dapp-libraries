@@ -105,7 +105,7 @@ jobs:
                   file: '${{steps.package.outputs.path}}/CHANGELOG.md'
                   version: '${{steps.package.outputs.version}}'
             - name: Upload package as GitHub release
-              uses: softprops/action-gh-release@v1
+              uses: softprops/action-gh-release@v2
               with:
                   tag_name: '${{steps.tag.outputs.name}}'
                   # Release body is the message of the annotated tag followed by the changelog entries for the version.

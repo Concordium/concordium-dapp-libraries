@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { WalletConnection, WalletConnector } from '@concordium/wallet-connectors';
 import { errorString } from './error';
 
@@ -9,7 +9,7 @@ export interface Connect {
     /**
      * Function for initiating a new connection. Any existing connection will not be automatically disconnected.
      */
-    connect: () => void;
+    connect: (() => void) | undefined;
 
     /**
      * Indicator on whether we're waiting for a connection to be established and approved.
@@ -35,21 +35,23 @@ export function useConnect(
 ): Connect {
     const [isConnecting, setIsConnecting] = useState(false);
     const [connectError, setConnectError] = useState('');
-    const connect = useCallback(() => {
+    const connect = useMemo(() => {
         if (!connector) {
-            throw new Error('no connector to connect from');
+            return undefined;
         }
-        setIsConnecting(true);
-        connector
-            .connect()
-            .then((c) => {
-                if (c) {
-                    setConnection(c);
-                    setConnectError('');
-                }
-            })
-            .catch((e) => setConnectError(errorString(e)))
-            .finally(() => setIsConnecting(false));
+        return () => {
+            setIsConnecting(true);
+            connector
+                .connect()
+                .then((c) => {
+                    if (c) {
+                        setConnection(c);
+                        setConnectError('');
+                    }
+                })
+                .catch((e) => setConnectError(errorString(e)))
+                .finally(() => setIsConnecting(false));
+        };
     }, [connector, setConnection]);
     return { connect, isConnecting, connectError };
 }

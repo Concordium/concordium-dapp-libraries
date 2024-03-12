@@ -9,10 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--   `useConnect`: Let `connection` function be `undefined` if `connector` is.
+-   `useConnect` (breaking): Let `connection` function be `undefined` if `connector` is.
     This prevents the function from being called before `WalletConnectionProps.activeConnector` is ready which would fail anyway.
     The expectation before was that the button/function invoking `connect` would check this itself,
     but making it explicit in the type seems less prone to errors.
+    To migrate, replace `connect()` with `connect && connect()` or `connect?.()`
+    and optionally replace any guarding using `activeConnector` by the truthiness value of `connect` itself.
 
 ## [0.4.0] - 2023-11-13
 

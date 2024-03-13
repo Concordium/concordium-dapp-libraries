@@ -63,7 +63,9 @@ If `activeConnector` is `undefined` then so is `connect` as it doesn't make sens
 This may be used to disable a button whose click handler invokes the function, like for instance:
 
 ```tsx
-<Button type="button" onClick={connect} disabled={!connect}>Connect</Button>
+<Button type="button" onClick={connect} disabled={!connect}>
+    Connect
+</Button>
 ```
 
 Once established, the connection and its state are exposed in the following fields:

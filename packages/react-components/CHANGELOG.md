@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     To migrate, replace `connect()` with `connect && connect()` or `connect?.()`
     and optionally replace any guarding using `activeConnector` by the truthiness value of `connect` itself.
 
+## [0.5.0] - 2024-03-13
+
+### Changed
+
+-   Dependency on `@concordium/wallet-connectors` bumped to v0.5.0+.
+
 ## [0.4.0] - 2023-11-13
 
 ### Changed

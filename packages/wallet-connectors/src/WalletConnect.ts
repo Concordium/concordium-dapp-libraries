@@ -22,9 +22,11 @@ import {
     serializeUpdateContractParameters,
     toBuffer,
 } from '@concordium/web-sdk';
-import QRCodeModal from '@walletconnect/qrcode-modal';
+import { WalletConnectModal } from '@walletconnect/modal';
+import { MobileWallet } from '@walletconnect/modal-core';
 import SignClient from '@walletconnect/sign-client';
-import { ISignClient, SessionTypes, SignClientTypes } from '@walletconnect/types';
+import { ISignClient, ProposalTypes, SessionTypes, SignClientTypes } from '@walletconnect/types';
+import { CONCORDIUM_WALLET_CONNECT_PROJECT_ID } from '.';
 import {
     Network,
     Schema,
@@ -38,20 +40,71 @@ import { UnreachableCaseError } from './error';
 
 const WALLET_CONNECT_SESSION_NAMESPACE = 'ccd';
 
-async function connect(client: ISignClient, chainId: string, cancel: () => void) {
+export const enum WalletConnectMethods {
+    SignAndSendTransaction = 'sign_and_send_transaction',
+    SignMessage = 'sign_message',
+    RequestVerifiablePresentation = 'request_verifiable_presentation',
+}
+
+export const enum WalletConnectEvents {
+    ChainChanged = 'chain_changed',
+    AccountsChanged = 'accounts_changed',
+}
+
+type WalletConnectMobileWallet = MobileWallet | string;
+
+export const concordiumWallet: MobileWallet = {
+    id: '7dcb0e5eb1b4fc6e2e0b143201c489ea6c618259f49527527d4a349d1a95ba7b', // https://explorer.walletconnect.com/?search=concordium
+    name: 'Concordium Wallet',
+    links: {
+        native: 'concordiumwallet://',
+    },
+};
+
+export const cryptoXWallet: MobileWallet = {
+    id: 'CryptoXWallet',
+    name: 'CryptoX Wallet',
+    links: {
+        native: 'cryptox://',
+    },
+};
+
+async function connect(
+    client: ISignClient,
+    scope: ProposalTypes.RequiredNamespace,
+    cancel: () => void,
+    mobileWallets?: WalletConnectMobileWallet[]
+) {
+    let modal: WalletConnectModal | undefined;
+    const { mobile, explorer } = mobileWallets?.reduce<{ mobile: MobileWallet[]; explorer: string[] }>(
+        (acc, cur) => {
+            if (typeof cur === 'string') {
+                acc.explorer.push(cur);
+            } else {
+                acc.mobile.push(cur);
+            }
+
+            return acc;
+        },
+        { mobile: [], explorer: [] }
+    ) ?? {};
     try {
         const { uri, approval } = await client.connect({
             requiredNamespaces: {
-                ccd: {
-                    methods: ['sign_and_send_transaction', 'sign_message', 'request_verifiable_presentation'],
-                    chains: [chainId],
-                    events: ['chain_changed', 'accounts_changed'],
-                },
+                ccd: scope,
             },
         });
         if (uri) {
+            modal = new WalletConnectModal({
+                projectId: CONCORDIUM_WALLET_CONNECT_PROJECT_ID,
+                chains: scope.chains,
+                mobileWallets: mobile,
+                desktopWallets: [],
+                explorerRecommendedWalletIds: explorer,
+                explorerExcludedWalletIds: 'ALL',
+            });
             // Open modal as we're not connecting to an existing pairing.
-            QRCodeModal.open(uri, cancel);
+            modal.openModal({ uri });
         }
         return await approval();
     } catch (e) {
@@ -61,7 +114,9 @@ async function connect(client: ISignClient, chainId: string, cancel: () => void)
         }
         cancel();
     } finally {
-        QRCodeModal.close();
+        if (modal !== undefined) {
+            modal.closeModal();
+        }
     }
 }
 
@@ -411,12 +466,21 @@ export class WalletConnectConnector implements WalletConnector {
         return new WalletConnectConnector(client, delegate, network);
     }
 
-    async connect() {
+    async connectWithScope(
+        methods: WalletConnectMethods[],
+        events: WalletConnectEvents[],
+        mobileWallets?: MobileWallet[]
+    ) {
         const { name } = this.network;
 
         const chainId = `${WALLET_CONNECT_SESSION_NAMESPACE}:${name}`;
+        const scope: ProposalTypes.RequiredNamespace = {
+            chains: [chainId],
+            methods: methods,
+            events: events,
+        };
         const session = await new Promise<SessionTypes.Struct | undefined>((resolve) => {
-            connect(this.client, chainId, () => resolve(undefined)).then(resolve);
+            connect(this.client, scope, () => resolve(undefined), mobileWallets).then(resolve);
         });
         if (!session) {
             // Connect was cancelled.
@@ -426,6 +490,17 @@ export class WalletConnectConnector implements WalletConnector {
         this.connections.set(session.topic, connection);
         this.delegate.onConnected(connection, connection.getConnectedAccount());
         return connection;
+    }
+
+    async connect() {
+        return this.connectWithScope(
+            [
+                WalletConnectMethods.SignAndSendTransaction,
+                WalletConnectMethods.SignMessage,
+                WalletConnectMethods.RequestVerifiablePresentation,
+            ],
+            [WalletConnectEvents.AccountsChanged, WalletConnectEvents.ChainChanged]
+        );
     }
 
     onDisconnect(connection: WalletConnectConnection) {

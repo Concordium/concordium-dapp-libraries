@@ -53,13 +53,10 @@ export const enum WalletConnectEvents {
 
 type WalletConnectMobileWallet = MobileWallet | string;
 
-export const concordiumWallet: MobileWallet = {
-    id: '7dcb0e5eb1b4fc6e2e0b143201c489ea6c618259f49527527d4a349d1a95ba7b', // https://explorer.walletconnect.com/?search=concordium
-    name: 'Concordium Wallet',
-    links: {
-        native: 'concordiumwallet://',
-    },
-};
+/**
+ * 
+ */
+export const concordiumWallet = '7dcb0e5eb1b4fc6e2e0b143201c489ea6c618259f49527527d4a349d1a95ba7b';
 
 export const cryptoXWallet: MobileWallet = {
     id: 'CryptoXWallet',
@@ -466,10 +463,19 @@ export class WalletConnectConnector implements WalletConnector {
         return new WalletConnectConnector(client, delegate, network);
     }
 
+    /**
+     * Connects to wallet connect with the configuration provided by the parameters
+     *
+     * @param methods - The methods to request permission to use for in the wallet
+     * @param events - The events to request permission to read from the wallet
+     * @param mobileWallets - The (mobile) wallets to be selectable from the walletconnect modal
+     *
+     * @returns the {@linkcode WalletConnectConnection}, or `undefined` if rejected from the wallet. 
+     */
     async connectWithScope(
         methods: WalletConnectMethods[],
         events: WalletConnectEvents[],
-        mobileWallets?: MobileWallet[]
+        mobileWallets?: WalletConnectMobileWallet[]
     ) {
         const { name } = this.network;
 
@@ -492,6 +498,9 @@ export class WalletConnectConnector implements WalletConnector {
         return connection;
     }
 
+    /**
+     * Like {@linkcode WalletConnectConnector.connectWithScope}, but with permission to use all methods and read all events.
+     */
     async connect() {
         return this.connectWithScope(
             [
@@ -499,7 +508,8 @@ export class WalletConnectConnector implements WalletConnector {
                 WalletConnectMethods.SignMessage,
                 WalletConnectMethods.RequestVerifiablePresentation,
             ],
-            [WalletConnectEvents.AccountsChanged, WalletConnectEvents.ChainChanged]
+            [WalletConnectEvents.AccountsChanged, WalletConnectEvents.ChainChanged],
+            [cryptoXWallet, concordiumWallet]
         );
     }
 

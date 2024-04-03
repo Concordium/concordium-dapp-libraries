@@ -40,16 +40,22 @@ import { UnreachableCaseError } from './error';
 
 const WALLET_CONNECT_SESSION_NAMESPACE = 'ccd';
 
-export const enum WalletConnectMethods {
-    SignAndSendTransaction = 'sign_and_send_transaction',
-    SignMessage = 'sign_message',
-    RequestVerifiablePresentation = 'request_verifiable_presentation',
-}
+// Enums are declared this way to support proper tree shaking
+export const WalletConnectMethods = {
+    SignAndSendTransaction: 'sign_and_send_transaction',
+    SignMessage: 'sign_message',
+    RequestVerifiablePresentation: 'request_verifiable_presentation',
+} as const;
 
-export const enum WalletConnectEvents {
-    ChainChanged = 'chain_changed',
-    AccountsChanged = 'accounts_changed',
-}
+export const WalletConnectEvents = {
+    ChainChanged: 'chain_changed',
+    AccountsChanged: 'accounts_changed',
+} as const;
+
+// intentionally naming the variable the same as the type
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type WalletConnectMethods = typeof WalletConnectMethods[keyof typeof WalletConnectMethods];
+export type WalletConnectEvents = typeof WalletConnectEvents[keyof typeof WalletConnectEvents];
 
 type WalletConnectMobileWallet = MobileWallet | string;
 

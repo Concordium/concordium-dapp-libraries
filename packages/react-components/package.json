@@ -27,7 +27,7 @@
         "build": "tsc"
     },
     "dependencies": {
-        "@concordium/wallet-connectors": "^0.6.0-alpha.4"
+        "@concordium/wallet-connectors": "^0.6.0-alpha.5"
     },
     "devDependencies": {
         "@tsconfig/recommended": "^1.0.1",

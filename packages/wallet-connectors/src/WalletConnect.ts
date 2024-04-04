@@ -138,8 +138,13 @@ async function connect(
                 walletImages,
                 enableExplorer,
             });
+            modal.subscribeModal(({ open }) => {
+                if (!open) {
+                    return cancel();
+                }
+            });
             // Open modal as we're not connecting to an existing pairing.
-            modal.openModal({ uri });
+            await modal.openModal({ uri });
         }
         return await approval();
     } catch (e) {
@@ -552,8 +557,8 @@ export class WalletConnectConnector implements WalletConnector {
             this.network === MAINNET
                 ? [cryptoXWalletMainnet, concordiumWalletMainnet]
                 : this.network === TESTNET
-                    ? [cryptoXWalletTestnet, concordiumWalletTestnet]
-                    : undefined
+                ? [cryptoXWalletTestnet, concordiumWalletTestnet]
+                : undefined
         );
     }
 

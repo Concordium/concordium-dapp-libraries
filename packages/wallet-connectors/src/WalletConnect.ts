@@ -127,6 +127,7 @@ async function connect(
                 ccd: scope,
             },
         });
+        let response: SessionTypes.Struct | undefined = undefined;
         if (uri) {
             modal = new WalletConnectModal({
                 projectId: CONCORDIUM_WALLET_CONNECT_PROJECT_ID,
@@ -139,14 +140,17 @@ async function connect(
                 enableExplorer,
             });
             modal.subscribeModal(({ open }) => {
-                if (!open) {
-                    return cancel();
+                if (!open && response === undefined) {
+                    cancel();
                 }
             });
+
             // Open modal as we're not connecting to an existing pairing.
             await modal.openModal({ uri });
         }
-        return await approval();
+
+        response = await approval();
+        return response;
     } catch (e) {
         // Ignore falsy errors.
         if (e) {
@@ -154,9 +158,7 @@ async function connect(
         }
         cancel();
     } finally {
-        if (modal !== undefined) {
-            modal.closeModal();
-        }
+        modal?.closeModal();
     }
 }
 

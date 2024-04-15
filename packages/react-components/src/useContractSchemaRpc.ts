@@ -45,7 +45,7 @@ function findSchema(m: WebAssembly.Module, moduleVersion: 0 | 1): SchemaRpcResul
 }
 
 async function fetchSchema(rpc: ConcordiumGRPCClient, contract: Info) {
-    const { version, source } = await rpc.getModuleSource(new ModuleReference(contract.moduleRef));
+    const { version, source } = await rpc.getModuleSource(ModuleReference.fromHexString(contract.moduleRef));
     if (source.length === 0) {
         throw new Error('module source is empty');
     }
@@ -73,6 +73,6 @@ export function useContractSchemaRpc(rpc: ConcordiumGRPCClient, contract: Info, 
             .catch((err) => {
                 setError(err);
             });
-    }, [contract, rpc]);
+    }, [rpc, contract]);
     return result;
 }

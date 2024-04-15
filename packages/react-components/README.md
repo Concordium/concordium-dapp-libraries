@@ -152,7 +152,7 @@ _Example: Fetch schema of a provided smart contract_
 
 ```typescript jsx
 import React, { useState } from 'react';
-import { Network, useContractSchemaRpc, Info, Schema } from '@concordium/react-components';
+import { Info, Network, Schema, useContractSchemaRpc } from '@concordium/react-components';
 import { ConcordiumGRPCClient } from '@concordium/web-sdk';
 
 interface Props {

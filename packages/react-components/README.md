@@ -24,17 +24,10 @@ Initialize the network configuration and wrap the component `MyAppComponent` tha
 in `WithWalletConnector`:
 
 ```typescript jsx
-import { Network, WalletConnectionProps, WithWalletConnector } from '@concordium/react-components';
-
-const testnet: Network = {
-    name: 'testnet',
-    genesisHash: '4221332d34e1694168c2a0c0b3fd0f273809612cb13d000d5c2e00e85f50f796',
-    jsonRpcUrl: 'https://json-rpc.testnet.concordium.com',
-    ccdScanBaseUrl: 'https://testnet.ccdscan.io',
-};
+import { Network, TESTNET, WalletConnectionProps, WithWalletConnector } from '@concordium/react-components';
 
 function MyRootComponent() {
-    return <WithWalletConnector network={network}>{(props) => <MyAppComponent {...props} />}</WithWalletConnector>;
+    return <WithWalletConnector network={TESTNET}>{(props) => <MyAppComponent {...props} />}</WithWalletConnector>;
 }
 
 function MyAppComponent(props: WalletConnectionProps) {
@@ -66,6 +59,15 @@ const { connect, isConnecting, connectError } = useConnect(activeConnector, setC
 
 The app uses the function `connect` to initiate a new connection from `activeConnector`.
 The fields `isConnecting` and `connectError` are used to render the connection status.
+If `activeConnector` is `undefined` then so is `connect` as it doesn't make sense to call it in that case.
+This may be used to disable a button whose click handler invokes the function, like for instance:
+
+```tsx
+<Button type="button" onClick={connect} disabled={!connect}>
+    Connect
+</Button>
+```
+
 Once established, the connection and its state are exposed in the following fields:
 
 -   `connection`: The `WalletConnection` object that the app uses to interact with the wallet.
@@ -139,7 +141,7 @@ export function ContractStuff({ rpc }: Props) {
 ```
 
 Use the hook [`useGrpcClient`](#usegrpcclient) below to obtain a `ConcordiumGRPCClient` instance.
-See [the sample dApp](../../samples/contractupdate/src/App.tsx) for a complete example.
+See [the sample dApp](../../samples/contractupdate/src/Root.tsx) for a complete example.
 
 ### [`useGrpcClient`](./src/useGrpcClient.ts)
 

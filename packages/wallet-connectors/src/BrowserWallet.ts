@@ -1,5 +1,15 @@
-import { SchemaType, WalletApi, detectConcordiumProvider } from '@concordium/browser-wallet-api-helpers';
-import { AccountTransactionPayload, AccountTransactionSignature, AccountTransactionType } from '@concordium/web-sdk';
+import {
+    SchemaType,
+    SendTransactionPayload,
+    WalletApi,
+    detectConcordiumProvider,
+} from '@concordium/browser-wallet-api-helpers';
+import {
+    AccountTransactionSignature,
+    AccountTransactionType,
+    CredentialStatements,
+    VerifiablePresentation,
+} from '@concordium/web-sdk';
 import {
     SignableMessage,
     TypedSmartContractParameters,
@@ -86,29 +96,21 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         return this.client.getMostRecentlySelectedAccount();
     }
 
-    getJsonRpcClient() {
-        return this.client.getJsonRpcClient();
-    }
-
     /**
-     * Returns a gRPC client that is ready to perform requests against some Concordium Node connected to network/chain
-     * that the connected account lives on.
+     * Returns the transport object of the gRPC client that the Browser Wallet uses to perform requests
+     * against some Concordium Node connected to network/chain that the connected account lives on.
      * The client implements version 2 of the Node API.
      *
      * This method is included because it's part of the Browser Wallet API.
      * It should be used with care as it's hard to guarantee that it actually connects to the expected network.
-     * The recommended alternative is to have the application instantiate its own instance
-     * that is independent of any connection.
-     * See {@link Network.grpcOpts} for more details.
-     *
-     * Implementation detail: The method cannot be moved to {@link WalletConnector}
-     * as the Browser Wallet's RPC client doesn't work until a connection has been established.
+     * The recommended alternative is to construct your own client using {@link Network.grpcOpts} which is
+     * independent of any connection.
      *
      * @return The Browser Wallet's internal gRPC client.
      * @throws If the installed version of the Browser Wallet doesn't support the method.
      */
-    getGrpcClient() {
-        return this.client.getGrpcClient();
+    getGrpcTransport() {
+        return this.client.grpcTransport;
     }
 
     /**
@@ -130,7 +132,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
     async signAndSendTransaction(
         accountAddress: string,
         type: AccountTransactionType,
-        payload: AccountTransactionPayload,
+        payload: SendTransactionPayload,
         typedParams?: TypedSmartContractParameters
     ): Promise<string> {
         if ((type === AccountTransactionType.InitContract || type === AccountTransactionType.Update) && typedParams) {
@@ -139,8 +141,8 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
                 case 'ModuleSchema':
                     return this.client.sendTransaction(
                         accountAddress,
-                        type,
-                        payload,
+                        type as any, // wallet API types enforce strict coupling of transaction types and corresponding payloads.
+                        payload as any, // wallet API types enforce strict coupling of transaction types and corresponding payloads.
                         parameters,
                         {
                             type: SchemaType.Module,
@@ -149,7 +151,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
                         schema.version
                     );
                 case 'TypeSchema':
-                    return this.client.sendTransaction(accountAddress, type, payload, parameters, {
+                    return this.client.sendTransaction(accountAddress, type as any, payload as any, parameters, {
                         type: SchemaType.Parameter,
                         value: schema.value.toString('base64'),
                     });
@@ -160,7 +162,7 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
         if (typedParams) {
             throw new Error(`'typedParams' must not be provided for transaction of type '${type}'`);
         }
-        return this.client.sendTransaction(accountAddress, type, payload);
+        return this.client.sendTransaction(accountAddress, type as any, payload as any); // wallet API types enforce strict coupling of transaction types and corresponding payloads.
     }
 
     async signMessage(accountAddress: string, msg: SignableMessage): Promise<AccountTransactionSignature> {
@@ -175,5 +177,12 @@ export class BrowserWalletConnector implements WalletConnector, WalletConnection
             default:
                 throw new UnreachableCaseError('message', msg);
         }
+    }
+
+    async requestVerifiablePresentation(
+        challenge: string,
+        credentialStatements: CredentialStatements
+    ): Promise<VerifiablePresentation> {
+        return this.client.requestVerifiablePresentation(challenge, credentialStatements);
     }
 }

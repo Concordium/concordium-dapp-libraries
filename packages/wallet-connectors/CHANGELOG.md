@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Added `cryptoXWallet` and `concordiumWallet` exports, which can be passed to `WalletConnectConnector.connectWithScope` to defined which wallets can be selected for connecting through deeplinking.
--   Added a new method `connectWithScope` to `WalletConnectConnector`, which lets users define the methods and events to request permissions for.
+-   Added `createWalletConnectModalConfig` to create a configuration the modal shown when connecting to a walletconnect compatible wallet. The value returned can be passed to `WalletConnectConnector.create`.
+-   Added `CRYPTO_X_WALLET_MAINNET` and `CONCORDIUM_WALLET_MAINNET` exports, which can be passed `createWalletConnectModalConfig` for more control over which wallets are shown.
+-   Added option to specify the methods and events to request permission for by walletconnect
 
 ### Changed
 

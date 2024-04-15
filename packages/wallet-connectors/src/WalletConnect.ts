@@ -127,23 +127,21 @@ const DEFAULT_MOBILE_WALLETS = {
  *
  * @param network The {@linkcode Network} to connect to.
  * @param [mobileWallets] The list of mobile wallets to use for deep linking. Defaults to the concordium and cryptoX wallets for mobile for the specified `network`.
- * If `network` is anything but {@linkcode MAINNET} or {@linkcode TESTNET}, the default value is undefined.
+ * If `network` is anything but {@linkcode MAINNET} or {@linkcode TESTNET}, the default value is an empty list.
  * @param [enableExplorer] Whether to enable the wallet connect explorer in the wallet connect modal. Defaults to `false`.
  *
  * @returns the corresponding {@linkcode WalletConnectModalConfig}
  */
 export function createWalletConnectModalConfig(
     network: Network,
-    mobileWallets: WalletConnectModalMobileWallet[] = DEFAULT_MOBILE_WALLETS[network.name],
+    mobileWallets: WalletConnectModalMobileWallet[] = DEFAULT_MOBILE_WALLETS[network.name] ?? [],
     enableExplorer = false
 ): WalletConnectModalConfig {
     let walletImages: Record<string, string> | undefined;
-    let mws: MobileWallet[] | undefined;
+    const mws: MobileWallet[] = [];
 
-    mobileWallets?.map(getWalletConnectModalParts).forEach(({ wallet, iconUrl }) => {
-        mws = mws ?? [];
+    mobileWallets.forEach(({ iconUrl, ...wallet }) => {
         mws.push(wallet);
-
         if (iconUrl !== undefined) {
             walletImages = walletImages ?? {};
             walletImages[wallet.name] = iconUrl;
@@ -162,16 +160,9 @@ export function createWalletConnectModalConfig(
     };
 }
 
-function getWalletConnectModalParts({ iconUrl, ...wallet }: WalletConnectModalMobileWallet): {
-    wallet: MobileWallet;
-    iconUrl: string | undefined;
-} {
-    return { wallet, iconUrl };
-}
-
 async function connect(
     client: ISignClient,
-    scope: ProposalTypes.RequiredNamespace,
+    namespaceConfig: ProposalTypes.RequiredNamespace,
     cancel: () => void,
     modalConfig: WalletConnectModalConfig
 ) {
@@ -180,7 +171,7 @@ async function connect(
     try {
         const { uri, approval } = await client.connect({
             requiredNamespaces: {
-                ccd: scope,
+                ccd: namespaceConfig,
             },
         });
         let response: SessionTypes.Struct | undefined = undefined;
@@ -476,13 +467,22 @@ function getChainId({ name }: Network): string {
 }
 
 /**
- * Describes the scope of a connection to a wallet through wallet connect
+ * Describes the configuration of a connection to a wallet through wallet connect
  */
-export type WalletConnectConnectionScope = {
+export type WalletConnectNamespaceConfig = {
     /** Which methods to request permission for */
     methods: WalletConnectMethod[];
     /** Which events to request permission for */
     events: WalletConnectEvent[];
+};
+
+export const FULL_WALLET_CONNECT_NAMESPACE_CONFIG: WalletConnectNamespaceConfig = {
+    methods: [
+        WalletConnectMethod.SignMessage,
+        WalletConnectMethod.SignAndSendTransaction,
+        WalletConnectMethod.RequestVerifiablePresentation,
+    ],
+    events: [WalletConnectEvent.AccountsChanged, WalletConnectEvent.ChainChanged],
 };
 
 /**
@@ -495,7 +495,7 @@ export type WalletConnectConnectionScope = {
 export class WalletConnectConnector implements WalletConnector {
     readonly client: ISignClient;
 
-    readonly network: Network;
+    readonly chainId: string;
 
     readonly delegate: WalletConnectionDelegate;
 
@@ -503,7 +503,7 @@ export class WalletConnectConnector implements WalletConnector {
 
     readonly modalConfig: WalletConnectModalConfig;
 
-    readonly scope: WalletConnectConnectionScope;
+    readonly namespaceConfig: WalletConnectNamespaceConfig;
 
     /**
      * Construct a new instance.
@@ -516,21 +516,21 @@ export class WalletConnectConnector implements WalletConnector {
      * @param client The underlying WalletConnect client.
      * @param delegate The object to receive events emitted by the client.
      * @param network The network/chain that connected accounts must live on.
-     * @param connectionScope The scope of the connections, i.e. which methods and events to request permission for in the wallet.
-     * @param modalConfig The configuration of the modal for connecting to the mobile wallet. Defaults to the default invocation of {@linkcode createWalletConnectModalConfig}
+     * @param [namespaceConfig] The namespace configuration of the connections, i.e. which methods and events to request permission for in the wallet. Defaults to {@linkcode FULL_WALLET_CONNECT_NAMESPACE_CONFIG}
+     * @param [modalConfig] The configuration of the modal for connecting to the mobile wallet. Defaults to the default invocation of {@linkcode createWalletConnectModalConfig}
      */
     constructor(
         client: SignClient,
         delegate: WalletConnectionDelegate,
         network: Network,
-        connectionScope: WalletConnectConnectionScope,
-        modalConfig: WalletConnectModalConfig
+        namespaceConfig: WalletConnectNamespaceConfig = FULL_WALLET_CONNECT_NAMESPACE_CONFIG,
+        modalConfig: WalletConnectModalConfig = createWalletConnectModalConfig(network)
     ) {
         this.client = client;
-        this.network = network;
+        this.chainId = getChainId(network);
         this.delegate = delegate;
         this.modalConfig = modalConfig;
-        this.scope = connectionScope;
+        this.namespaceConfig = namespaceConfig;
 
         client.on('session_event', ({ topic, params: { chainId, event }, id }) => {
             console.debug('WalletConnect event: session_event', { topic, id, chainId, event });
@@ -573,34 +573,33 @@ export class WalletConnectConnector implements WalletConnector {
      * if the dApp doesn't have its own {@link https://cloud.walletconnect.com WalletConnect Cloud} project.
      * @param delegate The object to receive events emitted by the client.
      * @param network The network/chain that connected accounts must live on.
-     * @param connectionScope The scope of the connections, i.e. which methods and events to request permission for in the wallet.
+     * @param [namespaceConfig] The namespace configuration of the connections, i.e. which methods and events to request permission for in the wallet. Defaults to {@linkcode FULL_WALLET_CONNECT_NAMESPACE_CONFIG}
      * @param [modalConfig] The configuration of the modal for connecting to the mobile wallet. Defaults to the default invocation of {@linkcode createWalletConnectModalConfig}
      */
     static async create(
         signClientInitOpts: SignClientTypes.Options,
         delegate: WalletConnectionDelegate,
         network: Network,
-        connectionScope: WalletConnectConnectionScope,
+        namespaceConfig: WalletConnectNamespaceConfig = FULL_WALLET_CONNECT_NAMESPACE_CONFIG,
         modalConfig: WalletConnectModalConfig = createWalletConnectModalConfig(network)
     ) {
         const client = await SignClient.init(signClientInitOpts);
-        return new WalletConnectConnector(client, delegate, network, connectionScope, modalConfig);
+        return new WalletConnectConnector(client, delegate, network, namespaceConfig, modalConfig);
     }
 
     async connect() {
-        const chainId = getChainId(this.network);
-        const scope: ProposalTypes.RequiredNamespace = {
-            chains: [chainId],
-            ...this.scope,
+        const namespaceConfig: ProposalTypes.RequiredNamespace = {
+            chains: [this.chainId],
+            ...this.namespaceConfig,
         };
         const session = await new Promise<SessionTypes.Struct | undefined>((resolve) => {
-            connect(this.client, scope, () => resolve(undefined), this.modalConfig).then(resolve);
+            connect(this.client, namespaceConfig, () => resolve(undefined), this.modalConfig).then(resolve);
         });
         if (!session) {
             // Connect was cancelled.
             return undefined;
         }
-        const connection = new WalletConnectConnection(this, chainId, session);
+        const connection = new WalletConnectConnection(this, this.chainId, session);
         this.connections.set(session.topic, connection);
         this.delegate.onConnected(connection, connection.getConnectedAccount());
         return connection;

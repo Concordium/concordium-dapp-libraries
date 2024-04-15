@@ -1,10 +1,10 @@
 import {
     BrowserWalletConnector,
     CONCORDIUM_WALLET_CONNECT_PROJECT_ID,
-    WalletConnectConnectionScope,
     WalletConnectConnector,
     WalletConnectEvent,
     WalletConnectMethod,
+    WalletConnectNamespaceConfig,
     ephemeralConnectorType,
 } from '@concordium/react-components';
 import { SignClientTypes } from '@walletconnect/types';
@@ -19,7 +19,7 @@ const WALLET_CONNECT_OPTS: SignClientTypes.Options = {
     },
 };
 
-const WALLET_CONNECT_SCOPE: WalletConnectConnectionScope = {
+const WALLET_CONNECT_SCOPE: WalletConnectNamespaceConfig = {
     methods: [WalletConnectMethod.SignMessage],
     events: [WalletConnectEvent.AccountsChanged, WalletConnectEvent.ChainChanged],
 };

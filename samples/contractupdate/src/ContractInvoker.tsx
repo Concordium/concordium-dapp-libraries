@@ -120,7 +120,7 @@ export function ContractInvoker({ rpc, network, connection, connectedAccount, co
     }, [contract]);
 
     const [schemaRpcError, setSchemaRpcError] = useState('');
-    const schemaRpcResult = useModuleSchemaRpc(rpc, contract, setSchemaRpcError);
+    const schemaRpcResult = useModuleSchemaRpc(rpc, contract.moduleRef, setSchemaRpcError);
     const [schemaTypeInput, setSchemaTypeInput] = useState(DEFAULT_SCHEMA_TYPE);
 
     const [contractParams, setContractParams] = useState<Array<ContractParamEntry>>([]);

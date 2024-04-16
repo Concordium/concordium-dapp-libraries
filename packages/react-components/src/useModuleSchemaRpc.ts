@@ -78,7 +78,11 @@ async function fetchSchema(rpc: ConcordiumGRPCClient, moduleRef: string) {
  * @param setError Function that is invoked with any error that occurred while resolving the schema (e.g. module was not found or it was malformed).
  * @return The schema wrapped into a {@link SchemaResult} or undefined if no schema was found.
  */
-export function useModuleSchemaRpc(rpc: ConcordiumGRPCClient, moduleRef: string, setError: (err: string) => void): SchemaResult | undefined {
+export function useModuleSchemaRpc(
+    rpc: ConcordiumGRPCClient,
+    moduleRef: string,
+    setError: (err: string) => void
+): SchemaResult | undefined {
     const [result, setResult] = useState<SchemaResult | undefined>();
     useEffect(() => {
         fetchSchema(rpc, moduleRef)

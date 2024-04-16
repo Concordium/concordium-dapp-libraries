@@ -9,7 +9,7 @@ import {
     moduleSchemaFromBase64,
     typeSchemaFromBase64,
 } from '@concordium/react-components';
-import { useContractSchemaRpc } from '@concordium/react-components';
+import { useModuleSchemaRpc } from '@concordium/react-components';
 import {
     AccountAddress,
     AccountTransactionType,
@@ -120,7 +120,7 @@ export function ContractInvoker({ rpc, network, connection, connectedAccount, co
     }, [contract]);
 
     const [schemaRpcError, setSchemaRpcError] = useState('');
-    const schemaRpcResult = useContractSchemaRpc(rpc, contract, setSchemaRpcError);
+    const schemaRpcResult = useModuleSchemaRpc(rpc, contract, setSchemaRpcError);
     const [schemaTypeInput, setSchemaTypeInput] = useState(DEFAULT_SCHEMA_TYPE);
 
     const [contractParams, setContractParams] = useState<Array<ContractParamEntry>>([]);

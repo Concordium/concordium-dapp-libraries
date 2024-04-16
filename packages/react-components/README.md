@@ -143,7 +143,7 @@ export function ContractStuff({ rpc }: Props) {
 Use the hook [`useGrpcClient`](#usegrpcclient) below to obtain a `ConcordiumGRPCClient` instance.
 See [the sample dApp](../../samples/contractupdate/src/Root.tsx) for a complete example.
 
-### [`useContractSchemaRpc`](./src/useContractSchemaRpc.ts)
+### [`useModuleSchemaRpc`](./src/useModuleSchemaRpc.ts)
 
 Hook for resolving the schema of a smart contract from the chain.
 The schema is used to construct the payload of invocations of the smart contract.
@@ -152,7 +152,7 @@ _Example: Fetch schema of a provided smart contract_
 
 ```typescript jsx
 import React, { useState } from 'react';
-import { Info, Network, Schema, useContractSchemaRpc } from '@concordium/react-components';
+import { Info, Network, Schema, useModuleSchemaRpc } from '@concordium/react-components';
 import { ConcordiumGRPCClient } from '@concordium/web-sdk';
 
 interface Props {
@@ -162,7 +162,7 @@ interface Props {
 
 export function ContractSchemaStuff({ rpc }: Props) {
     const [schemaRpcError, setSchemaRpcError] = useState('');
-    const schemaRpcResult = useContractSchemaRpc(rpc, contract, setSchemaRpcError);
+    const schemaRpcResult = useModuleSchemaRpc(rpc, contract.moduleRef, setSchemaRpcError);
     const schema: Schema = schemaRpcResult?.schema;
     // ...
 }

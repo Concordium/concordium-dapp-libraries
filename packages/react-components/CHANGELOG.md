@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Hook `useContractSchemaRpc` for fetching the schema of a smart contract from the chain.
+-   Hook `useModuleSchemaRpc` for fetching the schema of a smart contract module from the chain.
 
 ## [0.5.1] - 2024-03-22
 

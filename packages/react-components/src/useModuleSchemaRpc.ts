@@ -24,7 +24,7 @@ function findCustomSections(m: WebAssembly.Module, moduleVersion: number) {
     }
 
     // First look for section containing schema with embedded version, then "-v1" or "-v2" depending on the module version.
-    // See also comment in 'useContractSchemaRpc'.
+    // See also comment in 'useModuleSchemaRpc'.
     switch (moduleVersion) {
         case 0:
             return (

@@ -147,7 +147,7 @@ interface Props {
     network: Network; // reacting to change in 'componentDidUpdate'
 
     /**
-     * The namespace configuration of the connections,
+     * The namespace configuration for the wallet connect connection,
      * i.e. which methods and events to request permission for in the wallet.
      *
      * Defaults to {@linkcode FULL_WALLET_CONNECT_NAMESPACE_CONFIG} if not set.

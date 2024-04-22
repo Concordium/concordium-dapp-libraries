@@ -442,6 +442,7 @@ export class WalletConnectConnection implements WalletConnection {
                 throw new UnreachableCaseError('message', msg);
         }
     }
+
     async requestVerifiablePresentation(
         challenge: string,
         credentialStatements: CredentialStatements

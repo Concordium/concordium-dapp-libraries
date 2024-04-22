@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+-   Fixed circular dependency between `index` and `WalletConnect` files.
+
 ### Added
 
+-   Added `entrypoint` for the binary message signing in the mobile wallets.
 -   Added `createWalletConnectModalConfig` to create a configuration the modal shown when connecting to a walletconnect compatible wallet. The value returned can be passed to `WalletConnectConnector.create`.
 -   Added `CRYPTO_X_WALLET_MAINNET` and `CONCORDIUM_WALLET_MAINNET` exports, which can be passed `createWalletConnectModalConfig` for more control over which wallets are shown.
 -   Added option to specify the methods and events to request permission for by walletconnect

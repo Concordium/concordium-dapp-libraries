@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Network, WalletConnection, WalletConnectionDelegate, WalletConnector } from '@concordium/wallet-connectors';
+import { Network, WalletConnectNamespaceConfig, WalletConnection, WalletConnectionDelegate, WalletConnector } from '@concordium/wallet-connectors';
 import { errorString } from './error';
 
 /**
@@ -13,7 +13,7 @@ export interface ConnectorType {
      *                  This object doubles as the delegate to pass to new connector instances.
      * @param network The network to pass to new connector instances.
      */
-    activate(component: WithWalletConnector, network: Network): Promise<WalletConnector>;
+    activate(component: WithWalletConnector, network: Network, namespaceConfig: WalletConnectNamespaceConfig | undefined): Promise<WalletConnector>;
 
     /**
      * Called from {@link WithWalletConnector} when the connection type is being deactivated,
@@ -43,14 +43,14 @@ export function ephemeralConnectorType(create: (c: WithWalletConnector, n: Netwo
  * Note that only the connector is permanent. Individual connections may still be disconnected by the application.
  * @param create Factory function for creating new connector instances.
  */
-export function persistentConnectorType(create: (c: WithWalletConnector, n: Network) => Promise<WalletConnector>) {
+export function persistentConnectorType(create: (c: WithWalletConnector, n: Network, namespaceConfig: WalletConnectNamespaceConfig) => Promise<WalletConnector>) {
     const connectorPromises = new Map<WithWalletConnector, Map<Network, Promise<WalletConnector>>>();
     return {
-        activate: (component: WithWalletConnector, network: Network) => {
+        activate: (component: WithWalletConnector, network: Network, namespaceConfig: WalletConnectNamespaceConfig) => {
             const delegateConnectorPromises =
                 connectorPromises.get(component) || new Map<Network, Promise<WalletConnector>>();
             connectorPromises.set(component, delegateConnectorPromises);
-            const connectorPromise = delegateConnectorPromises.get(network) || create(component, network);
+            const connectorPromise = delegateConnectorPromises.get(network) || create(component, network, namespaceConfig);
             delegateConnectorPromises.set(network, connectorPromise);
             return connectorPromise;
         },
@@ -130,6 +130,14 @@ interface Props {
     network: Network; // reacting to change in 'componentDidUpdate'
 
     /**
+     * The namespace configuration of the connections, 
+     * i.e. which methods and events to request permission for in the wallet. 
+     * 
+     * Defaults to {@linkcode FULL_WALLET_CONNECT_NAMESPACE_CONFIG} if not set.
+     */
+    namespaceConfig?: WalletConnectNamespaceConfig;
+
+    /**
      * Function for generating the child component based on the props derived from the state of this component.
      *
      * JSX automatically supplies the nested expression as this prop field, so callers usually don't set it explicitly.
@@ -195,7 +203,7 @@ export class WithWalletConnector extends Component<Props, State> implements Wall
      */
     setActiveConnectorType = (type: ConnectorType | undefined) => {
         console.debug("WithWalletConnector: calling 'setActiveConnectorType'", { type, state: this.state });
-        const { network } = this.props;
+        const { network, namespaceConfig } = this.props;
         const { activeConnectorType, activeConnector } = this.state;
         this.setState({
             activeConnectorType: type,
@@ -215,7 +223,7 @@ export class WithWalletConnector extends Component<Props, State> implements Wall
             );
         }
         if (type) {
-            type.activate(this, network)
+            type.activate(this, network, namespaceConfig)
                 .then((connector: WalletConnector) => {
                     console.log('WithWalletConnector: setting active connector', { connector });
                     // Switch the connector (type) back in case the user changed it since initiating the connection.

@@ -26,7 +26,6 @@ import { WalletConnectModal, WalletConnectModalConfig } from '@walletconnect/mod
 import { MobileWallet } from '@walletconnect/modal-core';
 import SignClient from '@walletconnect/sign-client';
 import { ISignClient, ProposalTypes, SessionTypes, SignClientTypes } from '@walletconnect/types';
-import { CONCORDIUM_WALLET_CONNECT_PROJECT_ID, MAINNET, TESTNET } from './constants';
 import {
     Network,
     Schema,
@@ -36,6 +35,7 @@ import {
     WalletConnectionDelegate,
     WalletConnector,
 } from './WalletConnection';
+import { CONCORDIUM_WALLET_CONNECT_PROJECT_ID, MAINNET, TESTNET } from './constants';
 import { UnreachableCaseError } from './error';
 
 const WALLET_CONNECT_SESSION_NAMESPACE = 'ccd';
@@ -414,32 +414,30 @@ export class WalletConnectConnection implements WalletConnection {
 
     async signMessage(accountAddress: string, msg: SignableMessage) {
         switch (msg.type) {
-            case 'StringMessage':
-                {
-                    const params = { message: msg.value };
-                    const signature = await this.connector.client.request({
-                        topic: this.session.topic,
-                        request: {
-                            method: 'sign_message',
-                            params,
-                        },
-                        chainId: this.chainId,
-                    });
-                    return signature as AccountTransactionSignature; // TODO do proper type check
-                }
-            case 'BinaryMessage':
-                {
-                    const params = { schema: msg.schema.value.toString('base64'), data: msg.value.toString('hex') };
-                    const signature = await this.connector.client.request({
-                        topic: this.session.topic,
-                        request: {
-                            method: 'sign_message',
-                            params,
-                        },
-                        chainId: this.chainId,
-                    });
-                    return signature as AccountTransactionSignature;
-                }
+            case 'StringMessage': {
+                const params = { message: msg.value };
+                const signature = await this.connector.client.request({
+                    topic: this.session.topic,
+                    request: {
+                        method: 'sign_message',
+                        params,
+                    },
+                    chainId: this.chainId,
+                });
+                return signature as AccountTransactionSignature; // TODO do proper type check
+            }
+            case 'BinaryMessage': {
+                const params = { schema: msg.schema.value.toString('base64'), data: msg.value.toString('hex') };
+                const signature = await this.connector.client.request({
+                    topic: this.session.topic,
+                    request: {
+                        method: 'sign_message',
+                        params,
+                    },
+                    chainId: this.chainId,
+                });
+                return signature as AccountTransactionSignature;
+            }
             default:
                 throw new UnreachableCaseError('message', msg);
         }

@@ -47,6 +47,7 @@ export const WALLET_CONNECT = ephemeralConnectorType((delegate, network) =>
     WalletConnectConnector.create(walletConnectOptions, delegate, network, walletConnectNamespaceConfig)
 );
 ```
+
 where `walletConnectOptions` (type `SignClientTypes.Options`) is the initialization configuration for WalletConnect
 and `walletConnectNamespaceConfig` (optional, type `WalletConnectNamespaceConfig`) is the Concordium-specific connection configuration.
 In practice, both of these values are usually constants.

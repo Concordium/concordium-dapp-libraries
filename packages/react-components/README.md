@@ -48,8 +48,8 @@ export const WALLET_CONNECT = ephemeralConnectorType((delegate, network) =>
 );
 ```
 where `walletConnectOptions` (type `SignClientTypes.Options`) is the initialization configuration for WalletConnect
-and `walletConnectNamespaceConfig` (type `WalletConnectNamespaceConfig`) is the Concordium-specific connection configuration.
-In practice, both of these values are usually constants ([`@concordium/wallet-connectors`](../wallet-connectors) includes some useful defaults for the latter).
+and `walletConnectNamespaceConfig` (optional, type `WalletConnectNamespaceConfig`) is the Concordium-specific connection configuration.
+In practice, both of these values are usually constants.
 
 Initiate a connection by invoking `connect` on a connector.
 This is most easily done using the hooks `useConnection` and `useConnect`:

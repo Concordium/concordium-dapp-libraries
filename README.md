@@ -1,5 +1,11 @@
 # Concordium dApp Libraries
 
+## This project has been archived
+
+It has been moved to [concordium/concordium-node-sdk-js](../concordium-node-sdk-js) and will be maintained there going forward.
+
+## Description
+
 A collection of TypeScript libraries for making it easy for dApp developers to create robust dApps that do interesting things
 on the Concordium blockchain.
 

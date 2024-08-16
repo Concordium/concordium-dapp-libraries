@@ -2,7 +2,7 @@
 
 ## This project has been archived
 
-It has been moved to [concordium/concordium-node-sdk-js](../concordium-node-sdk-js) and will be maintained there going forward.
+It has been moved to [concordium/concordium-node-sdk-js](https://github.com/Concordium/concordium-node-sdk-js) and will be maintained there going forward.
 
 ## Description
 
